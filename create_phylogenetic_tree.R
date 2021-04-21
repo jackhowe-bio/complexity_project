@@ -8,12 +8,16 @@ library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.h
 
 
 df<- read.csv('germline_data_1.0.csv')
-
+df<- unique(df)
 # create tree
 
-#animals
-animals <- subset(df, kingdom == 'Animalia')
-ResolvedNamesAnimals <- tnrs_match_names(animals$species.updated, context_name = 'Animals')
+#ALL 
+ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life')
+ResolvedNames <- subset(ResolvedNames, !is.na(ott_id))
 
-AnimalTree<- tol_induced_subtree(ResolvedNamesAnimals$ott_id[-c(33,41)])
-plot(AnimalTree, no.margin = TRUE)
+ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id)
+ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T)
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id)
+plot(AllTree, no.margin = TRUE)
+
+
