@@ -1,0 +1,26 @@
+---
+title: "BRMS phylogeny"
+output: html_notebook
+---
+https://cran.r-project.org/web/packages/brms/vignettes/brms_phylogenetics.html
+
+# A Simple Phylogenetic Model
+
+Assume we have measurements of a phenotype, phen (say the body size), and a cofactor variable (say the temperature of the environment). We prepare the data using the following code.
+
+```{r}
+library(ape)
+phylo <- ape::read.nexus("https://paul-buerkner.github.io/data/phylo.nex")
+data_simple <- read.table(
+  "https://paul-buerkner.github.io/data/data_simple.txt", 
+  header = TRUE
+)
+head(data_simple)
+```
+
+
+
+```{r}
+A <- ape::vcv.phylo(phylo)
+```
+
