@@ -185,16 +185,39 @@ plot(hyp)
 ```{r}
 #read in phylogeny
 phylo<- ape::read.tree('phylogeny_all.txt')
-phylo
+
 
 #subset df above with just those that are in the tree (note some missing)
 names_in_tree<- read.csv('phylogeny_species_names_in_tree.csv')
+names_in_tree$tip_labels<- paste(gsub(' ', '_', names_in_tree$unique_name), names_in_tree$ott_id, sep = '_ott')
 
+phylo$tip.label
 
 df$species.updated.rotl<- tolower(df$species.updated.rotl)
 df<- subset(df, tolower(df$species.updated.rotl) %in% tolower(names_in_tree$search_string))
-
-
-
+df<- cbind(df, names_in_tree$tip_labels)
 ```
+
+produce covariance matrix using branch lengths of 1 (as in Fisher et al)
+```{r}
+# set branch lengths to 1 for covariance matrix
+phylo_1b <- compute.brlen(phylo, 1)
+#create covariance matrix
+CovarMatrix <- ape::vcv.phylo(phylo_1b)
+```
+
+define the phylogenetic model
+```{r}
+#(1|gr(phylo, cov = A))
+
+fit_obl_phy<-
+  brm(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(CovarMatrix)),
+      data2 = list(CovarMatrix = CovarMatrix),
+      iter = 6000, warmup = 100, chains = 5,thin = 10, cores = 5,
+      prior = prior(normal(0, 10), "b"))
+```
+
+
 

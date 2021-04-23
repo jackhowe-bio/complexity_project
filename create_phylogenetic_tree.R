@@ -18,7 +18,8 @@ ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All l
 ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id)
 ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T)
 
-AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id)
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id')
+
 
 # draw tree
 plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
