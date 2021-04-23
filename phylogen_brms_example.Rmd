@@ -57,6 +57,12 @@ summary(model_simple)
 plot(model_simple, N = 2, ask = F)
 plot(conditional_effects(model_simple), points = TRUE) 
 ```
+Testing for phylogenetic signal:
+standard deviation because of phylo over all variation? Smaller signal -> 0, larger effect of phylogeny -> 1
+```{r}
+hyp <- "sd_phylo__Intercept^2 / (sd_phylo__Intercept^2 + sigma^2) = 0"
+(hyp <- hypothesis(model_simple, hyp, class = NULL))
+```
 
 
 
