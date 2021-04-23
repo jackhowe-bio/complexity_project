@@ -1,42 +1,56 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
 # attempting analysis
 
-#load packages
+## load packages
+```{r}
 library(ape)
 library(ggplot2)
 library(tidyverse)
 library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
 library(tidybayes)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
+```
 
+## read in data
+```{r}
 setwd('/Users/user/Documents/oxford/comparative_data/tidy/analyses/complexity_project')
 df<- read.csv('germline_data_1.0.csv')
+```
 
 # trying to recreate Berti's data: does clonality lead to more obligate?
+
+Create simple model, using default undefined priors (flat).
+```{r}
 df %>%
   group_by(Obligate_or_facultative) %>%
   count() #summary table just to check that the results kinda fit
 
-
-prior <- get_prior(Obligate_or_facultative ~ 0 + clonal, family=bernoulli(link = 'logit'), data = df) #defining what priors we need
-prior$prior[2] <- "normal(-1.7,2)" #default priors are flat, changed them here to a normal distribution
-prior$prior[3] <- "normal(-1.7,2)"
 
 #fit the model 
 fit_obl<-
   brm(data = df,
       family=bernoulli(link = 'logit'),
       formula = Obligate_or_facultative ~ 0 + clonal, 
-      iter = 600000, warmup = 100000, chains = 5, seed = 8, thin = 100, cores = 5,
-      prior = prior)
+      iter = 600000, warmup = 10000, chains = 5, seed = 8, thin = 20, cores = 5)
 
+```
 
+Assessing model:
+```{r}
 plot(fit_obl) #check that chains converged
-
 pp_check(fit_obl) #check the predictions
+plot(conditional_effects(fit_obl), points = TRUE) 
 
-summary(fit_obl) #summary of model 
-posterior_summary(fit_obl, robust = T) #what are the medians for coefficients?
-
+summary(fit_obl)
+posterior_summary(fit_obl, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+This is another way of posting from the brms anaysis book online (https://bookdown.org/content/3686/)
+```{r}
 post <- posterior_samples(fit_obl) #take the posterior samples
 post <- #convert them back to probabilities (from log odds)
   post %>% 
@@ -58,10 +72,24 @@ gathered_post %>% #draw plot
   scale_y_continuous(NULL, breaks = NULL) +
   theme_minimal() +
   facet_wrap(~key, scales = 'free') 
+```
+
+Testing hypothesis:
+```{r}
+
+```
+
+
+
+
+
+
+
 
 hyp = hypothesis(fit_obl,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
 hyp
 plot(hyp)
+
 
 # Result 2: number of cells
 # trying to recreate Berti's data: does clonality lead to more obligate?
@@ -81,7 +109,7 @@ fit_num<-
   brm(data = df,
       family=gaussian(),
       formula = log(cell_number) ~ 0 + clonal, 
-      iter = 600000, warmup = 100000, chains = 5, seed = 8, thin = 100, cores = 5,
+      iter = 60000, warmup = 10000, chains = 5, seed = 8, thin = 10, cores = 5,
       prior = prior)
 
 plot(fit_num) #check that chains converged
