@@ -1,18 +1,18 @@
 ---
 title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 output:
-  html_document:
-    code_folding: hide
-    number_sections: yes
-    toc: yes
-    toc_float: yes
-    fig_caption: yes
   html_notebook:
     code_folding: hide
     number_sections: yes
     toc: yes
     toc_float: yes
     fig_caption: TRUE
+  html_document:
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: yes
 ---
 
 This script re-creates the analyses of Fisher et al 2013 using this dataset. As this dataset is built on the data from that study (with the addition of a small number of plants), then the results should be v. similar. 
