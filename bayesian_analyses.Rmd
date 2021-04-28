@@ -1,56 +1,111 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: yes
+  html_notebook:
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: TRUE
 ---
 
+This script re-creates the analyses of Fisher et al 2013 using this dataset. As this dataset is built on the data from that study (with the addition of a small number of plants), then the results should be v. similar. 
 
-# attempting analysis
-
+# Pre-amble
 ## load packages
-```{r}
+```{r packages}
 library(ape)
 library(ggplot2)
 library(tidyverse)
+library(knitr)
 library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
 library(tidybayes)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
 ```
 
 ## read in data
-```{r}
-setwd('/Users/user/Documents/oxford/comparative_data/tidy/analyses/complexity_project')
-df<- read.csv('germline_data_1.0.csv')
-df[nrow(df),]
+```{r data_input}
+df<- read.csv('data/germline_data_1.0.csv') #read in csv
 ```
 
-# trying to recreate Berti's data: does clonality lead to more obligate?
+## create phylogeny files
+```{r phylogeny_creation, message=F, results='hide'}
 
-Create simple model, using default undefined priors (flat). Berti used normal distribution?
-```{r}
-df %>%
+ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)
+ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
+ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
+
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id') #draw the phylogeny
+
+# tree with resolved polytomies:
+ResolvedPolytomiesTree<- multi2di(AllTree)
+
+# write to files
+write.tree(AllTree, file='data/phylogeny_all.txt') #phylogeny
+write.tree(AllTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with resolved polytomies
+write.csv(ResolvedNames, 'data/phylogeny_species_names.csv') #list of names
+write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list of names that are present in the tree
+```
+
+```{r plot_phylogeny, fig.cap="Simple phylogenetic tree constructed using the Open Tree of Life, needs manually checked for errors"}
+#plot phylogeny to check
+plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
+```
+
+
+# Recreating results in Fisher without phylogeny
+
+As practise for analyses of germline data.
+
+## 1. is clonal group formation more likely to produce obligate multi-cellularity?  
+### defining the model
+Have defined a v. simple, pretty non-informative prior (makes everything run faster). As a default, brms has flat prior, but defining a simple prior makes things run a bit quicker.  
+Summary table to eyeball results:
+```{r obl_summary}
+summary<- df %>%
   group_by(Obligate_or_facultative) %>%
-  count() #summary table just to check that the results kinda fit
+  count()#summary table just to check that the results kinda fit
 
+print(summary)
+```
 
+```{r obl_model}
 #fit the model 
 fit_obl<-
   brm(data = df,
-      family=bernoulli(link = 'logit'),
-      formula = Obligate_or_facultative ~ 0 + clonal, 
-      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5,
-      prior = prior(normal(0, 10), "b"), file = 'fits/obligate' )
+      family=bernoulli(link = 'logit'), # family of model
+      formula = Obligate_or_facultative ~ 0 + clonal,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/obligate' ) 
 
 ```
 
-Assessing model:
-```{r}
+### Assessing model:  
+Assessing whether the chains converged, whether the predictions are okay, etc. 
+```{r obl_model_assessment}
 plot(fit_obl) #check that chains converged
 pp_check(fit_obl) #check the predictions
-plot(conditional_effects(fit_obl), points = TRUE) 
+plot(conditional_effects(fit_obl), points = TRUE) #show the effects of the c
 
 summary(fit_obl)
 posterior_summary(fit_obl, robust = T) #what are the medians for coefficients? if F, then returns means
 ```
+
+### Hypothesis testing
+Do clonal groups contain more cells than non-clonal?
+```{r obl_model_testing}
+hyp = hypothesis(fit_obl,  "clonalclonal > clonalnonMclonal") #test hypothesis that clonal is more likely to produce obligate multicellularity
+hyp
+plot(hyp)
+```
+
 This is another way of posting from the brms anaysis book online (https://bookdown.org/content/3686/)
 ```{r}
 post <- posterior_samples(fit_obl) #take the posterior samples
@@ -76,23 +131,17 @@ gathered_post %>% #draw plot
   facet_wrap(~key, scales = 'free') 
 ```
 
-Testing hypothesis:
-```{r}
-hyp = hypothesis(fit_obl,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
-hyp
-plot(hyp)
-```
 
-
-# Result 2: number of cells
+## 2. does clonal group formation produce groups with more cells?
 
 ```{r}
 df %>%
   group_by(clonal) %>%
   summarise(cell_mean = mean(log(cell_number), na.rm = T)) #summary table just to check that the results kinda fit
             
-prior <- get_prior(log(cell_number) ~ 0 + clonal, family=gaussian(), data = df) #defining what priors we need
+prior <- get_prior(log(cell_number) ~ 0 + clonal, family=gaussian(), data = df) #what priors do we need?
 ```
+
 ```{r}
 #fit the model 
 fit_num<-
@@ -100,7 +149,7 @@ fit_num<-
       family=gaussian(),
       formula = log(cell_number) ~ 0 + clonal, 
       iter = 600000, warmup = 100000, chains = 5, thin = 100, cores = 5,
-      prior = prior(normal(0, 10), "b"), file = 'fits/cell_number' ) # a super simple prior as it leads to slightly quicker runs
+      prior = prior(normal(0, 10), "b"), file = 'fits/cell_number' ) # same simple prior
 ```
 
 ```{r}
@@ -118,7 +167,7 @@ hyp
 plot(hyp)
 ```
 
-# Result 3: number of cell types
+## Result 3: number of cell types
 ```{r}
 df %>%
   group_by(clonal) %>%
@@ -154,7 +203,7 @@ hyp
 plot(hyp)
 ```
 
-# complex vs simple
+## complex vs simple
 
 ```{r}
 
@@ -184,18 +233,23 @@ plot(hyp)
 
 ```{r}
 #read in phylogeny
-phylo<- ape::read.tree('phylogeny_all.txt')
+phylo<- ape::read.tree('data/phylogeny_all.txt')
 
 
 #subset df above with just those that are in the tree (note some missing)
-names_in_tree<- read.csv('phylogeny_species_names_in_tree.csv')
-names_in_tree$tip_labels<- paste(gsub(' ', '_', names_in_tree$unique_name), names_in_tree$ott_id, sep = '_ott')
+names_in_tree<- read.csv('data/phylogeny_species_names_in_tree.csv')
+names_in_tree$ott_id<- paste('ott',names_in_tree$ott_id, sep = '')
 
-phylo$tip.label
+phylo$tip.label %in% names_in_tree$ott_id
 
+names_in_tree<- subset(names_in_tree, names_in_tree$ott_id %in% phylo$tip.label)
+
+#which species in the table are in the tree
 df$species.updated.rotl<- tolower(df$species.updated.rotl)
 df<- subset(df, tolower(df$species.updated.rotl) %in% tolower(names_in_tree$search_string))
-df<- cbind(df, names_in_tree$tip_labels)
+
+#give them the ids in a column sot hat brms can match it up
+df$species_id<- names_in_tree$ott_id
 ```
 
 produce covariance matrix using branch lengths of 1 (as in Fisher et al)
@@ -204,20 +258,42 @@ produce covariance matrix using branch lengths of 1 (as in Fisher et al)
 phylo_1b <- compute.brlen(phylo, 1)
 #create covariance matrix
 CovarMatrix <- ape::vcv.phylo(phylo_1b)
+
 ```
 
 define the phylogenetic model
 ```{r}
 #(1|gr(phylo, cov = A))
 
+  get_prior(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)),
+      data2 = list(CovarMatrix = CovarMatrix))
+
 fit_obl_phy<-
   brm(data = df,
       family=bernoulli(link = 'logit'),
-      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(CovarMatrix)),
+      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)),
       data2 = list(CovarMatrix = CovarMatrix),
-      iter = 6000, warmup = 100, chains = 5,thin = 10, cores = 5,
-      prior = prior(normal(0, 10), "b"))
+      iter = 600000, warmup = 100000, chains = 5, thin = 150, cores = 5,
+      prior = c(prior(student_t(3, 0, 20), "sd"),
+                prior(normal(0, 10), "b")), file = 'fits/obl_phy')
+                
+
+
 ```
 
+Assessing model:
+```{r}
+plot(fit_obl_phy) #check that chains converged
+pp_check(fit_obl_phy) #check the predictions
+plot(conditional_effects(fit_obl_phy), points = TRUE) 
 
+summary(fit_obl_phy)
+pairs(fit_obl_phy)
+posterior_summary(fit_obl_phy, robust = T) #what are the medians for coefficients? if F, then returns means
+
+hyp<- hypothesis(fit_obl_phy,  "clonalclonal > clonalnonMclonal")
+plot(hyp)
+```
 

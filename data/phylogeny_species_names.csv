@@ -1,0 +1,197 @@
+"","search_string","unique_name","approximate_match","ott_id","is_synonym","flags","number_matches","IsInTree"
+"1","acrasis rosea","Acrasis rosea",FALSE,765113,FALSE,"",1,TRUE
+"2","acytostelium","Acytostelium",FALSE,811854,FALSE,"",1,TRUE
+"3","aeolosoma tenebrarum","Aeolosoma tenebrarum",FALSE,4974308,FALSE,"",1,TRUE
+"4","alaria marginata","Alaria marginata",FALSE,72522,FALSE,"sibling_higher",1,TRUE
+"5","amphibola crenata","Amphibola crenata",FALSE,298764,FALSE,"incertae_sedis_inherited",1,FALSE
+"6","anabaena","Anabaena",FALSE,368779,FALSE,"sibling_higher",2,FALSE
+"7","anthoceros himalayensis","Anthoceros himalayensis",FALSE,7567530,FALSE,"",2,TRUE
+"8","apodotrocha progenerans","Apodotrocha progenerans",FALSE,4979583,FALSE,"",1,TRUE
+"9","arthrospira","Arthrospira",FALSE,231664,FALSE,"sibling_higher",1,TRUE
+"10","ascophyllum nodosum","Ascophyllum nodosum",FALSE,727979,FALSE,"",1,TRUE
+"11","asperococcus fistulosus","Asperococcus fistulosus",FALSE,790395,FALSE,"",1,TRUE
+"12","astrephomene gubernaculifera","Astrephomene gubernaculifera",FALSE,1052546,FALSE,"",1,TRUE
+"13","astrephomene perforata","Astrephomene perforata",FALSE,1017821,FALSE,"",1,TRUE
+"14","bacillus subtilis","Bacillus subtilis",FALSE,1084928,FALSE,"sibling_higher",1,TRUE
+"15","basichlamys sacculifera","Basichlamys sacculifera",FALSE,60471,FALSE,"",1,TRUE
+"16","botryocladia wynnei","Botryocladia wynnei",FALSE,724784,FALSE,"",1,TRUE
+"17","caenorhabditis elegans","Caenorhabditis elegans",FALSE,395048,FALSE,"",1,TRUE
+"18","callinectes sapidus","Callinectes sapidus",FALSE,182906,FALSE,"",1,TRUE
+"19","calothrix","Calothrix",FALSE,12832,FALSE,"sibling_higher",1,FALSE
+"20","candida albicans","Candida albicans",FALSE,154960,FALSE,"",1,TRUE
+"21","canis lupus","Canis lupus",FALSE,247341,FALSE,"",1,TRUE
+"22","carpomitra costata","Carpomitra costata",FALSE,817791,FALSE,"",1,TRUE
+"23","cavenderia fasciculata","Cavenderia fasciculata",FALSE,543977,FALSE,"",1,TRUE
+"24","cheiroglossa palmata","Cheiroglossa palmata",FALSE,733462,FALSE,"",1,TRUE
+"25","chlamydomonas reinhardtii","Chlamydomonas reinhardtii",FALSE,33153,FALSE,"",1,TRUE
+"26","chlorogloeopsis","Chlorogloeopsis",FALSE,269063,FALSE,"sibling_higher",1,TRUE
+"27","chondromyces crocatus","Chondromyces crocatus",FALSE,424530,FALSE,"sibling_higher",1,TRUE
+"28","chordaria flagelliformis","Chordaria flagelliformis",FALSE,497063,FALSE,"",1,TRUE
+"29","chordodasiopsis antennatus","Chordodasiopsis antennatus",FALSE,2844962,FALSE,"",1,TRUE
+"30","cladostephus spongiosus","Cladostephus spongiosus (species in subkingdom SAR)",FALSE,92556,FALSE,"",2,TRUE
+"31","clostridium","Clostridium",FALSE,933512,FALSE,"",1,FALSE
+"32","colpomenia sinuosa","Colpomenia sinuosa",FALSE,849781,FALSE,"",1,TRUE
+"33","conocephalum conicum","Conocephalum conicum",FALSE,199292,FALSE,"",1,TRUE
+"34","conocyema polymorpha","Conocyema polymorpha",FALSE,3684437,FALSE,"",1,TRUE
+"35","craspedacusta sowerbii","Craspedacusta sowerbii",FALSE,127047,FALSE,"",1,TRUE
+"36","crinalium magnum","Crinalium magnum",FALSE,528228,FALSE,"sibling_higher",1,TRUE
+"37","croomia pauciflora","Croomia pauciflora",FALSE,840001,FALSE,"",1,TRUE
+"38","cupelopagis vorax","Cupelopagis vorax",FALSE,2942244,FALSE,"",1,TRUE
+"39","cutleria","Cutleria (genus in subkingdom SAR)",FALSE,92561,FALSE,"",2,TRUE
+"40","cyanea capillata","Cyanea capillata",FALSE,178412,FALSE,"",1,TRUE
+"41","cyathodium","Cyathodium",FALSE,230418,FALSE,"",1,TRUE
+"42","cyathodium foetidissimum","Cyathodium foetidissimum",FALSE,1069171,FALSE,"",1,TRUE
+"43","dasybranchus caducus","Dasybranchus caducus",FALSE,365439,FALSE,"",1,TRUE
+"44","desmarestia antarctica","Desmarestia antarctica",FALSE,336388,FALSE,"",1,TRUE
+"45","dictyosiphon hirsutus","Dictyosiphon hirsutus",FALSE,2819986,FALSE,"",1,TRUE
+"46","dictyostelium discoideum","Dictyostelium discoideum",FALSE,160850,FALSE,"",1,TRUE
+"47","dictyostelium purpureum","Dictyostelium purpureum",FALSE,999663,FALSE,"",1,TRUE
+"48","dictyota binghamiae","Dictyota binghamiae",FALSE,265121,FALSE,"",1,TRUE
+"49","dicyema typus","Dicyema typus",FALSE,3684365,FALSE,"",1,TRUE
+"50","dicyemennea abelis","Dicyemennea abelis",FALSE,3684379,FALSE,"",1,TRUE
+"51","dicyemennea lameerei","Dicyemennea lameerei",FALSE,3684389,FALSE,"",1,TRUE
+"52","dilsea natashae","Dilsea natashae",FALSE,567703,FALSE,"",1,TRUE
+"53","dinophilus gyrociliatus","Dinophilus gyrociliatus",FALSE,446088,FALSE,"",1,TRUE
+"54","diurodrilus westheidei","Diurodrilus westheidei",FALSE,4978773,FALSE,"",1,TRUE
+"55","ducellieria chodatii","Ducellieria chodatii",FALSE,2810724,FALSE,"",1,TRUE
+"56","durvillaea antarctica","Durvillaea antarctica",FALSE,216694,FALSE,"",1,TRUE
+"57","ectocarpus siliculosus","Ectocarpus siliculosus",FALSE,878345,FALSE,"",1,TRUE
+"58","elachista fucicola","Elachista fucicola",FALSE,263987,FALSE,"",1,TRUE
+"59","enterostomula graffi","Enterostomula graffi",FALSE,3665433,FALSE,"",1,TRUE
+"60","escherichia coli","Escherichia coli",FALSE,474506,FALSE,"sibling_higher",1,FALSE
+"61","eudorina cylindrica","Eudorina cylindrica",FALSE,359012,FALSE,"",1,TRUE
+"62","eudorina elegans","Eudorina elegans",FALSE,485476,FALSE,"",2,TRUE
+"63","eudorina minodii","Eudorina minodii",FALSE,167121,FALSE,"",1,TRUE
+"64","eudorina unicocca","Eudorina unicocca",FALSE,958293,FALSE,"",1,TRUE
+"65","farlowia mollis","Farlowia mollis",FALSE,779028,FALSE,"",1,TRUE
+"66","fischerella","Fischerella (genus in domain Bacteria)",FALSE,534131,FALSE,"sibling_higher",1,FALSE
+"67","fucus vesiculosus","Fucus vesiculosus",FALSE,601255,FALSE,"",1,TRUE
+"68","fuirena ciliaris","Fuirena ciliaris",FALSE,215125,FALSE,"",1,TRUE
+"69","funaria hygrometrica","Funaria hygrometrica",FALSE,765280,FALSE,"",1,TRUE
+"70","gloeophycus koreanus","Gloeophycus koreanus",FALSE,4013684,FALSE,"",1,TRUE
+"71","gonium multicoccum","Gonium multicoccum",FALSE,256145,FALSE,"",1,TRUE
+"72","gonium octonarium","Gonium octonarium",FALSE,958305,FALSE,"",1,TRUE
+"73","gonium pectorale","Gonium pectorale",FALSE,361837,FALSE,"",1,TRUE
+"74","gonium quadratum","Gonium quadratum",FALSE,60470,FALSE,"",1,TRUE
+"75","gonium viridistellatum","Gonium viridistellatum",FALSE,60473,FALSE,"",1,TRUE
+"76","gymnoascus reessii","Gymnoascus reessii",FALSE,246046,FALSE,"",1,TRUE
+"77","haliclystus","Haliclystus",FALSE,570656,FALSE,"",1,TRUE
+"78","halymenia asymmetrica","Halymenia asymmetrica",FALSE,4010960,FALSE,"",1,TRUE
+"79","haplospora globosa","Haplospora globosa",FALSE,649193,FALSE,"",1,TRUE
+"80","helminthostachys zeylanica","Helminthostachys zeylanica",FALSE,178177,FALSE,"",1,TRUE
+"81","heteroglossum carnosum","Heteroglossum carnosum",FALSE,4741377,FALSE,"",1,TRUE
+"82","heteroralfsia saxicola","Heteroralfsia saxicola",FALSE,275897,FALSE,"",1,TRUE
+"83","heterostelium pallidum","Heterostelium pallidum",FALSE,7041871,FALSE,"sibling_higher",1,TRUE
+"84","himantothallus grandifolius","Himantothallus grandifolius",FALSE,181933,FALSE,"",1,TRUE
+"85","hirudo medicinalis","Hirudo medicinalis",FALSE,954042,FALSE,"",1,TRUE
+"86","hummia onusta","Hummia onusta",FALSE,83430,FALSE,"",1,TRUE
+"87","hydra vulgaris","Hydra vulgaris",FALSE,111442,FALSE,"",1,TRUE
+"88","hymenophyllum tunbridgense","Hymenophyllum tunbrigense",FALSE,186999,TRUE,"",1,TRUE
+"89","isthmoplea sphaerophora","Isthmoplea sphaerophora",FALSE,83432,FALSE,"",1,TRUE
+"90","kurogiella saxatilis","Kurogiella saxatilis",FALSE,1099013,FALSE,"",1,TRUE
+"91","laminaria dentigera","Saccharina dentigera",FALSE,792636,TRUE,"",2,TRUE
+"92","leathesia difformis","Leathesia difformis",FALSE,263988,FALSE,"sibling_higher",2,TRUE
+"93","lemna minor","Lemna minor",FALSE,431388,FALSE,"",1,TRUE
+"94","lomandra hermaphrodita","Lomandra hermaphrodita",FALSE,3995126,FALSE,"",1,TRUE
+"95","loxosoma saltans","Loxosoma saltans",FALSE,2844172,FALSE,"",1,TRUE
+"96","lumbricus terrestris","Lumbricus terrestris",FALSE,316441,FALSE,"",1,TRUE
+"97","lyngbya aestuarii","Lyngbya aestuarii (species in domain Bacteria) (inconsistent in Lyngbya (genus in domain Bacteria))",FALSE,945417,FALSE,"sibling_higher, inconsistent",2,FALSE
+"98","macrostomum tuba","Macrostomum tuba",FALSE,490206,FALSE,"",1,TRUE
+"99","mammillaria elongata","Mammillaria elongata",FALSE,346740,FALSE,"",1,TRUE
+"100","membranoptera subtropica","Polyneura subtropica",FALSE,4011155,TRUE,"",1,TRUE
+"101","mesogloia linearis","Chordaria linearis",FALSE,34559,TRUE,"",1,TRUE
+"102","methanosarcina mazei","Methanosarcina mazei",FALSE,993194,FALSE,"",1,TRUE
+"103","microcoleus chthonoplastes","Microcoleus chthonoplastes",FALSE,7644171,FALSE,"major_rank_conflict",2,FALSE
+"104","microcystis aeruginosa","Microcystis aeruginosa",FALSE,269069,FALSE,"",1,FALSE
+"105","monoclea forsteri","Monoclea forsteri",FALSE,54768,FALSE,"",1,TRUE
+"106","morone saxatilis","Morone saxatilis",FALSE,223669,FALSE,"",1,TRUE
+"107","mus musculus","Mus musculus",FALSE,542509,FALSE,"",1,TRUE
+"108","myxococcus fulvus","Myxococcus fulvus",FALSE,939432,FALSE,"",1,TRUE
+"109","myxococcus xanthus","Myxococcus xanthus",FALSE,939454,FALSE,"sibling_higher",1,TRUE
+"110","nais variabilis","Nais variabilis",FALSE,549846,FALSE,"",1,TRUE
+"111","neomenia carinata","Neomenia carinata",FALSE,2849837,FALSE,"",1,TRUE
+"112","nostoc","Nostoc",FALSE,893787,FALSE,"sibling_higher",1,FALSE
+"113","notholca acuminata","Notholca acuminata",FALSE,492241,FALSE,"",1,TRUE
+"114","oncorhynchus mykiss","Oncorhynchus mykiss (species in domain Eukaryota)",FALSE,165368,FALSE,"",2,TRUE
+"115","oscillatoria sancta","Oscillatoria sancta (species in domain Bacteria)",FALSE,602180,FALSE,"sibling_higher",2,TRUE
+"116","pandorina colemaniae","Pandorina colemaniae",FALSE,958304,FALSE,"",1,TRUE
+"117","pandorina morum","Pandorina morum",FALSE,1072227,FALSE,"",1,TRUE
+"118","pedicellina cernua","Pedicellina cernua",FALSE,362913,FALSE,"",1,TRUE
+"119","periplaneta americana","Periplaneta americana",FALSE,48288,FALSE,"",1,TRUE
+"120","petermannia cirrosa","Petermannia cirrosa",FALSE,643237,FALSE,"",1,TRUE
+"121","physarum polycephalum","Physarum polycephalum",FALSE,422679,FALSE,"sibling_higher",1,TRUE
+"122","pinus monophylla","Pinus monophylla",FALSE,225275,FALSE,"",1,TRUE
+"123","pisione remota","Pisione remota",FALSE,518643,FALSE,"",1,TRUE
+"124","platydorina caudata","Platydorina caudata",FALSE,60479,FALSE,"",1,TRUE
+"125","pleodorina californica","Pleodorina californica",FALSE,485473,FALSE,"",1,TRUE
+"126","pleodorina illinoisensis","Pleodorina illinoisensis",FALSE,256089,FALSE,"",1,TRUE
+"127","pleodorina indica","Pleodorina indica",FALSE,633717,FALSE,"",1,TRUE
+"128","pleodorina japonica","Pleodorina japonica",FALSE,256062,FALSE,"",1,TRUE
+"129","pleurobrachia ","Pleurobrachia",TRUE,742128,FALSE,"",6,TRUE
+"130","pocheina flagellata","Moina macrocopa",TRUE,900929,FALSE,"",2,TRUE
+"131","pocheina rosea","Pocheina rosea",TRUE,4008875,FALSE,"hidden",1,FALSE
+"132","pogonatum neesii","Pogonatum neesii",FALSE,263960,FALSE,"sibling_higher",1,TRUE
+"133","polysphondylium violaceum","Polysphondylium violaceum",FALSE,811865,FALSE,"",1,TRUE
+"134","polytrichum commune","Polytrichum commune",FALSE,821356,FALSE,"",1,TRUE
+"135","ptilophora scalaramosa","Ptilophora scalaramosa",FALSE,4010019,FALSE,"",1,TRUE
+"136","pycnophyes frequens","Pycnophyes frequens",FALSE,3583594,FALSE,"",1,TRUE
+"137","ralfsia verrucosa","Ralfsia verrucosa",FALSE,275893,FALSE,"",1,TRUE
+"138","raperostelium minutum","Raperostelium minutum",FALSE,962359,FALSE,"",1,TRUE
+"139","rastrognathia macrostoma","Rastrognathia macrostoma",FALSE,675301,FALSE,"",1,TRUE
+"140","rhabditis monhystera","Rhabditis monhystera",FALSE,3587677,FALSE,"sibling_higher",1,TRUE
+"141","rhopalura granosa","Rhopalura granosa",FALSE,3684291,FALSE,"",1,TRUE
+"142","rivularia","Rivularia (genus in domain Bacteria)",FALSE,737026,FALSE,"sibling_higher",3,TRUE
+"143","saccharomyces cerevisiae","Saccharomyces cerevisiae",FALSE,356221,FALSE,"",1,TRUE
+"144","sagittaria lancifolia","Sagittaria lancifolia",FALSE,481952,FALSE,"",2,TRUE
+"145","salpingoeca rosetta","Salpingoeca rosetta",FALSE,1002450,FALSE,"",1,TRUE
+"146","sarconema scinaioides","Sarconema scinaioides",FALSE,4013437,FALSE,"",1,TRUE
+"147","schimmelmannia dawsonii","Schimmelmannia dawsonii",FALSE,4013674,FALSE,"",1,TRUE
+"148","schizosaccharomyces pombe","Schizosaccharomyces pombe",FALSE,990004,FALSE,"",1,TRUE
+"149","schmidtea mediterranea","Schmidtea mediterranea",FALSE,900428,FALSE,"extinct",1,FALSE
+"150","schmitzia hiscockiana","Schmitzia hiscockiana",FALSE,4742064,FALSE,"",1,TRUE
+"151","scytonema","Scytonema (genus in domain Bacteria)",FALSE,197002,FALSE,"sibling_higher",2,TRUE
+"152","scytosiphon lomentaria","Scytosiphon lomentaria (species in subkingdom SAR)",FALSE,263980,FALSE,"",2,TRUE
+"153","selenipedium palmifolium","Selenipedium palmifolium",FALSE,3974169,FALSE,"",1,TRUE
+"154","sorogena stoianovitchae","Sorogena stoianovitchae",FALSE,486834,FALSE,"",1,TRUE
+"155","sphacelaria cirrosa","Sphacelaria cirrosa (species in subkingdom SAR)",FALSE,237608,FALSE,"sibling_higher",2,TRUE
+"156","sphaerobolus stellatus","Sphaerobolus stellatus",FALSE,989764,FALSE,"",1,TRUE
+"157","sphagnum recurvum","Sphagnum recurvum",FALSE,592355,FALSE,"",1,TRUE
+"158","spirobranchus triqueter","Spirobranchus triqueter",FALSE,7489702,FALSE,"",1,TRUE
+"159","spirulina","Spirulina (genus in domain Bacteria)",FALSE,843526,FALSE,"sibling_higher",3,FALSE
+"160","spongilla lacustris","Spongilla lacustris",FALSE,588761,FALSE,"",1,TRUE
+"161","starria zimbabweensis","Starria zimbabweensis",FALSE,6862,FALSE,"sibling_higher, merged",2,FALSE
+"162","streptomyces albidoflavus","Streptomyces albidoflavus",FALSE,772836,FALSE,"sibling_higher",1,TRUE
+"163","streptomyces antibioticus","Streptomyces antibioticus",FALSE,249878,FALSE,"sibling_higher",1,TRUE
+"164","streptomyces griseus","Streptomyces griseus",FALSE,623861,FALSE,"sibling_higher",1,TRUE
+"165","symphyogyna brongniartii","Symphyogyna brongniartii",FALSE,108923,FALSE,"",1,TRUE
+"166","symploca","Symploca",FALSE,875816,FALSE,"sibling_higher",1,TRUE
+"167","syringoderma phinneyi","Syringoderma phinneyi",FALSE,736728,FALSE,"",1,TRUE
+"168","tetrabaena socialis","Tetrabaena socialis",FALSE,381979,FALSE,"",1,TRUE
+"169","thalassoanaperus sulcatus","Anaperus sulcatus",FALSE,3663378,TRUE,"",1,TRUE
+"170","trichodesmium erythraeum","Trichodesmium erythraeum",FALSE,197000,FALSE,"",1,TRUE
+"171","trichoplax adhaerens","Trichoplax adhaerens",FALSE,570365,FALSE,"",1,TRUE
+"172","turbanella cornuta","Turbanella cornuta",FALSE,150272,FALSE,"",1,TRUE
+"173","valvognathia pogonostoma","Valvognathia pogonostoma",FALSE,987480,FALSE,"",1,TRUE
+"174","volvox africanus","Volvox africanus",FALSE,633711,FALSE,"",1,TRUE
+"175","volvox aureus","Volvox aureus (species in kingdom Archaeplastida)",FALSE,485470,FALSE,"",2,TRUE
+"176","volvox barberi","Volvox barberi",FALSE,633710,FALSE,"",1,TRUE
+"177","volvox carteri f. kawasakiensis","Volvox carteri f. kawasakiensis",FALSE,841027,FALSE,"infraspecific",1,TRUE
+"178","volvox carteri f. nagariensis","Volvox carteri f. nagariensis",FALSE,187583,FALSE,"infraspecific",1,TRUE
+"179","volvox carteri f. weismannia","Volvox carteri f. weismannia",FALSE,266342,FALSE,"infraspecific",1,TRUE
+"180","volvox dissipatrix","Volvox dissipatrix",FALSE,485480,FALSE,"",1,TRUE
+"181","volvox gigas","Volvox gigas",FALSE,633708,FALSE,"",1,TRUE
+"182","volvox globator","Volvox globator (species in kingdom Archaeplastida)",FALSE,633719,FALSE,"",2,TRUE
+"183","volvox obversus","Volvox obversus",FALSE,485482,FALSE,"",1,TRUE
+"184","volvox rousseletii","Volvox rousseletii",FALSE,381980,FALSE,"",1,TRUE
+"185","volvox tertius","Volvox tertius (species in kingdom Archaeplastida)",FALSE,1061937,FALSE,"",2,TRUE
+"186","volvulina boldii","Volvulina boldii",FALSE,112016,FALSE,"",1,TRUE
+"187","volvulina compacta","Volvulina compacta",FALSE,112017,FALSE,"",1,TRUE
+"188","volvulina pringsheimii","Volvulina pringsheimii",FALSE,381983,FALSE,"",1,TRUE
+"189","volvulina steinii","Volvulina steinii",FALSE,112015,FALSE,"",1,TRUE
+"190","wolffia arrhiza","Wolffia arrhiza",FALSE,1059898,FALSE,"",1,TRUE
+"191","wolffia microscopica","Wolffia microscopica",FALSE,1059900,FALSE,"",1,TRUE
+"192","yamadaella caenomyce","Yamadaella caenomyce",TRUE,207134,FALSE,"",2,TRUE
+"193","yamagishiella unicocca","Yamagishiella unicocca",FALSE,60477,FALSE,"",1,TRUE
+"194","zeacarpa leiomorpha","Zeacarpa leiomorpha",FALSE,2821097,FALSE,"",1,TRUE
+"195","zoothamnium alternans","Zoothamnium alternans",FALSE,560703,FALSE,"sibling_higher",1,TRUE
+"196","nodularia","Nodularia (genus in domain Bacteria)",FALSE,578646,FALSE,"sibling_higher",3,FALSE
