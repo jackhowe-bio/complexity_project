@@ -1,0 +1,370 @@
+---
+title: "Clonality and the evolution of complex multi-cellularity"
+output:
+  html_notebook:
+    code_folding: show
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: TRUE
+  html_document:
+    code_folding: show
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: yes
+---
+
+This script re-creates the analyses of Fisher et al 2013 using this dataset. As this dataset is built on the data from that study (with the addition of a small number of plants), then the results should be v. similar. 
+
+# Pre-amble
+## load packages
+```{r packages}
+library(ape)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
+library(tidybayes)
+library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
+```
+
+## read in data
+```{r data_input}
+df<- read.csv('data/germline_data_1.0.csv') #read in csv
+```
+
+## create phylogeny files
+```{r phylogeny_creation, message=F, results='hide'}
+
+ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)
+ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
+ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
+
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id') #draw the phylogeny
+
+# tree with resolved polytomies:
+ResolvedPolytomiesTree<- multi2di(AllTree)
+
+# write to files
+write.tree(AllTree, file='data/phylogeny_all.txt') #phylogeny
+write.tree(AllTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with resolved polytomies
+write.csv(ResolvedNames, 'data/phylogeny_species_names.csv') #list of names
+write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list of names that are present in the tree
+```
+
+```{r plot_phylogeny, fig.cap="Simple phylogenetic tree constructed using the Open Tree of Life, needs manually checked for errors"}
+#plot phylogeny to check
+plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
+```
+
+*** 
+
+# Recreating results in Fisher without phylogeny  
+As practise for analyses of germline data.
+
+## is clonal group formation more likely to produce obligate multi-cellularity?  
+### eyeball the data  
+Summary table to eyeball results:
+```{r obligate_summary}
+summary<- df %>%
+  group_by(Obligate_or_facultative) %>%
+  count()#summary table just to check that the results kinda fit
+
+print(summary)
+```
+### defining the model  
+Have defined a v. simple, pretty non-informative prior (makes everything run faster). As a default, brms has flat prior, but defining a simple prior makes things run a bit quicker.    
+```{r obligate_model}
+get_prior(log(cell_number) ~ 0 + clonal, family=gaussian(), data = df) #what priors do we need to define?
+
+#fit the model 
+fit_obl<-
+  brm(data = df,
+      family=bernoulli(link = 'logit'), # family of model
+      formula = Obligate_or_facultative ~ 0 + clonal,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/obligate' ) 
+
+```
+
+### Assessing model:  
+Assessing whether the chains converged, whether the predictions are okay, etc.  
+```{r obligate_model_assessment}
+plot(fit_obl) #check that chains converged
+pp_check(fit_obl) #check the predictions
+plot(conditional_effects(fit_obl), points = TRUE) #show the effects of the c
+
+summary(fit_obl)
+posterior_summary(fit_obl, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+### Hypothesis testing  
+Do clonal groups contain more cells than non-clonal?  
+```{r obligate_model_testing}
+hyp = hypothesis(fit_obl,  "clonalclonal > clonalnonMclonal") #test hypothesis that clonal is more likely to produce obligate multicellularity
+hyp
+plot(hyp)
+```
+
+## does clonal group formation produce groups with more cells?
+### eyeball the data
+```{r cell_number_summary}
+df %>%
+  group_by(clonal) %>%
+  summarise(cell_mean = mean(log(cell_number), na.rm = T)) #summary table just to check that the results kinda fit
+            
+```
+### define the model  
+```{r cell_number_model}
+#fit the model 
+fit_num<-
+  brm(data = df,
+      family=gaussian(),
+      formula = log(cell_number) ~ 0 + clonal, 
+      iter = 600000, warmup = 100000, chains = 5, thin = 100, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/cell_number' ) # same simple prior
+```
+### assess the model
+```{r cell_number_model_assessment}
+plot(fit_num) #check that chains converged
+pp_check(fit_num) #check the predictions
+summary(fit_num) #summary of model 
+posterior_summary(fit_num, robust = T)
+plot(conditional_effects(fit_num), points = TRUE) 
+```
+
+### Hypothesis testing
+```{r cell_number_hypothesis}
+hyp = hypothesis(fit_num,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```
+
+## Cell types  
+### eyeball the data
+```{r cell_type_summary}
+df %>%
+  group_by(clonal) %>%
+  summarise(cell_mean = mean(cell_types, na.rm = T)) #summary table just to check that the results kinda fit
+```
+### define the model 
+This model has scaled, log transforemed cell number as an explanatory variable (as we expect more cells to lead to more cell types)
+```{r cell_type_model}
+fit_type<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + clonal + scale(log(cell_number)),
+      iter = 600000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/cell_type')
+```
+### assess the model
+```{r cell_type_model_assessment}
+plot(fit_type) #check that chains converged
+pp_check(fit_type) #check the predictions
+summary(fit_type) #summary of model 
+posterior_summary(fit_type, robust = T)
+plot(conditional_effects(fit_type), points = TRUE, ask = F) 
+```
+### hypothesis testing
+```{r cell_type_hypothesis}
+hyp = hypothesis(fit_type,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+
+hyp = hypothesis(fit_type,  "scalelogcell_number = 0") #does cell number have an effect?
+hyp
+plot(hyp)
+```
+
+## Simple vs Complex multicellularity
+### eyeball the data
+```{r complex_summary}
+summary<- df %>%
+  group_by(Simple_or_complex) %>%
+  count()#summary table just to check that the results kinda fit
+
+print(summary)
+```
+
+### define model  
+```{r complex_model}
+#fit the model 
+fit_complex<-
+  brm(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Simple_or_complex ~ 0 + clonal, 
+      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_complex' )
+```
+
+### assess model  
+```{r complex_model_assessment}
+plot(fit_complex) #check that chains converged
+pp_check(fit_complex) #check the predictions
+plot(conditional_effects(fit_complex), points = TRUE) 
+summary(fit_complex)
+posterior_summary(fit_complex, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Hypothesis testing  
+```{r complex_hypothesis}
+hyp = hypothesis(fit_complex,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```
+
+*** 
+
+# Results with phylogeny included
+```{r phylogeny_data_tidying}
+#read in phylogeny
+phylo<- ape::read.tree('data/phylogeny_all.txt')
+#subset df above with just those that are in the tree (note some missing)
+names_in_tree<- read.csv('data/phylogeny_species_names_in_tree.csv')
+names_in_tree$ott_id<- paste('ott',names_in_tree$ott_id, sep = '')
+#phylo$tip.label %in% names_in_tree$ott_id #to check whether they're all present
+names_in_tree<- subset(names_in_tree, names_in_tree$ott_id %in% phylo$tip.label)
+#which species in the table are in the tree
+df$species.updated.rotl<- tolower(df$species.updated.rotl)
+df<- subset(df, tolower(df$species.updated.rotl) %in% tolower(names_in_tree$search_string))
+#give them the ids in a column sot hat brms can match it up
+df$species_id<- names_in_tree$ott_id
+```
+
+Covariance matrix produced using branch lengths of 1 (as in Fisher et al)
+```{r covariance_matrix}
+# set branch lengths to 1 for covariance matrix
+phylo_1b <- compute.brlen(phylo, 1)
+#create covariance matrix
+CovarMatrix <- ape::vcv.phylo(phylo_1b)
+```
+
+## is clonal group formation more likely to produce obligate multi-cellularity?  
+### define the model
+```{r obligate_phylo_mode}
+# what priors do we need to define?
+get_prior(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)),
+      data2 = list(CovarMatrix = CovarMatrix))
+
+fit_obl_phy<-
+  brm(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Obligate_or_facultative ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)),
+      data2 = list(CovarMatrix = CovarMatrix),
+      iter = 600000, warmup = 100000, chains = 5, thin = 150, cores = 5,
+      prior = c(prior(student_t(3, 0, 20), "sd"),
+                prior(normal(0, 10), "b")), file = 'fits/obl_phy')
+                
+
+
+```
+
+### Assessing model:  
+```{r obligate_phylo_model_assessment}
+plot(fit_obl_phy) #check that chains converged
+pp_check(fit_obl_phy) #check the predictions
+plot(conditional_effects(fit_obl_phy), points = TRUE) 
+
+summary(fit_obl_phy)
+pairs(fit_obl_phy)
+posterior_summary(fit_obl_phy, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Testing Hypotheses
+```{r obligate_phylo_hypothesis}
+hyp<- hypothesis(fit_obl_phy,  "clonalclonal > clonalnonMclonal")
+hyp
+plot(hyp)
+```
+
+## does clonal group formation produce groups with more cells?
+### define the model  
+```{r cell_number_phylo_model}
+#fit the model 
+fit_num_phy<-
+  brm(data = df,
+      family=gaussian(),
+      formula = log(cell_number) ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)), 
+      iter = 600000, warmup = 100000, chains = 5, thin = 100, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/cell_number_phy', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+ 
+```
+### assess the model
+```{rc ell_number_phylo_model_assessment}
+plot(fit_num_phy) #check that chains converged
+pp_check(fit_num_phy) #check the predictions
+summary(fit_num_phy) #summary of model 
+posterior_summary(fit_num_phy, robust = T)
+plot(conditional_effects(fit_num_phy), points = TRUE) 
+```
+
+### Hypothesis testing
+```{r cell_number_phylo_hypothesis}
+hyp = hypothesis(fit_num_phy,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```
+
+## Cell types  
+### define the model 
+This model has scaled, log transforemed cell number as an explanatory variable (as we expect more cells to lead to more cell types)
+```{r cell_type_phylo_model}
+fit_type_phy<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + clonal + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),
+      iter = 600000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/cell_type_phy', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+```
+### assess the model
+```{r cell_type_phylo_model_assessment}
+plot(fit_type_phy) #check that chains converged
+pp_check(fit_type_phy) #check the predictions
+summary(fit_type_phy) #summary of model 
+posterior_summary(fit_type_phy, robust = T)
+plot(conditional_effects(fit_type_phy, points = TRUE, ask = F)) 
+```
+### hypothesis testing
+```{r cell_type_phylo_hypothesis}
+hyp = hypothesis(fit_type_phy,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+
+hyp = hypothesis(fit_type_phy,  "scalelogcell_number = 0") #does cell number have an effect?
+hyp
+plot(hyp)
+```
+
+## Simple vs Complex multicellularity
+### define model  
+```{r complex_phylo_model}
+#fit the model 
+fit_complex_phy<-
+  brm(data = df,
+      family=bernoulli(link = 'logit'),
+      formula = Simple_or_complex ~ 0 + clonal + (1|gr(species_id, cov = CovarMatrix)), 
+      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_complex_phy', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+```
+
+### assess model  
+```{r complex_phylo_model_assessment}
+plot(fit_complex_phy) #check that chains converged
+pp_check(fit_complex_phy) #check the predictions
+plot(conditional_effects(fit_complex_phy), points = TRUE) 
+summary(fit_complex_phy)
+posterior_summary(fit_complex, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Hypothesis testing  
+```{r complex_phylo_hypothesis}
+hyp = hypothesis(fit_complex_phy,  "clonalclonal > clonalnonMclonal") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```

@@ -1,0 +1,161 @@
+---
+title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
+output:
+  html_notebook:
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: TRUE
+  html_document:
+    code_folding: hide
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: yes
+---
+
+This script re-creates the analyses of Fisher et al 2013 using this dataset. As this dataset is built on the data from that study (with the addition of a small number of plants), then the results should be v. similar. 
+
+# Pre-amble
+## load packages
+```{r packages}
+library(ape)
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
+library(tidybayes)
+library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
+```
+
+## read in data
+```{r data_input}
+df<- read.csv('data/germline_data_1.0.csv') #read in csv
+```
+
+## create phylogeny files
+```{r phylogeny_creation, message=F, results='hide'}
+
+ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)
+ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
+ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
+
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id') #draw the phylogeny
+
+# tree with resolved polytomies:
+ResolvedPolytomiesTree<- multi2di(AllTree)
+
+# write to files
+write.tree(AllTree, file='data/phylogeny_all.txt') #phylogeny
+write.tree(AllTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with resolved polytomies
+write.csv(ResolvedNames, 'data/phylogeny_species_names.csv') #list of names
+write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list of names that are present in the tree
+```
+Preparing the phylogeny data
+```{r}
+#read in phylogeny
+phylo<- ape::read.tree('data/phylogeny_all.txt')
+#subset df above with just those that are in the tree (note some missing)
+names_in_tree<- read.csv('data/phylogeny_species_names_in_tree.csv')
+names_in_tree$ott_id<- paste('ott',names_in_tree$ott_id, sep = '')
+#phylo$tip.label %in% names_in_tree$ott_id #to check whether they're all present
+names_in_tree<- subset(names_in_tree, names_in_tree$ott_id %in% phylo$tip.label)
+#which species in the table are in the tree
+df$species.updated.rotl<- tolower(df$species.updated.rotl)
+df<- subset(df, tolower(df$species.updated.rotl) %in% tolower(names_in_tree$search_string))
+#give them the ids in a column sot hat brms can match it up
+df$species_id<- names_in_tree$ott_id
+```
+Covariance matrix produced using branch lengths of 1 (as in Fisher et al)
+```{r}
+# set branch lengths to 1 for covariance matrix
+phylo_1b <- compute.brlen(phylo, 1)
+#create covariance matrix
+CovarMatrix <- ape::vcv.phylo(phylo_1b)
+```
+
+```{r plot_phylogeny, fig.cap="Simple phylogenetic tree constructed using the Open Tree of Life, needs manually checked for errors"}
+#plot phylogeny to check
+plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
+```
+
+
+# Analyses 
+
+Testing the general format of the analyses using the current data-- to be redone when the new data are collected. 
+
+## Does regular presence of a single-celled bottleneck enable increased complexity?  
+
+   
+### defining the model  
+Using simple normally-distributed, relatively non-informative prior
+
+One possibility is that the 0s and 1s are treated as numeric, when they should be categorical, so change to yes/no.
+
+```{r cell_model}
+df$reproduction_without_bottleneck_genus<- ifelse(df$reproduction_without_bottleneck_genus == 1, 'fission','bottleneck')
+
+prior <- get_prior(log(cell_number) ~ 0 + reproduction_without_bottleneck_genus, family=gaussian(), data = df) #what priors do we need to define?
+
+#fit the model 
+fit_germline_cell_num<-
+  brm(data = df,
+      family=gaussian(), # family of model
+      formula = log(cell_number) ~ 0 + reproduction_without_bottleneck_genus,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 60000, warmup = 1000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/fit_germline_cell_num' ) 
+
+```
+
+
+### Assessing model:  
+```{r}
+plot(fit_germline_cell_num) #check that chains converged
+pp_check(fit_germline_cell_num) #check the predictions
+plot(conditional_effects(fit_germline_cell_num), points = TRUE) 
+
+summary(fit_germline_cell_num)
+pairs(fit_germline_cell_num)
+posterior_summary(fit_germline_cell_num, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Testing Hypotheses
+```{r}
+hyp<- hypothesis(fit_germline_cell_num,  "reproduction_without_bottleneck_genusbottleneck > reproduction_without_bottleneck_genusfission")
+hyp
+plot(hyp)
+```
+## with phylogenetic data
+
+```{r}
+#fit the model 
+fit_bottleneck_cell_num_phy<-
+  brm(data = df,
+      family=gaussian(), # family of model
+      formula = log(cell_number) ~ 0 + reproduction_without_bottleneck_genus  + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      data2 = list(CovarMatrix = CovarMatrix) ,
+      iter = 600000, warmup = 100000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/fit_bottleneck_cell_num_phy' ) 
+
+```
+
+### Assessing model:  
+```{r}
+plot(fit_bottleneck_cell_num_phy) #check that chains converged
+pp_check(fit_bottleneck_cell_num_phy) #check the predictions
+plot(conditional_effects(fit_bottleneck_cell_num_phy), points = TRUE) 
+
+summary(fit_bottleneck_cell_num_phy)
+pairs(fit_bottleneck_cell_num_phy)
+posterior_summary(fit_bottleneck_cell_num_phy, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Testing Hypotheses
+```{r}
+hyp<- hypothesis(fit_bottleneck_cell_num_phy,  "reproduction_without_bottleneck_genusbottleneck > reproduction_without_bottleneck_genusfission")
+hyp
+plot(hyp)
+```
