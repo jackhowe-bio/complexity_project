@@ -5,7 +5,8 @@ This repository contains all data and code for analysis.
 ## Directory structure:
 ```
 -- README.md (this file)  
--- bayesian_analyses.Rmd (the working R script)  
+-- bayesian_analyses.Rmd (Rmd that produces results from Fisher paper) 
+-- germline_bayesian_analyses.Rmd (the working R script for the novel analyses) 
 -- data/ (sub dir)  
   |-- germline_data_1.0.csv (csv containing dataset)  
   |-- phylogeny_all.txt (phylogeny produced by Rmd script)  
