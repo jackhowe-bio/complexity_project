@@ -15,7 +15,7 @@ output:
     fig_caption: yes
 ---
 
-This script re-creates the analyses of Fisher et al 2013 using this dataset. As this dataset is built on the data from that study (with the addition of a small number of plants), then the results should be v. similar. 
+
 
 # Pre-amble
 ## load packages
@@ -31,12 +31,11 @@ library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.h
 
 ## read in data
 ```{r data_input}
-df<- read.csv('data/germline_data_1.0.csv') #read in csv
+df<- read.csv('data/germline_data_1.1.csv')
 ```
 
 ## create phylogeny files
 ```{r phylogeny_creation, message=F, results='hide'}
-
 ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)
 ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
 ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
@@ -52,6 +51,7 @@ write.tree(AllTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with 
 write.csv(ResolvedNames, 'data/phylogeny_species_names.csv') #list of names
 write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list of names that are present in the tree
 ```
+
 Preparing the phylogeny data
 ```{r}
 #read in phylogeny
@@ -80,82 +80,83 @@ CovarMatrix <- ape::vcv.phylo(phylo_1b)
 plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
 ```
 
+Change the fission or budding observed column to 'yes' vs 'no' to make sure it is not doing some weird numeric thing
+```{r}
+df$FissionOrBuddingObserved_Genus_nominal <- ifelse(df$FissionOrBuddingObserved_Genus == 1, 'yes','no')
+```
 
 # Analyses 
 
-Testing the general format of the analyses using the current data-- to be redone when the new data are collected. 
+Conducting Bayesian analyses using BRMS, first without phylogeny included, then including phylogeny. Each analysis contains the code that defines the model, and briefly analyses them-- producing summary stats and figs.
 
-## Does regular presence of a single-celled bottleneck enable increased complexity?  
+See below for analyses of:
 
-   
-### defining the model  
+Each analysis uses vague priors, 5 chains, 6,000,000 iterations, 100000 of which are discarded as warm-up, thinned by a factor of 1000.
+
+(Currently use reproductive traits of genus rather than species)
+
+* Phylogenetically naive:
+  + Does a single-celled bottleneck correlate with increased cell number? (priors = normal dist, mean of 0, sd of 10)
+  + Does a single-celled bottleneck correlate with increased cell types (per cell)? prior(normal(0, 10), "b")
+  + Does germline timing correlate with increased cell number?
+  + Does germline timing correlate with increased cell types (per cell)?
+  
+* Phylogenetically informed:
+  + Does a single-celled bottleneck correlate with increased cell number?  
+  + Does a single-celled bottleneck correlate with increased cell types (per cell)?
+  + Does germline timing correlate with increased cell number?
+  + Does germline timing correlate with increased cell types (per cell)?
+
+To do: do any of these things need scaled?
+
+
+## Phylogenetically naive
+### Does a single-celled bottleneck correlate with increased cell number?
+#### defining the model  
 Using simple normally-distributed, relatively non-informative prior
 
 One possibility is that the 0s and 1s are treated as numeric, when they should be categorical, so change to yes/no.
 
-```{r cell_model}
-df$reproduction_without_bottleneck_genus<- ifelse(df$reproduction_without_bottleneck_genus == 1, 'fission','bottleneck')
-
-prior <- get_prior(log(cell_number) ~ 0 + reproduction_without_bottleneck_genus, family=gaussian(), data = df) #what priors do we need to define?
-
+```{r FissionCellNumber}
 #fit the model 
-fit_germline_cell_num<-
+fit_fission_cell_num<-
   brm(data = df,
       family=gaussian(), # family of model
-      formula = log(cell_number) ~ 0 + reproduction_without_bottleneck_genus,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
-      iter = 60000, warmup = 1000, chains = 5,thin = 100, cores = 5, #chain settings
+      formula = log(cell_number) ~ 0 + FissionOrBuddingObserved_Genus_nominal,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 6000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
       prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
-      file = 'fits/fit_germline_cell_num' ) 
+      file = 'fits/fit_FissionCellNumber' ) 
 
-```
+#### Assessing model:  
+plot(fit_fission_cell_num) #check that chains converged
+pp_check(fit_fission_cell_num) #check the predictions
+summary(fit_fission_cell_num) #summary of model 
+posterior_summary(fit_fission_cell_num, robust = T)
+plot(conditional_effects(fit_fission_cell_num, points = TRUE, ask = F)) 
 
-
-### Assessing model:  
-```{r}
-plot(fit_germline_cell_num) #check that chains converged
-pp_check(fit_germline_cell_num) #check the predictions
-plot(conditional_effects(fit_germline_cell_num), points = TRUE) 
-
-summary(fit_germline_cell_num)
-pairs(fit_germline_cell_num)
-posterior_summary(fit_germline_cell_num, robust = T) #what are the medians for coefficients? if F, then returns means
-```
-
-### Testing Hypotheses
-```{r}
-hyp<- hypothesis(fit_germline_cell_num,  "reproduction_without_bottleneck_genusbottleneck > reproduction_without_bottleneck_genusfission")
+hyp = hypothesis(fit_fission_cell_num,  "FissionOrBuddingObserved_Genus_nominalno > FissionOrBuddingObserved_Genus_nominalyes") #test hypothesis that there is no difference based on coefficients
 hyp
 plot(hyp)
 ```
-## with phylogenetic data
 
-```{r}
+### Does a single-celled bottleneck correlate with increased cell types (per cell)?
+```{r FissionCellType}
 #fit the model 
-fit_bottleneck_cell_num_phy<-
+fit_fission_cell_type<-
   brm(data = df,
-      family=gaussian(), # family of model
-      formula = log(cell_number) ~ 0 + reproduction_without_bottleneck_genus  + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
-      data2 = list(CovarMatrix = CovarMatrix) ,
-      iter = 600000, warmup = 100000, chains = 5,thin = 100, cores = 5, #chain settings
+      family=poisson(),
+      formula = cell_types ~ 0 + FissionOrBuddingObserved_Genus_nominal + scale(log(cell_number)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 6000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
       prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
-      file = 'fits/fit_bottleneck_cell_num_phy' ) 
+      file = 'fits/fit_FissionCellType' ) 
 
-```
+plot(fit_fission_cell_type) #check that chains converged
+pp_check(fit_fission_cell_type) #check the predictions
+summary(fit_fission_cell_type) #summary of model 
+posterior_summary(fit_fission_cell_type, robust = T)
+plot(conditional_effects(fit_fission_cell_type, points = TRUE, ask = F)) 
 
-### Assessing model:  
-```{r}
-plot(fit_bottleneck_cell_num_phy) #check that chains converged
-pp_check(fit_bottleneck_cell_num_phy) #check the predictions
-plot(conditional_effects(fit_bottleneck_cell_num_phy), points = TRUE) 
-
-summary(fit_bottleneck_cell_num_phy)
-pairs(fit_bottleneck_cell_num_phy)
-posterior_summary(fit_bottleneck_cell_num_phy, robust = T) #what are the medians for coefficients? if F, then returns means
-```
-
-### Testing Hypotheses
-```{r}
-hyp<- hypothesis(fit_bottleneck_cell_num_phy,  "reproduction_without_bottleneck_genusbottleneck > reproduction_without_bottleneck_genusfission")
+hyp = hypothesis(fit_fission_cell_type,  "FissionOrBuddingObserved_Genus_nominalno > FissionOrBuddingObserved_Genus_nominalyes") #test hypothesis that there is no difference based on coefficients
 hyp
 plot(hyp)
 ```
