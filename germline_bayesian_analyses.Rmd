@@ -80,9 +80,19 @@ CovarMatrix <- ape::vcv.phylo(phylo_1b)
 plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
 ```
 
+## data tidying 
+
 Change the fission or budding observed column to 'yes' vs 'no' to make sure it is not doing some weird numeric thing
 ```{r}
 df$FissionOrBuddingObserved_Genus_nominal <- ifelse(df$FissionOrBuddingObserved_Genus == 1, 'yes','no')
+```
+
+```{r germline_timing_tidying}
+early = c('1','1,2','2')
+
+df$germline_timing_simple<- ifelse(df$germline_timing %in% early, 'early', df$germline_timing) 
+df$germline_timing_simple<- ifelse(df$germline_timing == '0', 'no_germline', df$germline_timing_simple) 
+df$germline_timing_simple<- ifelse(df$germline_timing == '3', 'adult', df$germline_timing_simple) 
 ```
 
 # Analyses 
@@ -98,7 +108,7 @@ Each analysis uses vague priors, 5 chains, 6,000,000 iterations, 100000 of which
 * Phylogenetically naive:
   + Does a single-celled bottleneck correlate with increased cell number? (priors = normal dist, mean of 0, sd of 10)
   + Does a single-celled bottleneck correlate with increased cell types (per cell)? prior(normal(0, 10), "b")
-  + Does germline timing correlate with increased cell number?
+  + Does germline timing correlate with increased cell number? prior = prior(normal(0, 10), "b")
   + Does germline timing correlate with increased cell types (per cell)?
   
 * Phylogenetically informed:
@@ -112,7 +122,6 @@ To do: do any of these things need scaled?
 
 ## Phylogenetically naive
 ### Does a single-celled bottleneck correlate with increased cell number?
-#### defining the model  
 Using simple normally-distributed, relatively non-informative prior
 
 One possibility is that the 0s and 1s are treated as numeric, when they should be categorical, so change to yes/no.
@@ -159,4 +168,127 @@ plot(conditional_effects(fit_fission_cell_type, points = TRUE, ask = F))
 hyp = hypothesis(fit_fission_cell_type,  "FissionOrBuddingObserved_Genus_nominalno > FissionOrBuddingObserved_Genus_nominalyes") #test hypothesis that there is no difference based on coefficients
 hyp
 plot(hyp)
+```
+### Does germline timing correlate with increased cell number?
+```{r GermCellNumber}
+prior <- get_prior(log(cell_number) ~ 0 + germline_timing_simple, family=gaussian(), data = df) #what priors do we need to define?
+
+#fit the model 
+fit_germline_cell_num<-
+  brm(data = df,
+      family=gaussian(), # family of model
+      formula = log(cell_number) ~ 0 + germline_timing_simple,  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 6000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/fit_GermCellNum' ) 
+
+plot(fit_germline_cell_num) #check that chains converged
+pp_check(fit_germline_cell_num) #check the predictions
+plot(conditional_effects(fit_germline_cell_num), points = TRUE) 
+
+summary(fit_germline_cell_num)
+pairs(fit_germline_cell_num)
+posterior_summary(fit_germline_cell_num, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Does germline timing correlate with increased cell types (per cell)?
+```{r GermCellType}
+fit_type<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)),
+      iter = 6000000, warmup = 100000, chains = 5, thin = 10000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_GermCellType')
+
+plot(fit_type) #check that chains converged
+pp_check(fit_type) #check the predictions
+
+summary(fit_type) #summary of model 
+posterior_summary(fit_type, robust = T)
+plot(conditional_effects(fit_type), points = TRUE, ask = F) 
+```
+
+## Phylogenetically informed:
+
+### Does a single-celled bottleneck correlate with increased cell number?  
+
+```{r FissionCellNumber_phy}
+fit_cellnumber_fission_phy<-
+  brm(data = df,
+      family=gaussian(), # family of model
+      formula = log(cell_number) ~ 0 + FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
+      iter = 6000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_FissionCellNumber', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+
+plot(fit_cellnumber_fission_phy) #check that chains converged
+pp_check(fit_cellnumber_fission_phy) #check the predictions
+summary(fit_cellnumber_fission_phy) #summary of model 
+posterior_summary(fit_cellnumber_fission_phy, robust = T)
+plot(conditional_effects(fit_cellnumber_fission_phy, points = TRUE, ask = F)) 
+
+hyp = hypothesis(fit_cellnumber_fission_phy,  "FissionOrBuddingObserved_Genus_nominalno > FissionOrBuddingObserved_Genus_nominalyes") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```
+### Does a single-celled bottleneck correlate with increased cell types (per cell)?
+```{r FissionCellType_phy}
+#fit the model 
+phylo_fit_fission_cell_type<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + FissionOrBuddingObserved_Genus_nominal + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons)
+      data2 = list(CovarMatrix = CovarMatrix),
+      file = 'fits/fit_phy_FissionCellType') 
+
+plot(phylo_fit_fission_cell_type) #check that chains converged
+pp_check(phylo_fit_fission_cell_type) #check the predictions
+summary(phylo_fit_fission_cell_type) #summary of model 
+posterior_summary(phylo_fit_fission_cell_type, robust = T)
+plot(conditional_effects(phylo_fit_fission_cell_type, points = TRUE, ask = F)) 
+
+hyp = hypothesis(phylo_fit_fission_cell_type,  "FissionOrBuddingObserved_Genus_nominalno > FissionOrBuddingObserved_Genus_nominalyes") #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
+```
+
+### Does germline timing correlate with increased cell number?
+```{r GermCellNum_phy}
+#fit the model 
+phylofit_germline_cell_num<-
+  brm(data = df,
+      family=gaussian(), # family of model
+      formula = log(cell_number) ~ 0 + germline_timing_simple  + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
+      data2 = list(CovarMatrix = CovarMatrix) ,
+      iter = 1000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
+      file = 'fits/fit_phy_GermCellNum' ) 
+
+plot(phylofit_germline_cell_num) #check that chains converged
+pp_check(phylofit_germline_cell_num) #check the predictions
+plot(conditional_effects(phylofit_germline_cell_num), points = TRUE) 
+
+summary(phylofit_germline_cell_num)
+pairs(phylofit_germline_cell_num)
+posterior_summary(phylofit_germline_cell_num, robust = T) #what are the medians for coefficients? if F, then returns means
+```
+
+### Does germline timing correlate with increased cell types (per cell)?
+
+```{r GermCellType_phy}
+fit_type_phy<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),
+      iter = 1000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_GermCellType', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+
+plot(fit_type_phy) #check that chains converged
+pp_check(fit_type_phy) #check the predictions
+summary(fit_type_phy) #summary of model 
+posterior_summary(fit_type_phy, robust = T)
+plot(conditional_effects(fit_type_phy, points = TRUE, ask = F)) 
 ```
