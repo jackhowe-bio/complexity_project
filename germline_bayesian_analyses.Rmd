@@ -1,18 +1,18 @@
 ---
 title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 output:
-  html_notebook:
-    code_folding: hide
-    number_sections: yes
-    toc: yes
-    toc_float: yes
-    fig_caption: TRUE
   html_document:
-    code_folding: hide
+    code_folding: show
     number_sections: yes
     toc: yes
     toc_float: yes
     fig_caption: yes
+  html_notebook:
+    code_folding: show
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    fig_caption: TRUE
 ---
 
 
@@ -273,6 +273,10 @@ plot(conditional_effects(phylofit_germline_cell_num), points = TRUE)
 summary(phylofit_germline_cell_num)
 pairs(phylofit_germline_cell_num)
 posterior_summary(phylofit_germline_cell_num, robust = T) #what are the medians for coefficients? if F, then returns means
+
+hyp = hypothesis(phylofit_germline_cell_num,  c("germline_timing_simpleearly = germline_timing_simple", "germline_timing_simpleearly = germline_timing_simpleadult", "germline_timing_simpleearly = germline_timing_simpleno_germline")) #test hypothesis that there is no difference based on coefficients
+hyp
+plot(hyp)
 ```
 
 ### Does germline timing correlate with increased cell types (per cell)?
@@ -291,4 +295,8 @@ pp_check(fit_type_phy) #check the predictions
 summary(fit_type_phy) #summary of model 
 posterior_summary(fit_type_phy, robust = T)
 plot(conditional_effects(fit_type_phy, points = TRUE, ask = F)) 
+
+hyp = hypothesis(fit_type_phy,  c("germline_timing_simpleearly = germline_timing_simple", "germline_timing_simpleearly = germline_timing_simpleadult", "germline_timing_simpleearly = germline_timing_simpleno_germline"))
+hyp
+plot(hyp)
 ```
