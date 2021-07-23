@@ -2,10 +2,12 @@
 title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 output:
   github_document:
+    toc: true
+    toc_depth: 2
   pdf_document:
     toc: yes
   html_notebook:
-    code_folding: show
+    code_folding: hide
     fig_caption: yes
     number_sections: yes
     toc: yes
