@@ -8,6 +8,8 @@ Cloning this github repository should allow the script (germline_bayesian_analys
 
 The fisher_... file replicates the results from Berti's paper (with shorter chains), as a test that things generally work as they should (they do!). The germline....Rmd runs the analyses using the new dataset. They currently use the genus-level info for reproduction, the analyses on the species-level data are next on the list!
 
+Output as germline_bayesian_analyses.md, which can be read pretty well online here. 
+
 The input data is saved in the 'data' directory, and the chains from the brms runs are saved in the 'fits' directory. The 'brm' functions that run the analyses contain a "file = 'fits/...'" parameter, which tells it to load the run that is saved in the 'fits' folder and ignore any other parameters. Removing the fit parameter, or changing the file name will cause the analysis to be rerun (or using an 'update.brmsfit' function to update the fit might be quicker?)
 
 ## Directory structure:
@@ -15,13 +17,15 @@ The input data is saved in the 'data' directory, and the chains from the brms ru
 -- README.md (this file)  
 -- fisher_bayesian_analyses.Rmd (Rmd that produces results from Fisher paper) 
 -- germline_bayesian_analyses.Rmd (the working R script for the novel analyses) 
+-- germline_bayesian_analyses.md (a readable output of the script with figures, etc. ) 
 -- data/ (sub dir)  
   |-- germline_data_1.1.csv (csv containing dataset)  
   |-- phylogeny_all.txt (phylogeny produced by Rmd script)  
   |-- phylogeny_all_res_polytomy.txt (same phylogeny, but with polytomies resolved randomly)  
   |-- phylogeny_species_names.csv (produced to match species names in dataset to the labels used by rotl phylogeny)
   |-- phylogeny_species_names_in_tree.csv (same dictionary, but subset to include only those that are present in the rotl tree)  
--- fits/ (sub dir that contains the sampling data from MCMC chains, means that the models do not need re-run every time) BUT, if parameters changed, then this file needs deleted, or changed within code)  
+-- fits/ (sub dir that contains the sampling data from MCMC chains, means that the models do not need re-run every time) BUT, if parameters changed, then this file needs deleted, or changed within code)
+-- germline_bayesian_analyses_files/ (directory that contains the images used in the .md output, ignore this folder)
 ```
 
 ## Search strategy
