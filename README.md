@@ -2,13 +2,17 @@
 
 This repository contains all data and code for analysis.
 
+## Running the files
+
+Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). The input data is saved in the 'data' directory, and the chains from the brms runs are saved in the 'fits' directory. The 'brm' functions that run the analyses contain a "file = 'fits/...'" parameter, which tells it to load the run that is saved in the 'fits' folder and ignore any other parameters. Removing the fit parameter, or changing the file name will cause the analysis to be rerun (or using an 'update.brmsfit' function to update the fit might be quicker?)
+
 ## Directory structure:
 ```
 -- README.md (this file)  
 -- fisher_bayesian_analyses.Rmd (Rmd that produces results from Fisher paper) 
 -- germline_bayesian_analyses.Rmd (the working R script for the novel analyses) 
 -- data/ (sub dir)  
-  |-- germline_data_1.0.csv (csv containing dataset)  
+  |-- germline_data_1.1.csv (csv containing dataset)  
   |-- phylogeny_all.txt (phylogeny produced by Rmd script)  
   |-- phylogeny_all_res_polytomy.txt (same phylogeny, but with polytomies resolved randomly)  
   |-- phylogeny_species_names.csv (produced to match species names in dataset to the labels used by rotl phylogeny)
@@ -17,7 +21,6 @@ This repository contains all data and code for analysis.
 ```
 
 ## Search strategy
-
 
 Searches were conducted broadly for literature focussed on reproductive mode and germline development across the tree of life. This included chapters reviews and chapters within textbooks.
 
@@ -34,10 +37,4 @@ Caveats:
 * Sexual organisms contain more cells because they have gonads that asexual organisms lack...  
 * hard to fit algae with gametophyte/sporophyte stages: they have life cycles where some stages can fragment, where some stages can reproduce by spores, parthenogenesis or by sex
 
-### textbooks
-
-* reproductive biology of plants  
-* phycology Lee  
-* algae: an introduction to phycology  
-* kawai and henry: most brown algal species have high potential for regeneration and totipotency
 
