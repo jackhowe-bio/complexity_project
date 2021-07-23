@@ -43,6 +43,6 @@ Research into reproduction and development is heterogeneous across organisms, an
 Caveats:
 
 * Sexual organisms contain more cells because they have gonads that asexual organisms lack...  
-* hard to fit algae with gametophyte/sporophyte stages: they have life cycles where some stages can fragment, where some stages can reproduce by spores, parthenogenesis or by sex
+* hard to fit algae with gametophyte/sporophyte stages: they have life cycles where some stages can fragment, where some stages can reproduce by spores, parthenogenesis or by sex. If an algae can stay in one loop and reproduce exclusively through parthenogenesis/fragmentation, then counts-- similar to organisms that can fission, but don't always.
 
 
