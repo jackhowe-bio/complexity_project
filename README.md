@@ -6,6 +6,8 @@ This repository contains all data and code for analysis.
 
 Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). 
 
+The fisher_... file replicates the results from Berti's paper (with shorter chains), as a test that things generally work as they should (they do!). The germline....Rmd runs the analyses using the new dataset. They currently use the genus-level info for reproduction, the analyses on the species-level data are next on the list!
+
 The input data is saved in the 'data' directory, and the chains from the brms runs are saved in the 'fits' directory. The 'brm' functions that run the analyses contain a "file = 'fits/...'" parameter, which tells it to load the run that is saved in the 'fits' folder and ignore any other parameters. Removing the fit parameter, or changing the file name will cause the analysis to be rerun (or using an 'update.brmsfit' function to update the fit might be quicker?)
 
 ## Directory structure:
