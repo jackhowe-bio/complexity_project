@@ -1,8 +1,9 @@
 # Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity
 
-This repository contains all data and code for analysis.
 
 ## Running the files
+
+This repository contains all data and code for analysis.
 
 Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). 
 
