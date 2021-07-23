@@ -6,7 +6,7 @@ This repository contains all data and code for analysis.
 
 Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). 
 
-The fisher_... file replicates the results from Berti's paper (with shorter chains), as a test that things generally work as they should (they do!). The germline....Rmd runs the analyses using the new dataset. They currently use the genus-level info for reproduction, the analyses on the species-level data are next on the list!
+The fisher_bayesian_analyses.rmd file replicates the results from Berti's paper (with shorter chains), as a test that things generally work as they should (they do!). The germline_bayesian_analyses.rmd runs the analyses using the new dataset. They currently use the genus-level info for reproduction, the analyses on the species-level data are next on the list!
 
 Output as germline_bayesian_analyses.md, which can be read pretty well online here. 
 
