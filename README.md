@@ -19,6 +19,7 @@ The input data is saved in the 'data' directory, and the chains from the brms ru
 -- fisher_bayesian_analyses.Rmd (Rmd that produces results from Fisher paper) 
 -- germline_bayesian_analyses.Rmd (the working R script for the novel analyses) 
 -- germline_bayesian_analyses.md (a readable output of the script with figures, etc. ) 
+-- create_phylogenetic_tree.R (script that creates the phylogenetic tree from online databases for organisms in data)
 -- data/ (sub dir)  
   |-- germline_data_1.1.csv (csv containing dataset)  
   |-- phylogeny_all.txt (phylogeny produced by Rmd script)  
