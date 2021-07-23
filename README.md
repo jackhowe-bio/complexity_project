@@ -4,7 +4,9 @@ This repository contains all data and code for analysis.
 
 ## Running the files
 
-Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). The input data is saved in the 'data' directory, and the chains from the brms runs are saved in the 'fits' directory. The 'brm' functions that run the analyses contain a "file = 'fits/...'" parameter, which tells it to load the run that is saved in the 'fits' folder and ignore any other parameters. Removing the fit parameter, or changing the file name will cause the analysis to be rerun (or using an 'update.brmsfit' function to update the fit might be quicker?)
+Cloning this github repository should allow the script (germline_bayesian_analyses.Rmd) to be run relatively quickly (if packages installed). 
+
+The input data is saved in the 'data' directory, and the chains from the brms runs are saved in the 'fits' directory. The 'brm' functions that run the analyses contain a "file = 'fits/...'" parameter, which tells it to load the run that is saved in the 'fits' folder and ignore any other parameters. Removing the fit parameter, or changing the file name will cause the analysis to be rerun (or using an 'update.brmsfit' function to update the fit might be quicker?)
 
 ## Directory structure:
 ```
