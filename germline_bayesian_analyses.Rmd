@@ -1,8 +1,22 @@
 ---
 title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 output:
-  output: rmarkdown::github_document
-  ---
+  github_document:
+  pdf_document:
+    toc: yes
+  html_notebook:
+    code_folding: show
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+  html_document:
+    code_folding: show
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+---
 
 
 
