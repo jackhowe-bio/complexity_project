@@ -278,8 +278,8 @@ phylo_fit_fission_cell_type<-
   brm(data = df,
       family=poisson(),
       formula = cell_types ~ 0 + FissionOrBuddingObserved_Genus_nominal + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
-      iter = 600000, warmup = 10000, chains = 5,thin = 100, cores = 5, #chain settings
-      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons)
+      iter = 6000000, warmup = 100000, chains = 5,thin = 100, cores = 5, #chain settings
+      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() functions)
       data2 = list(CovarMatrix = CovarMatrix),
       file = 'fits/fit_phy_FissionCellType') 
 
@@ -302,7 +302,7 @@ phylofit_germline_cell_num<-
       family=gaussian(), # family of model
       formula = log(cell_number) ~ 0 + germline_timing_simple  + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
       data2 = list(CovarMatrix = CovarMatrix) ,
-      iter = 1000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
+      iter = 6000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
       prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
       file = 'fits/fit_phy_GermCellNum' ) 
 
@@ -326,7 +326,7 @@ fit_type_phy<-
   brm(data = df,
       family=poisson(),
       formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),
-      iter = 1000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      iter = 6000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
       prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_GermCellType', # same simple prior
       data2 = list(CovarMatrix = CovarMatrix))
 
