@@ -34,6 +34,7 @@ library(tidybayes)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
 library(phytools)
 library(coda)
+library(MCMCglmm)
 ```
 
 ## read in data
@@ -287,8 +288,13 @@ fit_cellnumber_fission_phy<-
   brm(data = df,
       family=poisson(), # family of model
       formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
-      prior = prior(normal(0, 10), class = "b", coef = "FissionOrBuddingObserved_Genus_nominalyes"),
-      iter = 1000000, warmup = 100000, chains = 5, thin = 1000, cores = 5, file = 'fits/fit_phy_FissionCellNumber', file_refit = "on_change", # same simple prior
+      prior = c(
+        prior(normal(0, 10), "b"),
+        prior(normal(0, 50), "Intercept"),
+        prior(student_t(3, 0, 20), "sd")),  iter = 100000, warmup = 10000, chains = 3, thin = 100, cores = 3, threads = threading(6), 
+      file_refit = "on_change",
+      file = 'fits/fit_phy_FissionCellNumber',
+      backend = "cmdstanr", 
       data2 = list(CovarMatrix = CovarMatrix))
 
 plot(fit_cellnumber_fission_phy) #check that chains converged
@@ -301,6 +307,26 @@ hyp = hypothesis(fit_cellnumber_fission_phy,  "FissionOrBuddingObserved_Genus_no
 hyp
 plot(hyp)
 ```
+
+```{r trying with mcmcglmm}
+ResolvedPolytomiesTree$node.label<- NULL
+inv.phylo<-inverseA(ResolvedPolytomiesTree,scale=TRUE)
+prior<-list(G=list(G1=list(V=1,nu=0.02)),R=list(V=1,nu=0.02))
+
+df<- df[,-14]
+
+model_simple<-
+  MCMCglmm(cell_number~FissionOrBuddingObserved_Genus_nominal,
+           random=~ResolvedPolytomiesTree,
+           family="poisson",
+           prior=prior,
+           data=df,
+           nitt=5000,
+           burnin=1000,
+           thin=500)
+
+```
+
 ### Does a single-celled bottleneck correlate with increased cell types (per cell)?
 ```{r FissionCellType_phy}
 #fit the model 
@@ -308,8 +334,13 @@ phylo_fit_fission_cell_type<-
   brm(data = df,
       family=poisson(),
       formula = cell_types ~ 0 + FissionOrBuddingObserved_Genus_nominal + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
-      iter = 6000000, warmup = 100000, chains = 5,thin = 100, cores = 5, #chain settings
-      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() functions)
+      prior = c(
+        prior(normal(0, 10), "b"),
+        prior(normal(0, 50), "Intercept"),
+        prior(student_t(3, 0, 20), "sd")),  
+      iter = 100000, warmup = 10000, chains = 3, thin = 100, cores = 3, threads = threading(6), 
+      file_refit = "on_change",
+      backend = "cmdstanr", 
       data2 = list(CovarMatrix = CovarMatrix),
       file = 'fits/fit_phy_FissionCellType') 
 
@@ -332,9 +363,14 @@ phylofit_germline_cell_num<-
       family=gaussian(), # family of model
       formula = log(cell_number) ~ 0 + germline_timing_simple  + (1|gr(species_id, cov = CovarMatrix)),  #formula, the 0 means that there are estimates for both clonal and non-clonal, rather than relative to each other
       data2 = list(CovarMatrix = CovarMatrix) ,
-      iter = 6000000, warmup = 100000, chains = 5,thin = 1000, cores = 5, #chain settings
-      prior = prior(normal(0, 10), "b"), #defining the priors- for things in 'class b' set this prior. (can also use get_priors() and set_priors() fucncitons) 
-      file = 'fits/fit_phy_GermCellNum' ) 
+      prior = c(
+        prior(normal(0, 10), "b"),
+        prior(normal(0, 50), "Intercept"),
+        prior(student_t(3, 0, 20), "sd")),  
+      iter = 100000, warmup = 10000, chains = 3, thin = 100, cores = 3, threads = threading(6), 
+      backend = "cmdstanr",
+      file_refit = "on_change",
+      file = 'fits/fit_phy_GermCellNum') 
 
 plot(phylofit_germline_cell_num) #check that chains converged
 pp_check(phylofit_germline_cell_num) #check the predictions
@@ -356,8 +392,13 @@ fit_type_phy<-
   brm(data = df,
       family=poisson(),
       formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),
-      iter = 6000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
-      prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_GermCellType', # same simple prior
+            prior = c(
+        prior(normal(0, 10), "b"),
+        prior(normal(0, 50), "Intercept"),
+        prior(student_t(3, 0, 20), "sd")),  iter = 100000, warmup = 10000, chains = 3, thin = 100, cores = 3, threads = threading(6), 
+      file_refit = "on_change",
+      backend = "cmdstanr", 
+      file = 'fits/fit_phy_GermCellType', # same simple prior
       data2 = list(CovarMatrix = CovarMatrix))
 
 plot(fit_type_phy) #check that chains converged
