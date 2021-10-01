@@ -32,11 +32,16 @@ library(knitr)
 library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
 library(tidybayes)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
+library(phytools)
 ```
 
 ## read in data
 ```{r data_input}
 df<- read.csv('data/germline_data_1.1.csv')
+#create a genus column
+df<- df %>% 
+  separate(species.updated.rotl, into = c('genus', 'species'), remove = F) 
+glimpse(df)
 ```
 
 ## create phylogeny files
@@ -45,16 +50,58 @@ ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All l
 ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
 ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
 
-AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id') #draw the phylogeny
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'name') #draw the phylogeny
 
 # tree with resolved polytomies:
-ResolvedPolytomiesTree<- multi2di(AllTree)
+ResolvedPolytomiesTree<- multi2di(AllTree, random=T)
+plot(ResolvedPolytomiesTree)
 
 # write to files
-write.tree(AllTree, file='data/phylogeny_all.txt') #phylogeny
-write.tree(AllTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with resolved polytomies
+write.tree(ResolvedPolytomiesTree, file='data/phylogeny_all.txt') #phylogeny
+write.tree(ResolvedPolytomiesTree, file='data/phylogeny_all_res_polytomy.txt') #phylogeny with resolved polytomies
 write.csv(ResolvedNames, 'data/phylogeny_species_names.csv') #list of names
 write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list of names that are present in the tree
+```
+
+#CKC edit: Can also produce a tree using taxonomic classifications - here's an example
+```{r}
+#Get species in dataset and order by calssifications
+species<-df %>% select(order,family,genus,species.updated.rotl) %>%arrange(order,family,genus,species.updated.rotl)
+
+#Add outgroup
+out<-data.frame(order="Ulvales",family="Kornmanniaceae",genus="Pseudendoclonium",species.updated.rotl="Pseudendoclonium_basiliense")
+species<-rbind(species,out)
+species<- species %>% mutate(across(,~as.factor(.x)))
+
+tree<-as.phylo(~order/family/genus/species.updated.rotl, data=species)
+tree<-multi2di(tree, random=T)
+tree<-makeNodeLabel(tree, method="number", prefix="Node")
+#tree<-root(tree, outgroup="Pseudendoclonium_basiliense", resolve.root=T)
+tree<-compute.brlen(tree, method = "Grafen", power = 1)
+tree<-di2multi(tree, tol=1e-25)
+tree<-chronoMPL(tree)
+treeTrimmed<- drop.tip(tree, which(is.na(tree$tip.label)))
+
+plot(treeTrimmed)
+is.binary.tree(treeTrimmed)
+is.ultrametric(treeTrimmed)
+
+#need to make tip labels match to be able to compare...
+treeTrimmed$tip.label
+ResolvedPolytomiesTree$tip.label <- gsub("_"," ",ResolvedPolytomiesTree$tip.label)
+ResolvedPolytomiesTree$tip.label <- str_remove(ResolvedPolytomiesTree$tip.label, " \\(.*\\)$")
+
+#Can then compare the trees using a cophylogeny plot
+Cophy<-cophylo(ResolvedPolytomiesTree,treeTrimmed,rotate=T)
+pdf('figures/phylogenies.pdf')
+plot.phylo(ResolvedPolytomiesTree, cex = 0.5)
+plot(treeTrimmed, cex = 0.4)
+dev.off()
+
+pdf('figures/cophylogeny.pdf')
+plot(Cophy,link.type="curved",link.lwd=3,link.lty="solid",
+     link.col=make.transparent("blue",0.25),fsize=0.2)
+dev.off()
 ```
 
 Preparing the phylogeny data
@@ -152,6 +199,13 @@ hyp = hypothesis(fit_fission_cell_num,  "FissionOrBuddingObserved_Genus_nominaln
 hyp
 plot(hyp)
 ```
+
+#CKC edit: can also check convergence using gelman's diagnostic and examining autocorrelation between samples
+```{r}
+gelman.diag(fit_fission_cell_num)
+autocor(fit_fission_cell_num)
+```
+
 
 ### Does a single-celled bottleneck correlate with increased cell types (per cell)?
 ```{r FissionCellType}

@@ -7,7 +7,7 @@ library(brms)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
 
 
-df<- read.csv('germline_data_1.0.csv')
+df<- read.csv('data/germline_data_1.1.csv')
 df[nrow(df),]
 df<- df[-197,]
 df[nrow(df),]
@@ -35,3 +35,27 @@ write.tree(AllTree, file='phylogeny_all_res_polytomy.txt')
 
 write.csv(ResolvedNames, 'phylogeny_species_names.csv')
 write.csv(ResolvedNamesInTree, 'phylogeny_species_names_in_tree.csv')
+
+#CKC edits
+#Can also produce a tree using taxonomic classifications - here's an example
+
+species<- df %>% select(order,family,genus,species) %>% arrange(order,family,genus,species)
+
+#Add outgroup
+out<-data.frame(order="Ulvales",family="Kornmanniaceae",genus="Pseudendoclonium",species="Pseudendoclonium_basiliense")
+species<-rbind(species,out)
+species<- species %>% mutate(across(,~as.factor(.x)))
+
+tree<-as.phylo(~order/family/genus/species, data=species)
+tree<-multi2di(tree, random=T)
+tree<-makeNodeLabel(tree, method="number", prefix="Node")
+tree<-root(tree, outgroup="Pseudendoclonium_basiliense", resolve.root=T)
+tree<-compute.brlen(tree, method = "Grafen", power = 1)
+tree<-di2multi(tree, tol=1e-25)
+tree<-chronoMPL(tree)
+
+plot(tree)
+is.binary.tree(tree)
+is.ultrametric(tree)
+
+
