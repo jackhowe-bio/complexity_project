@@ -33,6 +33,7 @@ library(brms) #https://rdrr.io/cran/brms/f/vignettes/brms_phylogenetics.Rmd
 library(tidybayes)
 library(rotl) #see https://cran.r-project.org/web/packages/rotl/vignettes/rotl.html
 library(phytools)
+library(coda)
 ```
 
 ## read in data
@@ -42,19 +43,24 @@ df<- read.csv('data/germline_data_1.1.csv')
 df<- df %>% 
   separate(species.updated.rotl, into = c('genus', 'species'), remove = F) 
 glimpse(df)
+
+df$cell_number<- as.integer(as.numeric(df$cell_number))
 ```
 
 ## create phylogeny files
 ```{r phylogeny_creation, message=F, results='hide'}
-ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)
+ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)cc
 ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
 ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
 
-AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'name') #draw the phylogeny
+AllTree<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'id') #draw the phylogeny with ids
+AllTreeNames<- tol_induced_subtree(ResolvedNamesInTree$ott_id, label_format = 'name') #draw the phylogeny with names
 
 # tree with resolved polytomies:
 ResolvedPolytomiesTree<- multi2di(AllTree, random=T)
-plot(ResolvedPolytomiesTree)
+ResolvedPolytomiesTreeNames<- multi2di(AllTreeNames, random=T)
+
+plot(ResolvedPolytomiesTreeNames)
 
 # write to files
 write.tree(ResolvedPolytomiesTree, file='data/phylogeny_all.txt') #phylogeny
@@ -202,7 +208,7 @@ plot(hyp)
 
 #CKC edit: can also check convergence using gelman's diagnostic and examining autocorrelation between samples
 ```{r}
-gelman.diag(fit_fission_cell_num)
+fit_fission_cell_num$Rhat
 autocor(fit_fission_cell_num)
 ```
 
@@ -256,7 +262,7 @@ fit_type<-
   brm(data = df,
       family=poisson(),
       formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)),
-      iter = 6000000, warmup = 100000, chains = 5, thin = 10000, cores = 5,
+      iter = 1000000, warmup = 100000, chains = 5, thin = 10000, cores = 5,
       prior = prior(normal(0, 10), "b"), file = 'fits/fit_GermCellType')
 
 plot(fit_type) #check that chains converged
@@ -272,12 +278,17 @@ plot(conditional_effects(fit_type), points = TRUE, ask = F)
 ### Does a single-celled bottleneck correlate with increased cell number?  
 
 ```{r FissionCellNumber_phy}
+get_prior(data = df,
+      family=poisson(), # family of model
+      formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
+      data2 = list(CovarMatrix = CovarMatrix))
+
 fit_cellnumber_fission_phy<-
   brm(data = df,
-      family=gaussian(), # family of model
-      formula = log(cell_number) ~ 0 + FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
-      iter = 6000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
-      prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_FissionCellNumber', # same simple prior
+      family=poisson(), # family of model
+      formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
+      prior = prior(normal(0, 10), class = "b", coef = "FissionOrBuddingObserved_Genus_nominalyes"),
+      iter = 1000000, warmup = 100000, chains = 5, thin = 1000, cores = 5, file = 'fits/fit_phy_FissionCellNumber', file_refit = "on_change", # same simple prior
       data2 = list(CovarMatrix = CovarMatrix))
 
 plot(fit_cellnumber_fission_phy) #check that chains converged
