@@ -340,3 +340,62 @@ hyp = hypothesis(fit_type_phy,  c("germline_timing_simpleearly = germline_timing
 hyp
 plot(hyp)
 ```
+
+
+#CKC edit: MCMCglmm models 
+##Without phylogeny
+```{r FissionCellNumberMCMCglmm}
+#Setting the priors
+p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+M1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, #-1 here removes the intercept equivalent to 0 in brms
+                family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+M1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+M1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+
+#### Assessing model: 
+#plot the fixed effects
+M1.1Sol<-mcmc.list(M1.1$Sol,M1.2$Sol,M1.3$Sol)
+plot(M1.1Sol) 
+
+#plot the random effects
+M1.1VCV<-mcmc.list(M1.1$VCV,M1.2$VCV,M1.3$VCV)
+plot(M1.1VCV) 
+
+gelman.diag(M1.1Sol,multivariate = FALSE)
+gelman.diag(M1.1VCV,multivariate = FALSE)
+```
+
+##With phylogeny
+```{r FissionCellNumberMCMCglmmPhylo}
+#Create inverse for running MCMCglmm models 
+inv_tree<-inverseA(tree)$Ainv
+
+#Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
+p2=list(R = list(V = 1, nu=0.002), 
+        G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+P1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, #-1 here removes the intercept equivalent to 0 in brms
+                random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
+                family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+P1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+P1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+
+#### Assessing model: 
+#plot the fixed effects
+P1.1Sol<-mcmc.list(P1.1$Sol,P1.2$Sol,P1.3$Sol)
+plot(P1.1Sol) 
+
+#plot the random effects
+P1.1VCV<-mcmc.list(P1.1$VCV,P1.2$VCV,P1.3$VCV)
+plot(P1.1VCV) 
+
+gelman.diag(P1.1Sol,multivariate = FALSE)
+gelman.diag(P1.1VCV,multivariate = FALSE)
+```
