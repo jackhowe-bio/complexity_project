@@ -39,7 +39,11 @@ write.csv(ResolvedNamesInTree, 'phylogeny_species_names_in_tree.csv')
 #CKC edits
 #Can also produce a tree using taxonomic classifications - here's an example
 
+<<<<<<< HEAD
 species<- df %>% select(order,family,genus,species) %>% arrange(order,family,genus,species)
+=======
+species<-df %>% select(order,family,genus,species) %>%arrange(order,family,genus,species)
+>>>>>>> main
 
 #Add outgroup
 out<-data.frame(order="Ulvales",family="Kornmanniaceae",genus="Pseudendoclonium",species="Pseudendoclonium_basiliense")

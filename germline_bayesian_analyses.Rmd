@@ -75,6 +75,7 @@ write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list
 #CKC edit: Can also produce a tree using taxonomic classifications - here's an example
 ```{r}
 #Get species in dataset and order by calssifications
+<<<<<<< HEAD
 species<-df %>% select(kingdom, phylum, class, order,family,genus,species.updated.rotl) %>% arrange(kingdom, phylum, class, order,family,genus,species.updated.rotl)
 
 #Add outgroup
@@ -111,6 +112,31 @@ pdf('figures/cophylogeny.pdf')
 plot(Cophy,link.type="curved",link.lwd=3,link.lty="solid",
      link.col=make.transparent("blue",0.25),fsize=0.2)
 dev.off()
+=======
+species<-df %>% select(order,family,genus,species) %>%arrange(order,family,genus,species)
+
+#Add outgroup
+out<-data.frame(order="Ulvales",family="Kornmanniaceae",genus="Pseudendoclonium",species="Pseudendoclonium_basiliense")
+species<-rbind(species,out)
+species<- species %>% mutate(across(,~as.factor(.x)))
+
+tree<-as.phylo(~order/family/genus/species, data=species)
+tree<-multi2di(tree, random=T)
+tree<-makeNodeLabel(tree, method="number", prefix="Node")
+tree<-root(tree, outgroup="Pseudendoclonium_basiliense", resolve.root=T)
+tree<-compute.brlen(tree, method = "Grafen", power = 1)
+tree<-di2multi(tree, tol=1e-25)
+tree<-chronoMPL(tree)
+
+plot(tree)
+is.binary.tree(tree)
+is.ultrametric(tree)
+
+#Can then compare the trees using a cophylogeny plot
+Cophy<-cophylo(ResolvedPolytomiesTree,tree,rotate=T)
+plot(Cophy,link.type="curved",link.lwd=3,link.lty="solid",
+     link.col=make.transparent("blue",0.25),fsize=0.8)
+>>>>>>> main
 ```
 
 Preparing the phylogeny data
@@ -211,7 +237,11 @@ plot(hyp)
 
 #CKC edit: can also check convergence using gelman's diagnostic and examining autocorrelation between samples
 ```{r}
+<<<<<<< HEAD
 fit_fission_cell_num$Rhat
+=======
+gelman.diag(fit_fission_cell_num)
+>>>>>>> main
 autocor(fit_fission_cell_num)
 ```
 
@@ -392,6 +422,7 @@ plot(hyp)
 ### Does germline timing correlate with increased cell types (per cell)?
 
 ```{r GermCellType_phy}
+<<<<<<< HEAD
 # fit_type_phy<-
 #   brm(data = df,
 #       family=poisson(),
@@ -415,3 +446,98 @@ plot(hyp)
 # hyp
 # plot(hyp)
 ```
+=======
+fit_type_phy<-
+  brm(data = df,
+      family=poisson(),
+      formula = cell_types ~ 0 + germline_timing_simple + scale(log(cell_number)) + (1|gr(species_id, cov = CovarMatrix)),
+      iter = 6000000, warmup = 100000, chains = 5, thin = 1000, cores = 5,
+      prior = prior(normal(0, 10), "b"), file = 'fits/fit_phy_GermCellType', # same simple prior
+      data2 = list(CovarMatrix = CovarMatrix))
+
+plot(fit_type_phy) #check that chains converged
+pp_check(fit_type_phy) #check the predictions
+summary(fit_type_phy) #summary of model 
+posterior_summary(fit_type_phy, robust = T)
+plot(conditional_effects(fit_type_phy, points = TRUE, ask = F)) 
+
+hyp = hypothesis(fit_type_phy,  c("germline_timing_simpleearly = germline_timing_simple", "germline_timing_simpleearly = germline_timing_simpleadult", "germline_timing_simpleearly = germline_timing_simpleno_germline"))
+hyp
+plot(hyp)
+```
+
+
+#CKC edit: MCMCglmm models 
+##Without phylogeny
+```{r FissionCellNumberMCMCglmm}
+#Setting the priors
+p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+M1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, #-1 here removes the intercept equivalent to 0 in brms
+                family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+M1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+M1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, family ="poisson",data = df,prior=p1, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+
+#### Assessing model: 
+#plot the fixed effects
+M1.1Sol<-mcmc.list(M1.1$Sol,M1.2$Sol,M1.3$Sol)
+plot(M1.1Sol) 
+
+#plot the random effects
+M1.1VCV<-mcmc.list(M1.1$VCV,M1.2$VCV,M1.3$VCV)
+plot(M1.1VCV) 
+
+gelman.diag(M1.1Sol,multivariate = FALSE)
+gelman.diag(M1.1VCV,multivariate = FALSE)
+```
+
+##With phylogeny
+```{r FissionCellNumberMCMCglmmPhylo}
+#Create inverse for running MCMCglmm models 
+inv_tree<-inverseA(tree)$Ainv
+
+#Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
+p2=list(R = list(V = 1, nu=0.002), 
+        G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+P1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, #-1 here removes the intercept equivalent to 0 in brms
+                random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
+                family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+P1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+P1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=6000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+
+
+#### Assessing model: 
+#plot the fixed effects
+P1.1Sol<-mcmc.list(P1.1$Sol,P1.2$Sol,P1.3$Sol)
+plot(P1.1Sol) 
+
+#plot the random effects
+P1.1VCV<-mcmc.list(P1.1$VCV,P1.2$VCV,P1.3$VCV)
+plot(P1.1VCV) 
+
+gelman.diag(P1.1Sol,multivariate = FALSE)
+gelman.diag(P1.1VCV,multivariate = FALSE)
+```
+
+#MCMCglmm multi-response model to estimate phylogenetic correlations
+
+```{r multiresponseMCMCglmmPhylo}
+#Bivariate model
+pM2.1 =list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
+          R = list(V = diag(2),nu=1, fix=1), #Residual variance not identifiable for binary variables
+          G = list(G1=list(V = diag(2), nu = 1, alpha.mu = c(0,0), alpha.V = diag(c(1000,1000)))))#parameter expanded priors, usually good for binary data
+
+#Here both responses need to 0 and 1s or yes and nos
+M2.1<- MCMCglmm(cbind(FissionOrBuddingObserved_Genus_nominal,germline_timing_simple) ~ trait-1, 
+                random = ~us(trait):species, #2x2 phylogenetic covariance matrix 
+                rcov = ~us(trait):units, #2x2 residual covariance matrix 
+                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df,prior=pM2.1, nitt=6000000, burnin=100000, thin=1000,verbose = F)
+```
+
+>>>>>>> main
