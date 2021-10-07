@@ -40,7 +40,6 @@ library(coda)
 
 ## read in data 
 ```{r data_input}
-
 df<- read_csv('data/germline_data_1.2.csv', col_types = list( #import data with defining column types
   cell_types = col_integer(),
   cell_number = col_integer(),
@@ -70,6 +69,8 @@ early = c('1','1,2','2')
 df$germline_timing_simple<- ifelse(df$germline_timing %in% early, 'early', df$germline_timing)  # early germline segregation
 df$germline_timing_simple<- ifelse(df$germline_timing == '0', 'no_germline', df$germline_timing_simple) # no germline/soma divide
 df$germline_timing_simple<- ifelse(df$germline_timing == '3', 'adult', df$germline_timing_simple) # germline segregated in adult tissues
+
+df<- subset(df, !is.na(cell_number))
 ```
 
 ## create phylogeny 
@@ -128,7 +129,7 @@ M1_parallel <- mclapply(1:6, function(i){
  MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
                 family ="poisson",data = df,prior=p1, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
-names(M1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+names(M1_parallel)<- c('chain1','chain2','chain3','chain4')
 
 M1_Sol<- mcmc.list(lapply(M1_parallel, function(m) m$Sol))
 plot(M1_Sol) 
@@ -147,11 +148,11 @@ summary(M1_parallel$chain1)
 #Setting the priors
 p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
 
-M2_parallel <- mclapply(1:6, function(i){
- MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
+M2_parallel <- mclapply(1:4, function(i){
+ MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
                 family ="poisson",data = df,prior=p1, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
-names(M2_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+names(M2_parallel)<- c('chain1','chain2','chain3','chain4')
 
 M2_Sol<- mcmc.list(lapply(M2_parallel, function(m) m$Sol))
 plot(M2_Sol) 
@@ -179,12 +180,12 @@ p2=list(R = list(V = 1, nu=0.002),
         G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
 
 
-P1_parallel <- mclapply(1:6, function(i){
+P1_parallel <- mclapply(1:4, function(i){
  MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
                 random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
                 family ="poisson",data = df,prior=p2, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
-}, mc.cores = 6)
-names(P1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+}, mc.cores = 4)
+names(P1_parallel)<- c('chain1','chain2','chain3','chain4')
 
 
 P1_Sol<- mcmc.list(lapply(P1_parallel, function(m) m$Sol))
