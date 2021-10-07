@@ -118,30 +118,50 @@ Each analysis uses relatively uninformative priors, 5 chains, 6,000,000 iteratio
 To do: do any of these things need scaled?
 
 
-## Phylogenetically naive
-##Without phylogeny
 
+##Without phylogeny
 ```{r FissionCellNumberMCMCglmm}
 #Setting the priors
 p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
 
-m1_parallel <- mclapply(1:6, function(i){
+M1_parallel <- mclapply(1:6, function(i){
  MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
-                family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
+                family ="poisson",data = df,prior=p1, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
-names(m1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+names(M1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
 
-M1_Sol<- mcmc.list(lapply(m1_parallel, function(m) m$Sol))
+M1_Sol<- mcmc.list(lapply(M1_parallel, function(m) m$Sol))
 plot(M1_Sol) 
 gelman.diag(M1_Sol,multivariate = FALSE)
 
-M1_VCV<- mcmc.list(lapply(m1_parallel, function(m) m$VCV))
+M1_VCV<- mcmc.list(lapply(M1_parallel, function(m) m$VCV))
 plot(M1_VCV) 
 gelman.diag(M1_VCV,multivariate = FALSE)
 
+summary(M1_parallel$chain1)
+```
 
 
-summary(m1_parallel)
+
+```{r FissionCellTypeMCMCglmm}
+#Setting the priors
+p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
+
+M2_parallel <- mclapply(1:6, function(i){
+ MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
+                family ="poisson",data = df,prior=p1, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
+}, mc.cores = 4)
+names(M2_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+
+M2_Sol<- mcmc.list(lapply(M2_parallel, function(m) m$Sol))
+plot(M2_Sol) 
+gelman.diag(M2_Sol,multivariate = FALSE)
+
+M2_VCV<- mcmc.list(lapply(M2_parallel, function(m) m$VCV))
+plot(M2_VCV) 
+gelman.diag(M2_VCV,multivariate = FALSE)
+
+summary(M2_parallel$chain1)
 ```
 
 ##With phylogeny
@@ -159,12 +179,12 @@ p2=list(R = list(V = 1, nu=0.002),
         G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
 
 
-p1_parallel <- mclapply(1:6, function(i){
+P1_parallel <- mclapply(1:6, function(i){
  MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
                 random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
-                family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
-}, mc.cores = 4)
-names(p1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
+                family ="poisson",data = df,prior=p2, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
+}, mc.cores = 6)
+names(P1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
 
 
 P1_Sol<- mcmc.list(lapply(P1_parallel, function(m) m$Sol))
@@ -174,7 +194,13 @@ gelman.diag(P1_Sol,multivariate = FALSE)
 P1_VCV<- mcmc.list(lapply(P1_parallel, function(m) m$VCV))
 plot(M1_VCV) 
 gelman.diag(M1_VCV,multivariate = FALSE)
-
+chain1<- p1_parallel$chain1
 summary(p1_parallel$chain1)
 
+hist(mcmc(chain1$Sol)[,"FissionOrBuddingObserved_Genus"])
 ```
+
+```{r}
+
+```
+
