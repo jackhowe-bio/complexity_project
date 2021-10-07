@@ -119,18 +119,17 @@ To do: do any of these things need scaled?
 
 
 ## Phylogenetically naive
-#CKC edit: MCMCglmm models 
 ##Without phylogeny
 
 ```{r FissionCellNumberMCMCglmm}
 #Setting the priors
 p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
 
-
 m1_parallel <- mclapply(1:6, function(i){
  MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
                 family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
+names(m1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
 
 M1_Sol<- mcmc.list(lapply(m1_parallel, function(m) m$Sol))
 plot(M1_Sol) 
@@ -139,6 +138,10 @@ gelman.diag(M1_Sol,multivariate = FALSE)
 M1_VCV<- mcmc.list(lapply(m1_parallel, function(m) m$VCV))
 plot(M1_VCV) 
 gelman.diag(M1_VCV,multivariate = FALSE)
+
+
+
+summary(m1_parallel)
 ```
 
 ##With phylogeny
@@ -155,41 +158,23 @@ df<- as.data.frame(df)
 p2=list(R = list(V = 1, nu=0.002), 
         G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
 
-#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
-P1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
+
+p1_parallel <- mclapply(1:6, function(i){
+ MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
                 random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
                 family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
-print('1 finished')
-P1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
-print('2 finished')
-P1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
-print('3 finished')
-
-
-
-#### Assessing model: 
-#plot the fixed effects
-P1.1Sol<-mcmc.list(P1.1$Sol,P1.2$Sol,P1.3$Sol)
-plot(P1.1Sol) 
-
-#plot the random effects
-P1.1VCV<-mcmc.list(P1.1$VCV,P1.2$VCV,P1.3$VCV)
-plot(P1.1VCV) 
-
-gelman.diag(P1.1Sol,multivariate = FALSE)
-gelman.diag(P1.1VCV,multivariate = FALSE)
-
-m1_parallel <- mclapply(1:6, function(i){
- MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
-                family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
+names(p1_parallel)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
 
-M1_Sol<- mcmc.list(lapply(m1_parallel, function(m) m$Sol))
-plot(M1_Sol) 
-gelman.diag(M1_Sol,multivariate = FALSE)
 
-M1_VCV<- mcmc.list(lapply(m1_parallel, function(m) m$VCV))
+P1_Sol<- mcmc.list(lapply(P1_parallel, function(m) m$Sol))
+plot(P1_Sol) 
+gelman.diag(P1_Sol,multivariate = FALSE)
+
+P1_VCV<- mcmc.list(lapply(P1_parallel, function(m) m$VCV))
 plot(M1_VCV) 
 gelman.diag(M1_VCV,multivariate = FALSE)
+
+summary(p1_parallel$chain1)
 
 ```
