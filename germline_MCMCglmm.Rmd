@@ -1,0 +1,201 @@
+---
+title: "Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+  pdf_document:
+    toc: yes
+  html_notebook:
+    code_folding: hide
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+  html_document:
+    code_folding: hide
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+---
+
+This document follows the same structure as 'germline_bayesian_analyses.Rmd', but uses MCMCglmm package rather than BRMS as brms was slow to run and difficult to get to converge.
+
+
+# Pre-amble
+
+```{r setup}
+knitr::opts_chunk$set(message=F) # set multiple global options here
+```
+
+## load packages
+```{r packages}
+library(ape)
+library(tidyverse)
+library(MCMCglmm)
+library(parallel)
+library(coda)
+```
+
+## read in data 
+```{r data_input}
+
+df<- read_csv('data/germline_data_1.2.csv', col_types = list( #import data with defining column types
+  cell_types = col_integer(),
+  cell_number = col_integer(),
+  clonal = col_factor(),
+  SexualReproductionObserved_Species = col_factor(),
+  AsexualGameticObserved_Species = col_factor(),
+  FissionOrBuddingObserved_Species = col_factor(),
+  SexualReproductionObserved_Genus = col_factor(),
+  AsexualGameticObserved_Genus = col_factor(),
+  FissionOrBuddingObserved_Genus = col_factor(),
+  fragmentation_or_budding = col_factor(),
+  germline_timing = col_factor()
+))
+
+#create a genus column
+df<- df %>% 
+  separate(species, into = c('genus', 'species_name'), remove = F) 
+glimpse(df)
+
+df$cell_number<- as.integer(as.numeric(df$cell_number))
+```
+
+## data tidying
+```{r germline_timing_tidying}
+early = c('1','1,2','2')
+
+df$germline_timing_simple<- ifelse(df$germline_timing %in% early, 'early', df$germline_timing)  # early germline segregation
+df$germline_timing_simple<- ifelse(df$germline_timing == '0', 'no_germline', df$germline_timing_simple) # no germline/soma divide
+df$germline_timing_simple<- ifelse(df$germline_timing == '3', 'adult', df$germline_timing_simple) # germline segregated in adult tissues
+```
+
+## create phylogeny 
+```{r phylogeny_creation}
+#Get species in dataset and order by classification
+species<-df %>% select(kingdom, phylum, class, order,taxon,genus,species) %>% arrange(kingdom, phylum, class, order,taxon,genus,species)
+
+species<- species %>% mutate(across(.cols = everything(),~as.factor(.x))) #make factors
+tree<-as.phylo(~kingdom/phylum/class/order/taxon/genus/species, data=species) #draw tree
+tree<-multi2di(tree, random=T) #collapse and resolve multichotomies (randomly)
+tree<-makeNodeLabel(tree, method="number", prefix="Node") #make node labels
+tree<-compute.brlen(tree, method = "Grafen", power = 1) #compute branch lengths
+tree<-di2multi(tree, tol=1e-25) # collapse and resolve multichotomies (again?)
+tree<-chronoMPL(tree) #estimates age of nodes from distance to all tips
+treeTrimmed<- drop.tip(tree, which(is.na(tree$tip.label))) #drop any tips where the label is NA (not sure this is an issue any longer)
+
+#should we include an outgroup? 
+
+is.binary.tree(treeTrimmed)
+is.ultrametric(treeTrimmed)
+
+pdf('figures/phylogenies.pdf')
+plot(treeTrimmed, cex = 0.4)
+dev.off()
+```
+# Analyses 
+
+Conducting Bayesian analyses using MCMCglmm, first without phylogeny included, then including phylogeny. 
+
+Each analysis uses relatively uninformative priors, 5 chains, 6,000,000 iterations, 100000 of which are discarded as warm-up, thinned by a factor of 1000.
+
+(Currently use reproductive traits of genus rather than species)
+
+* Phylogenetically naive:
+  + Does a single-celled bottleneck correlate with increased cell number? (priors = normal dist, mean of 0, sd of 10)
+  + Does a single-celled bottleneck correlate with increased cell types (per cell)? prior(normal(0, 10), "b")
+  + Does germline timing correlate with increased cell number? prior = prior(normal(0, 10), "b")
+  + Does germline timing correlate with increased cell types (per cell)?
+  
+* Phylogenetically informed:
+  + Does a single-celled bottleneck correlate with increased cell number?  
+  + Does a single-celled bottleneck correlate with increased cell types (per cell)?
+  + Does germline timing correlate with increased cell number?
+  + Does germline timing correlate with increased cell types (per cell)?
+
+To do: do any of these things need scaled?
+
+
+## Phylogenetically naive
+#CKC edit: MCMCglmm models 
+##Without phylogeny
+
+```{r FissionCellNumberMCMCglmm}
+#Setting the priors
+p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+
+M1.1<- MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
+                ,data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = F,pr=T, family ="poisson")
+print('1 finished')
+M1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1,family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = F,pr=T)
+print('2 finished')
+M1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = F,pr=T)
+print('3 finished')
+
+#### Assessing model: 
+#plot the fixed effects
+M1.1Sol<-mcmc.list(M1.1$Sol,M1.2$Sol,M1.3$Sol)
+plot(M1.1Sol) 
+
+#plot the random effects
+M1.1VCV<-mcmc.list(M1.1$VCV,M1.2$VCV,M1.3$VCV)
+plot(M1.1VCV) 
+
+#gelman.diag(M1.1Sol,multivariate = FALSE)
+gelman.diag(M1.1VCV,multivariate = FALSE)
+
+m1_parallel <- mclapply(1:6, function(i){
+ MCMCglmm(cell_number ~ FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
+                family ="poisson",data = df,prior=p1, nitt=1000000, burnin=100000, thin=1000,verbose = T,pr=T)
+}, mc.cores = 4)
+
+M1_Sol<- mcmc.list(lapply(m1_parallel, function(m) m$Sol))
+plot(M1_Sol) 
+
+M1_VCV<- mcmc.list(lapply(m1_parallel, function(m) m$VCV))
+plot(M1_VCV) 
+```
+
+##With phylogeny
+
+
+```{r FissionCellNumberMCMCglmmPhylo}
+#Create inverse for running MCMCglmm models 
+inv_tree<-inverseA(treeTrimmed)$Ainv
+
+df <- df %>%
+  filter(df$species %in% dimnames(inv_tree)[[1]])
+df<- as.data.frame(df)
+
+#Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
+p2=list(R = list(V = 1, nu=0.002), 
+        G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
+
+#fit the model (run 3 times to assess convergence - can be parallelised using mclapply())
+P1.1<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus-1, #-1 here removes the intercept equivalent to 0 in brms
+                random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
+                family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+print('1 finished')
+P1.2<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1,random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+print('2 finished')
+P1.3<- MCMCglmm(cell_number ~FissionOrBuddingObserved_Genus_nominal-1, random = ~species, ginverse=list(species=inv_tree),family ="poisson",data = df,prior=p2, nitt=1000000, burnin=100000, thin=1000,verbose = FALSE,pr=T)
+print('3 finished')
+
+
+
+#### Assessing model: 
+#plot the fixed effects
+P1.1Sol<-mcmc.list(P1.1$Sol,P1.2$Sol,P1.3$Sol)
+plot(P1.1Sol) 
+
+#plot the random effects
+P1.1VCV<-mcmc.list(P1.1$VCV,P1.2$VCV,P1.3$VCV)
+plot(P1.1VCV) 
+
+gelman.diag(P1.1Sol,multivariate = FALSE)
+gelman.diag(P1.1VCV,multivariate = FALSE)
+```
