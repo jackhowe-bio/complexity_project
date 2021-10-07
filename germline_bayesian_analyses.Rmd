@@ -36,7 +36,7 @@ library(phytools)
 library(coda)
 library(MCMCglmm)
 
-knitr::purl('germline_bayesian_analyses.Rmd','germline_bayesian_analyses.R') #read this rmd to an .R file
+#knitr::purl('germline_bayesian_analyses.Rmd','germline_bayesian_analyses.R') #read this rmd to an .R file
 ```
 
 ## read in data
@@ -44,7 +44,7 @@ knitr::purl('germline_bayesian_analyses.Rmd','germline_bayesian_analyses.R') #re
 df<- read.csv('data/germline_data_1.2.csv')
 #create a genus column
 df<- df %>% 
-  separate(species.updated.rotl, into = c('genus', 'species'), remove = F) 
+  separate(species, into = c('genus', 'species'), remove = F) 
 glimpse(df)
 
 df$cell_number<- as.integer(as.numeric(df$cell_number))
@@ -52,7 +52,7 @@ df$cell_number<- as.integer(as.numeric(df$cell_number))
 
 ## create phylogeny files
 ```{r phylogeny_creation, message=F, results='hide'}
-ResolvedNames <- tnrs_match_names(df$species.updated.rotl, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)cc
+ResolvedNames <- tnrs_match_names(df$species, context_name = 'All life') #search for similar names in the 'open tree of life' project (ROTL)cc
 ResolvedNames$IsInTree <- is_in_tree(ResolvedNames$ott_id) #T/F, did the above find a match that can be put in the phylogeny? 
 ResolvedNamesInTree<- subset(ResolvedNames, IsInTree==T) #subset to only those where present in the phylogeny
 
@@ -75,7 +75,6 @@ write.csv(ResolvedNamesInTree, 'data/phylogeny_species_names_in_tree.csv') #list
 #CKC edit: Can also produce a tree using taxonomic classifications - here's an example
 ```{r}
 #Get species in dataset and order by calssifications
-<<<<<<< HEAD
 species<-df %>% select(kingdom, phylum, class, order,family,genus,species.updated.rotl) %>% arrange(kingdom, phylum, class, order,family,genus,species.updated.rotl)
 
 #Add outgroup
@@ -112,37 +111,14 @@ pdf('figures/cophylogeny.pdf')
 plot(Cophy,link.type="curved",link.lwd=3,link.lty="solid",
      link.col=make.transparent("blue",0.25),fsize=0.2)
 dev.off()
-=======
-species<-df %>% select(order,family,genus,species) %>%arrange(order,family,genus,species)
 
-#Add outgroup
-out<-data.frame(order="Ulvales",family="Kornmanniaceae",genus="Pseudendoclonium",species="Pseudendoclonium_basiliense")
-species<-rbind(species,out)
-species<- species %>% mutate(across(,~as.factor(.x)))
 
-tree<-as.phylo(~order/family/genus/species, data=species)
-tree<-multi2di(tree, random=T)
-tree<-makeNodeLabel(tree, method="number", prefix="Node")
-tree<-root(tree, outgroup="Pseudendoclonium_basiliense", resolve.root=T)
-tree<-compute.brlen(tree, method = "Grafen", power = 1)
-tree<-di2multi(tree, tol=1e-25)
-tree<-chronoMPL(tree)
-
-plot(tree)
-is.binary.tree(tree)
-is.ultrametric(tree)
-
-#Can then compare the trees using a cophylogeny plot
-Cophy<-cophylo(ResolvedPolytomiesTree,tree,rotate=T)
-plot(Cophy,link.type="curved",link.lwd=3,link.lty="solid",
-     link.col=make.transparent("blue",0.25),fsize=0.8)
->>>>>>> main
 ```
 
 Preparing the phylogeny data
 ```{r}
 #read in phylogeny
-phylo<- ape::read.tree('data/phylogeny_all.txt')
+phylo<- tree
 #subset df above with just those that are in the tree (note some missing)
 names_in_tree<- read.csv('data/phylogeny_species_names_in_tree.csv')
 names_in_tree$ott_id<- paste('ott',names_in_tree$ott_id, sep = '')
@@ -160,11 +136,29 @@ Covariance matrix produced using branch lengths of 1 (as in Fisher et al)
 phylo_1b <- compute.brlen(phylo, 1)
 #create covariance matrix
 CovarMatrix <- ape::vcv.phylo(phylo_1b)
+
+
+cbind(df$species.updated.rotl, gsub("_", " ", tree$tip.label))
+df$species.updated.rotl %in% gsub("_", " ", tree$tip.label)
+
+# trying alternative
+dfs <- df %>%
+  dplyr::filter(df$species.updated.rotl %in% gsub("_", " ", tree$tip.label)) %>%
+  janitor::clean_names()
+
+scaled_tree <- tree
+scaled_tree$edge.length <- scaled_tree$edge.length / (max(tree$edge.length))
+
+tree_vcv_cov <- ape::vcv(tree, corr = FALSE) #covariance matrix
+tree_vcv_scaled <- ape::vcv(scaled_tree, corr = FALSE) #scaled covariance matrix
+tree_vcv_cor<- ape::vcv(tree, corr = T) #correlation matrix
+
+
 ```
 
 ```{r plot_phylogeny}
 #plot phylogeny to check
-plot(AllTree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
+plot(scaled_tree, no.margin = TRUE, cex = 0.5, label.offset = 0.5)
 ```
 
 ## data tidying 
@@ -237,11 +231,8 @@ plot(hyp)
 
 #CKC edit: can also check convergence using gelman's diagnostic and examining autocorrelation between samples
 ```{r}
-<<<<<<< HEAD
 fit_fission_cell_num$Rhat
-=======
 gelman.diag(fit_fission_cell_num)
->>>>>>> main
 autocor(fit_fission_cell_num)
 ```
 
@@ -311,15 +302,10 @@ plot(conditional_effects(fit_type), points = TRUE, ask = F)
 ### Does a single-celled bottleneck correlate with increased cell number?  
 
 ```{r FissionCellNumber_phy}
-get_prior(data = df,
-      family=poisson(), # family of model
-      formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
-      data2 = list(CovarMatrix = CovarMatrix))
-
 fit_cellnumber_fission_phy<-
   brm(data = df,
       family=poisson(), # family of model
-      formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species_id, cov = CovarMatrix)),
+      formula = cell_number ~ FissionOrBuddingObserved_Genus_nominal + (1|gr(species.updated.rotl, cov = tree_vcv_cor)),
       prior = c(
         prior(normal(0, 5), "b"),
         prior(normal(0, 20), "Intercept"),
@@ -328,7 +314,7 @@ fit_cellnumber_fission_phy<-
       file_refit = "always", 
       file = 'fits/fit_phy_FissionCellNumber_long',
       backend = "cmdstanr", 
-      data2 = list(CovarMatrix = CovarMatrix))
+      data2 = list(tree_vcv_cor = tree_vcv_cor))
 
 plot(fit_cellnumber_fission_phy) #check that chains converged
 pairs(fit_cellnumber_fission_phy)
@@ -422,7 +408,7 @@ plot(hyp)
 ### Does germline timing correlate with increased cell types (per cell)?
 
 ```{r GermCellType_phy}
-<<<<<<< HEAD
+
 # fit_type_phy<-
 #   brm(data = df,
 #       family=poisson(),
@@ -445,8 +431,8 @@ plot(hyp)
 # hyp = hypothesis(fit_type_phy,  c("germline_timing_simpleearly = germline_timing_simple", "germline_timing_simpleearly = germline_timing_simpleadult", "germline_timing_simpleearly = germline_timing_simpleno_germline"))
 # hyp
 # plot(hyp)
-```
-=======
+
+
 fit_type_phy<-
   brm(data = df,
       family=poisson(),
@@ -539,5 +525,3 @@ M2.1<- MCMCglmm(cbind(FissionOrBuddingObserved_Genus_nominal,germline_timing_sim
                 rcov = ~us(trait):units, #2x2 residual covariance matrix 
                 ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df,prior=pM2.1, nitt=6000000, burnin=100000, thin=1000,verbose = F)
 ```
-
->>>>>>> main
