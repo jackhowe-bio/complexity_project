@@ -128,21 +128,19 @@ Each analysis uses relatively uninformative priors, 5 chains, 6,000,000 iteratio
 
 ## Testing to establish the number of iterations:
 
-Tested using a model accounting for phylogeny (P1), from 1M to 10M iterations, testing with thinning of 100 and 1000, and burnin from 500000 to 1000000. 
+Tested using a model without accounting for phylogeny (M1), from 1M to 10M iterations, testing with thinning of 100 and 1000, and burnin from 500000 to 1000000. 
 
 ```{r}
 testing_args <- expand.grid(n_itts = seq(1000000, 10000000, length = 5), n_thin = seq(100,1000, length = 2), n_burn = seq(500000, 1000000, length = 4))
 
 testing_args<- subset(testing_args, n_itts >= 2*n_burn)
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
-p2=list(R = list(V = 1, nu=0.002), 
-        G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
+p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
 
 
 P1_parallel_test <- mclapply(1:nrow(testing_args), function(i, n_itts,n_burn, n_thin){
- MCMCglmm(cell_number ~FissionOrBuddingObserved_Species-1, #-1 here removes the intercept equivalent to 0 in brms
-                random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
-                family ="poisson",data = df,prior=p2, nitt=n_itts[i], burnin=n_burn[i], thin=n_thin[i], verbose = T,pr=T)
+ MCMCglmm(cell_number ~ FissionOrBuddingObserved_Species-1,
+                family ="poisson",data = df,prior=p1, nitt=n_itts[i], burnin=n_burn[i], thin=n_thin[i], verbose = T,pr=T)
 }, mc.set.seed=T, mc.cores = 6, n_itts = testing_args$n_itts, n_burn = testing_args$n_burn, n_thin = testing_args$n_thin)
 
 options(scipen = 8) 
