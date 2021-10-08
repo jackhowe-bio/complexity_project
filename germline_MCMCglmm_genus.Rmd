@@ -219,6 +219,13 @@ P2_VCV<- mcmc.list(lapply(P2_parallel, function(m) m$VCV))
 plot(P2_VCV) 
 gelman.diag(P2_VCV,multivariate = FALSE)
 chain1<- P2_parallel$chain1
+
+autocorr.diag(chain1$VCV)
+posterior.mode(chain1$VCV)
+
+posterior.mode(chain1$Sol)
+HPDinterval(chain1$Sol)
+
 print(summary.MCMCglmm(P2_parallel$chain1))
 
 ```
