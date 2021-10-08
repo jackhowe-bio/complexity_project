@@ -131,7 +131,7 @@ Each analysis uses relatively uninformative priors, 5 chains, 6,000,000 iteratio
 Tested using a model without accounting for phylogeny (M1), from 1M to 10M iterations, testing with thinning of 100 and 1000, and burnin from 500000 to 1000000. 
 
 ```{r}
-testing_args <- expand.grid(n_itts = seq(1000000, 10000000, length = 5), n_thin = seq(100,1000, length = 2), n_burn = seq(500000, 1000000, length = 4))
+testing_args <- expand.grid(n_itts = seq(1000000, 10000000, length = 5), n_thin = seq(100,1000, length = 3), n_burn = seq(500000, 10000000, length = 4))
 
 testing_args<- subset(testing_args, n_itts >= 2*n_burn)
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
@@ -144,26 +144,26 @@ P1_parallel_test <- mclapply(1:nrow(testing_args), function(i, n_itts,n_burn, n_
 }, mc.set.seed=T, mc.cores = 6, n_itts = testing_args$n_itts, n_burn = testing_args$n_burn, n_thin = testing_args$n_thin)
 
 options(scipen = 8) 
-names(P1_parallel_test)<- paste('_it:',testing_args$n_itts,'_thin:',testing_args$n_thin,'_burnin:',testing_args$n_burn, sep = '')
+names(P1_parallel_test)<- paste('it:',testing_args$n_itts,'thin:',testing_args$n_thin,'burnin:',testing_args$n_burn, sep = '')
 summary(P1_parallel_test)
+autocorr(P1_parallel_test[[1]]$v)
 
 
-autocorrelation_tests<- as.data.frame(lapply(P1_parallel_test, function(m) autocorr(m$VCV, lags = min(testing_args$n_itts)/2000))) #conduct autocorrelation tests
+autocorrelation_tests_VCV<- data.frame(sapply(P1_parallel_test, function(m) autocorr(m$VCV, lags = 10))) #conduct autocorrelation tests
 
-#autocorrelation_tests$lag<- row.names(autocorrelation_tests)
 
-autocorrelation_tests_long<- 
-  
-  autocorrelation_tests %>%
-  pivot_longer(cols = everything(),  
-               names_to = c("iterations", "thinning", "burnin","a","b"),
-               names_pattern = "X_it\\.(.*)_thin\\.(.*)_burnin\\.(.*)\\.(.*)\\.(.*)", 
-               values_to = 'autocor') %>%
-  filter(a == 'species', b == 'species')
+autocorrelation_tests_long<- autocorrelation_tests_VCV %>% 
+  mutate(info = rownames(.)) %>%
+  extract(info, 
+          into = c('iterations','thinning','burnin'),
+          regex = "it:(.*)thin:(.*)burnin:(.*)") %>%
+  rename(autocorrelation = 1) %>%
+  mutate(iterations = as.numeric(iterations), burnin = as.factor(burnin))
 
-autocorrelation_tests_long$iterations<- as.numeric(autocorrelation_tests_long$iterations)
 
-ggplot(autocorrelation_tests_long, aes(x = iterations, y = abs(autocor), colour = burnin, shape = thinning)) + geom_point() + geom_line() + theme_minimal()
+glimpse(autocorrelation_tests)
+
+ggplot(autocorrelation_tests_long, aes(x = iterations, y = autocorrelation, colour = burnin)) + geom_point(aes(shape = thinning), size = 2, alpha = 0.9, position = position_dodge(width = 100)) + geom_line(aes(group = interaction(burnin, thinning))) + theme_minimal()
 ```
 
 
