@@ -149,7 +149,7 @@ summary(M1_parallel$chain1)
 p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
 
 M2_parallel <- mclapply(1:4, function(i){
- MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
+ MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
                 family ="poisson",data = df,prior=p1, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
 }, mc.cores = 4)
 names(M2_parallel)<- c('chain1','chain2','chain3','chain4')
@@ -167,14 +167,17 @@ summary(M2_parallel$chain1)
 
 ##With phylogeny
 
-```{r FissionCellNumberMCMCglmmPhylo}
+```{r invtree}
 #Create inverse for running MCMCglmm models 
 inv_tree<-inverseA(treeTrimmed)$Ainv
 
 df <- df %>%
   filter(df$species %in% dimnames(inv_tree)[[1]])
 df<- as.data.frame(df)
+```
 
+
+```{r FissionCellNumberMCMCglmmPhylo}
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
 p2=list(R = list(V = 1, nu=0.002), 
         G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
@@ -193,15 +196,30 @@ plot(P1_Sol)
 gelman.diag(P1_Sol,multivariate = FALSE)
 
 P1_VCV<- mcmc.list(lapply(P1_parallel, function(m) m$VCV))
-plot(M1_VCV) 
-gelman.diag(M1_VCV,multivariate = FALSE)
-chain1<- p1_parallel$chain1
-summary(p1_parallel$chain1)
-
-hist(mcmc(chain1$Sol)[,"FissionOrBuddingObserved_Genus"])
+plot(P1_VCV) 
+gelman.diag(P1_VCV,multivariate = FALSE)
+chain1<- P1_parallel$chain1
+summary(P1_parallel$chain1)
 ```
 
-```{r}
+```{r FissionCellTypeMCMCglmmPhylo}
+P2_parallel <- mclapply(1:4, function(i){
+MCMCglmm(cell_types ~ FissionOrBuddingObserved_Genus-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
+                random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
+                family ="poisson",data = df,prior=p2, nitt=2000000, burnin=100000, thin=1000,verbose = T,pr=T)
+}, mc.cores = 4)
+
+names(P2_parallel)<- c('chain1','chain2','chain3','chain4')
+
+P2_Sol<- mcmc.list(lapply(P2_parallel, function(m) m$Sol))
+plot(P2_Sol) 
+gelman.diag(P2_Sol,multivariate = FALSE)
+
+P2_VCV<- mcmc.list(lapply(P2_parallel, function(m) m$VCV))
+plot(P2_VCV) 
+gelman.diag(P2_VCV,multivariate = FALSE)
+chain1<- P2_parallel$chain1
+print(summary.MCMCglmm(P2_parallel$chain1))
 
 ```
 
