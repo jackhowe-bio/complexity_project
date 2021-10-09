@@ -131,7 +131,7 @@ Each analysis uses relatively uninformative priors, 5 chains, 6,000,000 iteratio
 Tested using a model without accounting for phylogeny (M1), from 1M to 10M iterations, testing with thinning of 100 and 1000, and burnin from 500000 to 1000000. 
 
 ```{r}
-testing_args <- expand.grid(n_itts = as.integer(seq(1000000, 10000000, length = 7)), n_thin = as.integer(seq(100,1000, length = 2)), n_burn = as.integer(seq(500000, 1000000, length = 4)))
+testing_args <- expand.grid(n_itts = as.integer(seq(100000, 10000000, length = 7)), n_thin = as.integer(seq(100,1000, length = 2)), n_burn = as.integer(seq(500000, 1000000, length = 4)))
 
 testing_args<- subset(testing_args, n_itts >= 2*n_burn)
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
