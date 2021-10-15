@@ -1,40 +1,10 @@
 ---
 title: "*Working Notes:* Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 shorttitle: "Notes"
-
-author: 
-  - name          : "Jack Howe"
-    affiliation   : "1, 2"
-    corresponding : yes    # Define only one corresponding author
-    email         : "jack.howe@sund.ku.dk"
-  - name          : "Charlie Cornwallis"
-    affiliation   : "3"
-  - name          : "Ashleigh S. Griffin"
-    affiliation   : "2"  
-affiliation:
-  - id            : "1"
-    institution   : "Center for Evolutionary Hologenomics, GLOBE INSTITUTE, University of Copenhagen"
-  - id            : "2"
-    institution   : "Department of Zoology, University of Oxford"
-  - id            : "3"
-    institution   : "LUND"
-
-floatsintext      : yes
-figurelist        : no
-tablelist         : no
-footnotelist      : no
-linenumbers       : yes
-mask              : no
-draft             : no
-
-
 output: 
-  github_document:
-      toc: true
-      toc_depth: 2
+  github_document: default
   bookdown::html_document2: default
-
-
+  bookdown::pdf_document2: default
 bibliography: "r-references.bib"
 ---
 
@@ -67,6 +37,7 @@ Model parameters were optimised using the first model described in our results, 
 ```{r OptimisationFigure, include = T, fig.cap = "Fig S1: Autocorrelation of successively sampled mean and variance values from posterior distribution", echo=F}
 OptimisingPlot #from OptimisingModels.Rdata
 ```
+
 ## Testing for a correlation between reproductive biology and multicellular complexity
 
 ## Phylogenetically Informed Tests

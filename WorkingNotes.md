@@ -1,13 +1,6 @@
 *Working Notes:* Single-celled bottlenecks, germlines and the evolution
 of complex multi-cellularity
 ================
-truetruetrue
-
--   [Data Collection](#data-collection)
--   [Statistical Analyses](#statistical-analyses)
-    -   [Phylogenetically Informed
-        Tests](#phylogenetically-informed-tests)
--   [References](#references)
 
 # Data Collection
 
@@ -38,9 +31,9 @@ below.
 
 ![Fig S1: Autocorrelation of successively sampled mean and variance
 values from posterior
-distribution](WorkingNotes_files/figure-gfm/OptimisationFigure-1.png) ##
-Testing for a correlation between reproductive biology and multicellular
-complexity
+distribution](WorkingNotes_files/figure-gfm/OptimisationFigure-1.png)
+
+## Testing for a correlation between reproductive biology and multicellular complexity
 
 ## Phylogenetically Informed Tests
 
