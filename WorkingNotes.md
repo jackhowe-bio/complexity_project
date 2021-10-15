@@ -3,6 +3,12 @@ of complex multi-cellularity
 ================
 truetruetrue
 
+-   [Data Collection](#data-collection)
+-   [Statistical Analyses](#statistical-analyses)
+    -   [Phylogenetically Informed
+        Tests](#phylogenetically-informed-tests)
+-   [References](#references)
+
 # Data Collection
 
 Data were collected by…
