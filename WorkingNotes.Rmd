@@ -30,8 +30,9 @@ draft             : no
 documentclass     : "apa6"
 classoption       : "man"
 output: 
-  bookdown::html_document2: default
   github_document: default
+  bookdown::html_document2: default
+
 
 bibliography: "r-references.bib"
 ---
