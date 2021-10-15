@@ -1,0 +1,86 @@
+---
+title: "*Working Notes:* Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
+shorttitle: "Notes"
+
+author: 
+  - name          : "Jack Howe"
+    affiliation   : "1, 2"
+    corresponding : yes    # Define only one corresponding author
+    email         : "jack.howe@sund.ku.dk"
+  - name          : "Charlie Cornwallis"
+    affiliation   : "3"
+  - name          : "Ashleigh S. Griffin"
+    affiliation   : "2"  
+affiliation:
+  - id            : "1"
+    institution   : "Center for Evolutionary Hologenomics, GLOBE INSTITUTE, University of Copenhagen"
+  - id            : "2"
+    institution   : "Department of Zoology, University of Oxford"
+  - id            : "3"
+    institution   : "LUND"
+
+floatsintext      : yes
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : yes
+mask              : no
+draft             : no
+
+documentclass     : "apa6"
+classoption       : "man"
+output: 
+  bookdown::html_document2: default
+  github_document: default
+
+bibliography: "r-references.bib"
+---
+
+```{r RmdSetup, include = F}
+knitr::opts_chunk$set(include = F)
+```
+
+
+# Data Collection
+```{r DataImportPhylogenyConstruction}
+getwd()
+source('RScripts/DataImportPhylogenyConstruction.R', echo = F)
+glimpse(df)
+```
+
+```{r AnalysesImport}
+load('RScripts/OptimisingModels.Rdata')
+```
+
+Data were collected by... 
+
+Phylogeny was constructed by
+
+# Statistical Analyses
+
+All analyses were conducted in R [@R-base] using the package MCMCglmm [MCMCglmm], while documents were produced using [RMarkdown]. All data and code are accessible at [github]. 
+
+Model parameters were optimised using the first model described in our results, for which we ran a total of `r nrow(testing_args)` MCMCglmm chains of varying lengths (`r (min(testing_args$n_itts))` - `r (max(testing_args$n_itts))` iterations), with varying warm-ups (`r (min(testing_args$n_burn))` - `r (max(testing_args$n_burn))`, and with thinning of either `r (min(testing_args$n_thin))` or `r (max(testing_args$n_thin))` fold, see Figure S\@ref(fig:OptimisationFigure).  All subsequent models were then fit using the combination of these parameters where the autocorrelation in the sampled mean and variance were minimal: [X] iterations, a warm-up of [Y] iterations and thinning by a factor of [Z]. In all fitted models, the autocorrelation was well below the suggested tolerable maximum of 0.1 [@hadfield?]. For each model, [n_chains] chains were run. These were visually inspected for chain convergence, and the Gelman-Rubin [@Gelman-Rubin] convergence diagnostic approximated 1 (<1.05) in all cases--these are reported in the summary of each model below. 
+
+```{r OptimisationFigure, include = T, fig.cap = "Fig S1: Autocorrelation of successively sampled mean and variance values from posterior distribution", echo=F}
+OptimisingPlot #from OptimisingModels.Rdata
+```
+## Testing for a correlation between reproductive biology and multicellular complexity
+
+## Phylogenetically Informed Tests
+
+
+
+
+\newpage
+
+# References
+
+\begingroup
+\setlength{\parindent}{-0.5in}
+\setlength{\leftskip}{0.5in}
+
+<div id="refs" custom-style="Bibliography"></div>
+\endgroup
+
+
