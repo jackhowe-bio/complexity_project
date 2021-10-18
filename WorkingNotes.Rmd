@@ -5,11 +5,13 @@ header-includes:
    - \usepackage{lineno}
    - \linenumbers
 output: 
-  bookdown::pdf_document2: 
+  github_document: 
     toc: true
     toc_depth: 4
   bookdown::html_document2: default
-  github_document: default
+  bookdown::pdf_document2: 
+    toc: true
+    toc_depth: 4
 bibliography: "r-references.bib"
 ---
 
