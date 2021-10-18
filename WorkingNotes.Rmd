@@ -1,15 +1,24 @@
 ---
 title: "*Working Notes:* Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity"
 shorttitle: "Notes"
+header-includes:
+   - \usepackage{lineno}
+   - \linenumbers
 output: 
-  github_document: default
+  bookdown::pdf_document2: 
+    toc: true
+    toc_depth: 4
   bookdown::html_document2: default
-  bookdown::pdf_document2: default
+  github_document: default
 bibliography: "r-references.bib"
 ---
 
 ```{r RmdSetup, include = F}
 knitr::opts_chunk$set(include = F)
+library(ggmcmc)
+library(ggpubr)
+library(tidyverse)
+library(ggthemes)
 ```
 
 
@@ -20,9 +29,6 @@ source('RScripts/DataImportPhylogenyConstruction.R', echo = F)
 glimpse(df)
 ```
 
-```{r AnalysesImport}
-load('RScripts/OptimisingModels.Rdata')
-```
 
 Data were collected by... 
 
@@ -30,19 +36,186 @@ Phylogeny was constructed by
 
 # Statistical Analyses
 
-All analyses were conducted in R [@R-base] using the package MCMCglmm [MCMCglmm], while documents were produced using [RMarkdown]. All data and code are accessible at [github]. 
+```{r AnalysesImport}
+load('RScripts/OptimisingModels.Rdata')
+```
 
-Model parameters were optimised using the first model described in our results, for which we ran a total of `r nrow(testing_args)` MCMCglmm chains of varying lengths (`r (min(testing_args$n_itts))` - `r (max(testing_args$n_itts))` iterations), with varying warm-ups (`r (min(testing_args$n_burn))` - `r (max(testing_args$n_burn))`, and with thinning of either `r (min(testing_args$n_thin))` or `r (max(testing_args$n_thin))` fold, see Figure S\@ref(fig:OptimisationFigure).  All subsequent models were then fit using the combination of these parameters where the autocorrelation in the sampled mean and variance were minimal: [X] iterations, a warm-up of [Y] iterations and thinning by a factor of [Z]. In all fitted models, the autocorrelation was well below the suggested tolerable maximum of 0.1 [@hadfield?]. For each model, [n_chains] chains were run. These were visually inspected for chain convergence, and the Gelman-Rubin [@Gelman-Rubin] convergence diagnostic approximated 1 (<1.05) in all cases--these are reported in the summary of each model below. 
 
-```{r OptimisationFigure, include = T, fig.cap = "Fig S1: Autocorrelation of successively sampled mean and variance values from posterior distribution", echo=F}
+```{r Parameters}
+iterations<- readRDS('RScripts/iterations.RDS')
+burnin<- readRDS('RScripts/burnin.RDS')
+thinning <- readRDS('RScripts/thinning.RDS')
+n_chains <- readRDS('RScripts/n_chains.RDS')
+```
+## MCMCglmm parameters
+
+All analyses were conducted in R [@R-base] using the package MCMCglmm [@MCMCglmm], while documents were produced using [RMarkdown]. All data and code are accessible at github.. 
+
+Model parameters were optimised using the first model described in our results, for which we ran a total of `r nrow(testing_args)` MCMCglmm chains of varying lengths (`r (min(testing_args$n_itts))` - `r (max(testing_args$n_itts))` iterations), with varying warm-ups (`r (min(testing_args$n_burn))` - `r (max(testing_args$n_burn))`, and with thinning of either `r (min(testing_args$n_thin))` or `r (max(testing_args$n_thin))` fold, see Figure S\@ref(fig:OptimisationFigure).  All subsequent models were then fit using the combination of these parameters where the autocorrelation of successive sampled mean and variance were minimal: `r iterations` iterations, a warm-up of `r burnin` iterations and thinning by a factor of `r thinning`. In all fitted models, the autocorrelation was well below the suggested tolerable maximum of 0.1 [@hadfield?]. For each model, `r n_chains` chains were run which were visually inspected for chain convergence. Convergence was also supported by the Gelman-Rubin [@Gelman-Rubin] convergence diagnostic, which approximated 1 (<1.05) in all cases--these are reported in the summary of each model below. 
+
+```{r OptimisationFigure, include = T, fig.cap = "Autocorrelation of successively sampled mean and variance values from posterior distribution", echo=F}
 OptimisingPlot #from OptimisingModels.Rdata
 ```
 
-## Testing for a correlation between reproductive biology and multicellular complexity
+## Without Phylogeny
 
-## Phylogenetically Informed Tests
+### **Model 1**: Fission vs Cell Number
+
+\newpage
+```{r Model1Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model1 <- readRDS('RScripts/model_outputs/Model1.RDS')
+
+Model1Sol_mcmc<- mcmc.list(lapply(Model1, function(m) m$Sol))
+Model1Sol_gg<- ggmcmc::ggs(Model1Sol_mcmc)
+Model1Sol_traceplot <- ggmcmc::ggs_traceplot(Model1Sol_gg) + theme_minimal()
+Model1Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model1Sol_gg) + theme_minimal()
+Model1SolGelman<- gelman.diag(Model1Sol_mcmc,multivariate = FALSE)
+
+Model1MeanPlot<- ggarrange(Model1Sol_traceplot, Model1Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model1MeanPlot
+```
+
+### **Model 2**: Fission vs Cell Types
+
+```{r Model2Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 2: Cell Types vs Fission** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model2 <- readRDS('RScripts/model_outputs/Model2.RDS')
+
+Model2Sol_mcmc<- mcmc.list(lapply(Model2, function(m) m$Sol))
+Model2Sol_gg<- ggmcmc::ggs(Model2Sol_mcmc)
+Model2Sol_traceplot <- ggmcmc::ggs_traceplot(Model2Sol_gg) + theme_minimal()
+Model2Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model2Sol_gg) + theme_minimal()
+Model2SolGelman<- gelman.diag(Model2Sol_mcmc,multivariate = FALSE)
+
+Model2MeanPlot<- ggarrange(Model2Sol_traceplot, Model2Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model2MeanPlot
+```
+
+### **Model 3**: Germline vs Cell Numbers
+
+Should we subset to only those organisms that have sterile cells for the germline models?
+
+```{r Model3Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 3: Cell number vs Germline** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model3 <- readRDS('RScripts/model_outputs/Model3.RDS')
+
+Model3Sol_mcmc<- mcmc.list(lapply(Model3, function(m) m$Sol))
+Model3Sol_gg<- ggmcmc::ggs(Model3Sol_mcmc)
+Model3Sol_traceplot <- ggmcmc::ggs_traceplot(Model3Sol_gg) + theme_minimal()
+Model3Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model3Sol_gg) + theme_minimal()
+Model3SolGelman<- gelman.diag(Model3Sol_mcmc,multivariate = FALSE)
+
+Model3MeanPlot<- ggarrange(Model3Sol_traceplot, Model3Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model3MeanPlot
+```
+
+### **Model 4**: Germline vs Cell Types
+
+```{r Model4Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 4: Cell Types vs Germline** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model4 <- readRDS('RScripts/model_outputs/Model4.RDS')
+
+Model4Sol_mcmc<- mcmc.list(lapply(Model4, function(m) m$Sol))
+Model4Sol_gg<- ggmcmc::ggs(Model4Sol_mcmc)
+Model4Sol_traceplot <- ggmcmc::ggs_traceplot(Model4Sol_gg) + theme_minimal()
+Model4Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model4Sol_gg) + theme_minimal()
+Model4SolGelman<- gelman.diag(Model4Sol_mcmc,multivariate = FALSE)
+
+Model4MeanPlot<- ggarrange(Model4Sol_traceplot, Model4Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model4MeanPlot
+```
+
+## Phylogenetically Informed Models
+
+The datapoints are not independent: they have shared evolutionary history of varying degrees. 
+Should we exclude some of the 
+
+### **Model 5**: Fission vs Cell Number
+
+```{r Model5Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 5: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model5 <- readRDS('RScripts/model_outputs/Model5.RDS')
+Model5Sol_mcmc<- mcmc.list(lapply(Model5, function(m) m$Sol))
+Model5Sol_gg<- ggmcmc::ggs(Model5Sol_mcmc)
+Model5Sol_ggSubset<- subset(Model5Sol_gg,  grepl('FissionOrBuddingObserved_Species', Model5Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
+
+Model5Sol_traceplot <- ggmcmc::ggs_traceplot(Model5Sol_ggSubset) + theme_minimal()
 
 
+Model5Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model5Sol_ggSubset) + theme_minimal()
+
+
+Model5SolGelman<- gelman.diag(Model5Sol_mcmc,multivariate = FALSE)
+
+Model5MeanPlot<- ggarrange(Model5Sol_traceplot, Model5Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model5MeanPlot
+```
+
+### **Model 6**: Fission vs Cell Types
+
+```{r Model6Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 6: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model6 <- readRDS('RScripts/model_outputs/Model6.RDS')
+Model6Sol_mcmc<- mcmc.list(lapply(Model6, function(m) m$Sol))
+Model6Sol_gg<- ggmcmc::ggs(Model6Sol_mcmc)
+
+summary(Model6Sol_gg)
+Model6Sol_ggSubset<- subset(Model6Sol_gg,  grepl('FissionOrBuddingObserved_Species', Model6Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
+
+Model6Sol_traceplot <- ggmcmc::ggs_traceplot(Model6Sol_ggSubset) + theme_minimal()
+
+
+Model6Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model6Sol_ggSubset) + theme_minimal()
+
+
+Model6SolGelman<- gelman.diag(Model6Sol_mcmc,multivariate = FALSE)
+
+Model6MeanPlot<- ggarrange(Model6Sol_traceplot, Model6Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model6MeanPlot
+```
+
+
+### **Model 7**: Germline vs Cell Number
+
+```{r Model7Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 7: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model7 <- readRDS('RScripts/model_outputs/Model7.RDS')
+Model7Sol_mcmc<- mcmc.list(lapply(Model7, function(m) m$Sol))
+Model7Sol_gg<- ggmcmc::ggs(Model7Sol_mcmc)
+
+summary(Model7Sol_gg)
+Model7Sol_ggSubset<- subset(Model7Sol_gg,  grepl('germline_timing_simple', Model7Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
+
+Model7Sol_traceplot <- ggmcmc::ggs_traceplot(Model7Sol_ggSubset) + theme_minimal()
+
+
+Model7Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model7Sol_ggSubset) + theme_minimal()
+
+
+Model7SolGelman<- gelman.diag(Model7Sol_mcmc,multivariate = FALSE)
+
+Model7MeanPlot<- ggarrange(Model7Sol_traceplot, Model7Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model7MeanPlot
+```
+
+### **Model 8**: Germline vs Cell Types
+
+```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
+Model8 <- readRDS('RScripts/model_outputs/Model8.RDS')
+Model8Sol_mcmc<- mcmc.list(lapply(Model8, function(m) m$Sol))
+Model8Sol_gg<- ggmcmc::ggs(Model8Sol_mcmc)
+
+summary(Model8Sol_gg)
+Model8Sol_ggSubset<- subset(Model8Sol_gg,  grepl('germline_timing_simple', Model8Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
+
+Model8Sol_traceplot <- ggmcmc::ggs_traceplot(Model8Sol_ggSubset) + theme_minimal()
+
+
+Model8Sol_caterpillar<- ggmcmc::ggs_caterpillar(Model8Sol_ggSubset) + theme_minimal()
+
+
+Model8SolGelman<- gelman.diag(Model8Sol_mcmc,multivariate = FALSE)
+
+Model8MeanPlot<- ggarrange(Model8Sol_traceplot, Model8Sol_caterpillar, nrow = 2, labels = "AUTO")
+Model8MeanPlot
+```
+## Open Questions
+
+Phylogenetic correlation between germline and fission-- multivariate model? How to test this? 
 
 
 \newpage
