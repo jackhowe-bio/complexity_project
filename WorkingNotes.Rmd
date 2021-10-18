@@ -29,10 +29,24 @@ source('RScripts/DataImportPhylogenyConstruction.R', echo = F)
 glimpse(df)
 ```
 
+## Search strategy
 
-Data were collected by... 
+Searches were conducted broadly for literature focussed on reproductive mode and germline development across the tree of life. This included chapters reviews and chapters within textbooks.
 
-Phylogeny was constructed by
+As Fisher paper was used for estimates of individual complexity (which in turn used Bell paper as a foundation), narrower searches were conducted for each species/genus from Bell paper on Web of Knowledge and on Google Scholar. 
+
+`(ALL = (reproduct* OR sex* OR asex* OR vegetat* OR fissi* OR clonal* OR regenerat* OR rhizo* OR germ-line* OR germline* OR germ line* OR bud* OR fragment* OR parthenogen* OR stolon*)) AND (ALL = TAXON)` 
+
+We recorded whether sexual, parthenogenetic/clonal and agametic have been observed as binary values. We did not attempt to capture the relative frequency of different reproductive strategies, as these data do not exist for the majority of species. 
+
+Research into reproduction and development is heterogeneous across organisms, and this is necessarily reflected in the required searching effort for different groups: the reproductive biology and development of model organisms such as C. elegans, M. musculus, D. melanogaster, A. thaliana are well known, but in many other groups reproduction may never have been observed. We therefore conducted searches for each species, but if no literature discussing reproductive strategy was observed, then we conducted an additional search at the genus level. This assumes that genera will tend to be relatively similar in their reproductive strategies: this is not always the case. The planarian S. mediterranea, for example, has strictly sexual and strictly asexual strains within even the same species. However, we are focussed on patterns through longer spans of evolution than between individual genera. 
+
+Caveats:
+
+* Sexual organisms contain more cells because they have gonads that asexual organisms lack...  
+* hard to fit algae with gametophyte/sporophyte stages: they have life cycles where some stages can fragment, where some stages can reproduce by spores, parthenogenesis or by sex. If an algae can stay in one loop and reproduce exclusively through parthenogenesis/fragmentation, then counts-- similar to organisms that can fission, but don't always.
+
+## Production of phylogenetic tree
 
 # Statistical Analyses
 
@@ -154,7 +168,7 @@ Model6 <- readRDS('RScripts/model_outputs/Model6.RDS')
 Model6Sol_mcmc<- mcmc.list(lapply(Model6, function(m) m$Sol))
 Model6Sol_gg<- ggmcmc::ggs(Model6Sol_mcmc)
 
-summary(Model6Sol_gg)
+
 Model6Sol_ggSubset<- subset(Model6Sol_gg,  grepl('FissionOrBuddingObserved_Species', Model6Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
 
 Model6Sol_traceplot <- ggmcmc::ggs_traceplot(Model6Sol_ggSubset) + theme_minimal()
@@ -177,7 +191,7 @@ Model7 <- readRDS('RScripts/model_outputs/Model7.RDS')
 Model7Sol_mcmc<- mcmc.list(lapply(Model7, function(m) m$Sol))
 Model7Sol_gg<- ggmcmc::ggs(Model7Sol_mcmc)
 
-summary(Model7Sol_gg)
+
 Model7Sol_ggSubset<- subset(Model7Sol_gg,  grepl('germline_timing_simple', Model7Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
 
 Model7Sol_traceplot <- ggmcmc::ggs_traceplot(Model7Sol_ggSubset) + theme_minimal()
@@ -199,7 +213,6 @@ Model8 <- readRDS('RScripts/model_outputs/Model8.RDS')
 Model8Sol_mcmc<- mcmc.list(lapply(Model8, function(m) m$Sol))
 Model8Sol_gg<- ggmcmc::ggs(Model8Sol_mcmc)
 
-summary(Model8Sol_gg)
 Model8Sol_ggSubset<- subset(Model8Sol_gg,  grepl('germline_timing_simple', Model8Sol_gg$Parameter)) #need to subset so we don't get a plot for each species
 
 Model8Sol_traceplot <- ggmcmc::ggs_traceplot(Model8Sol_ggSubset) + theme_minimal()
