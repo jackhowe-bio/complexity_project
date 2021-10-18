@@ -2,4 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
-RScripts/model_outputs/
+RScripts/model_outputs/Model*
+.DS_Store
+.Rapp.history
+RScripts/OptimisingModels.Rdata
