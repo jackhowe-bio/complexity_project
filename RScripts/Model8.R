@@ -25,7 +25,7 @@ p2=list(R = list(V = 1, nu=0.002),
 
 
 Model8_parallel <- mclapply(1:n_chains, function(i){
-  MCMCglmm(cell_number ~ cell_types ~ germline_timing_simple-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
+  MCMCglmm(cell_types ~ germline_timing_simple-1 + scale(log(cell_number)), #-1 here removes the intercept equivalent to 0 in brms
            random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
            family ="poisson",data = df,prior=p2, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T)
 }, mc.cores = 4)
