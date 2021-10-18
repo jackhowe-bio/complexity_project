@@ -11,3 +11,5 @@ RScript RScripts/Model5.R
 RScript RScripts/Model6.R
 RScript RScripts/Model7.R
 RScript RScripts/Model8.R
+
+R -e "rmarkdown::render('WorkingNotes.Rmd', output_format='all')"

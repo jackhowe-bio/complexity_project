@@ -13,6 +13,9 @@ output:
     toc: true
     toc_depth: 4
 bibliography: "r-references.bib"
+
+knit: (function(inputFile, encoding){
+  rmarkdown::render(inputFile, encoding = encoding, output_format = "all") })
 ---
 
 ```{r RmdSetup, include = F}
@@ -50,6 +53,10 @@ Caveats:
 
 ## Production of phylogenetic tree
 
+We used a phylogenetic tree to control for non-independence of species based on shared evolutionary history. The tree was constructed within R using the latest evolutionary classifications found on the Tree of Life, AlgaeBase.org, and the World Register of Marine species. The relationships among species were reconstructed by ordering the taxa from Kingdom through to species, and grouping according to these names. 
+
+As a comparison, we also constructed a tree using the 'R Tree of Life Project'. These two trees were largely congruent: some larger groups had switched places, but within these groups relationships were predominantly the same. As the Rtol tree dropped X data points from the tree, we used the tree based on the taxa names. Multichotomies within the tree were randomly resolved, before branch lengths were generated as described by [@grafen1989]. Branches smaller than `r 1e-25` were deleted, and the dichotomies here collapsed to multichotomies. Figure () shows a cophylogeny based on each tree. 
+
 # Statistical Analyses
 
 ```{r AnalysesImport}
@@ -64,7 +71,6 @@ thinning <- readRDS('RScripts/thinning.RDS')
 n_chains <- readRDS('RScripts/n_chains.RDS')
 ```
 ## MCMCglmm parameters
-
 All analyses were conducted in R [@R-base] using the package MCMCglmm [@MCMCglmm], while documents were produced using [RMarkdown]. All data and code are accessible at github.. 
 
 Model parameters were optimised using the first model described in our results, for which we ran a total of `r nrow(testing_args)` MCMCglmm chains of varying lengths (`r (min(testing_args$n_itts))` - `r (max(testing_args$n_itts))` iterations), with varying warm-ups (`r (min(testing_args$n_burn))` - `r (max(testing_args$n_burn))`, and with thinning of either `r (min(testing_args$n_thin))` or `r (max(testing_args$n_thin))` fold, see Figure S\@ref(fig:OptimisationFigure).  All subsequent models were then fit using the combination of these parameters where the autocorrelation of successive sampled mean and variance were minimal: `r iterations` iterations, a warm-up of `r burnin` iterations and thinning by a factor of `r thinning`. In all fitted models, the autocorrelation was well below the suggested tolerable maximum of 0.1 [@hadfield?]. For each model, `r n_chains` chains were run which were visually inspected for chain convergence. Convergence was also supported by the Gelman-Rubin [@Gelman-Rubin] convergence diagnostic, which approximated 1 (<1.05) in all cases--these are reported in the summary of each model below. 

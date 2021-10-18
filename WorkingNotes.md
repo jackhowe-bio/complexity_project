@@ -80,6 +80,23 @@ Caveats:
 
 ## Production of phylogenetic tree
 
+We used a phylogenetic tree to control for non-independence of species
+based on shared evolutionary history. The tree was constructed within R
+using the latest evolutionary classifications found on the Tree of Life,
+AlgaeBase.org, and the World Register of Marine species. The
+relationships among species were reconstructed by ordering the taxa from
+Kingdom through to species, and grouping according to these names.
+
+As a comparison, we also constructed a tree using the ‘R Tree of Life
+Project’. These two trees were largely congruent: some larger groups had
+switched places, but within these groups relationships were
+predominantly the same. As the Rtol tree dropped X data points from the
+tree, we used the tree based on the taxa names. Multichotomies within
+the tree were randomly resolved, before branch lengths were generated as
+described by (**grafen1989?**). Branches smaller than 10^{-25} were
+deleted, and the dichotomies here collapsed to multichotomies. Figure ()
+shows a cophylogeny based on each tree.
+
 # Statistical Analyses
 
 ## MCMCglmm parameters

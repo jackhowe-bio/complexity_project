@@ -9,8 +9,8 @@ library(coda)
 library(ggthemes)
 
 df<- read_csv('data/germline_data_1.2.csv', col_types = list( #import data with defining column types
-  cell_types = col_integer(),
-  cell_number = col_integer(),
+  cell_types = col_number(),
+  cell_number = col_number(),
   clonal = col_factor(),
   SexualReproductionObserved_Species = col_factor(),
   AsexualGameticObserved_Species = col_factor(),
@@ -26,7 +26,7 @@ df<- read_csv('data/germline_data_1.2.csv', col_types = list( #import data with 
 df<- df %>% 
   separate(species, into = c('genus', 'species_name'), remove = F) 
 
-df$cell_number<- as.integer(as.numeric(df$cell_number))
+df$cell_number<- ceiling(df$cell_number)
 
 early = c('1','1,2','2')
 
@@ -54,7 +54,7 @@ is.binary(treeTrimmed)
 is.ultrametric(treeTrimmed)
 
 pdf('figures/phylogenies.pdf')
-plot(treeTrimmed, cex = 0.4)
+plot(treeTrimmed, cex = 0.2)
 dev.off()
 
 #Create inverse for running MCMCglmm models 

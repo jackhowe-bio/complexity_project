@@ -59,21 +59,12 @@ The analyses is described in full in **WorkingNotes.Rmd** and its output **Worki
     └── phylogenies.pdf
 ```
 
-The .pdf and .md reports should be readable without running any scripts, but to create the outputs from the files in order to run the script locally, run the following commands: (not tested)
+The .pdf and .md reports should be readable without running any scripts, but to create the outputs from the files in order to run the script locally, run the following command: 
 
 ```
-mkdir RScripts/model_outputs
-RScript RScripts/OptimisingModels.R
-RScript RScripts/ParameterDefinitions.R
-RScript RScripts/Model1.R
-RScript RScripts/Model2.R
-RScript RScripts/Model3.R
-RScript RScripts/Model4.R
-RScript RScripts/Model5.R
-RScript RScripts/Model6.R
-RScript RScripts/Model7.R
-RScript RScripts/Model8.R
+bash run_all.sh
 ```
 
+This runs a shell script that creates the folders required for outputs, runs all models and then knits the output from the RMarkdown Document 'WorkingNotes.Rmd' to a html document, a pdf document, and a github friendly document (when closer to submission will output a word document)
 
 
