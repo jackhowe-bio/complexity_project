@@ -75,6 +75,8 @@ All analyses were conducted in R [@R-base] using the package MCMCglmm [@MCMCglmm
 
 Model parameters were optimised using the first model described in our results, for which we ran a total of `r nrow(testing_args)` MCMCglmm chains of varying lengths (`r (min(testing_args$n_itts))` - `r (max(testing_args$n_itts))` iterations), with varying warm-ups (`r (min(testing_args$n_burn))` - `r (max(testing_args$n_burn))`, and with thinning of either `r (min(testing_args$n_thin))` or `r (max(testing_args$n_thin))` fold, see Figure S\@ref(fig:OptimisationFigure).  All subsequent models were then fit using the combination of these parameters where the autocorrelation of successive sampled mean and variance were minimal: `r iterations` iterations, a warm-up of `r burnin` iterations and thinning by a factor of `r thinning`. In all fitted models, the autocorrelation was well below the suggested tolerable maximum of 0.1 [@hadfield?]. For each model, `r n_chains` chains were run which were visually inspected for chain convergence. Convergence was also supported by the Gelman-Rubin [@Gelman-Rubin] convergence diagnostic, which approximated 1 (<1.05) in all cases--these are reported in the summary of each model below. 
 
+The entire analysis, including the parameter optimisation step and creating all output documents, runs in approximately 3hrs 15 mins using a 2020 MacBook Pro running 4 chains in parallel. 
+
 ```{r OptimisationFigure, include = T, fig.cap = "Autocorrelation of successively sampled mean and variance values from posterior distribution", echo=F}
 OptimisingPlot #from OptimisingModels.Rdata
 ```
@@ -83,7 +85,7 @@ OptimisingPlot #from OptimisingModels.Rdata
 
 ### **Model 1**: Fission vs Cell Number
 
-\newpage
+*Priors* 
 ```{r Model1Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated means f, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively."}
 Model1 <- readRDS('RScripts/model_outputs/Model1.RDS')
 

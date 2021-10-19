@@ -1,6 +1,7 @@
 #!/bin/bash
 mkdir -p RScripts/model_outputs
 mkdir -p figures
+mkdir -p MCMCglmmDiagnostics
 RScript RScripts/OptimisingModels.R
 RScript RScripts/ParameterDefinitions.R
 RScript RScripts/Model1.R
