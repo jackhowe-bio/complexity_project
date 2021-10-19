@@ -7,9 +7,15 @@ This repository contains all data and code for analysis.
 
 The analyses is described in full in **WorkingNotes.Rmd** and its output **WorkingNotes.pdf**. The Rmd file contains snippets of code for creating figures and reporting results, but all analyses are conducted within smaller scripts for each model. 
 
+The .pdf and .md reports should be readable without running any scripts, but to create the outputs from the files in order to run the script locally, run the following command: 
+
+```
+bash run_all.sh
+```
+
+This runs a shell script that creates the folders required for outputs, runs all models and then knits the output from the RMarkdown Document 'WorkingNotes.Rmd' to a html document, a pdf document, and a github friendly document (when closer to submission will output a word document)
 
 ## Directory structure:
-
 ```
 .
 ├── README.md
@@ -58,13 +64,4 @@ The analyses is described in full in **WorkingNotes.Rmd** and its output **Worki
 └── figures
     └── phylogenies.pdf
 ```
-
-The .pdf and .md reports should be readable without running any scripts, but to create the outputs from the files in order to run the script locally, run the following command: 
-
-```
-bash run_all.sh
-```
-
-This runs a shell script that creates the folders required for outputs, runs all models and then knits the output from the RMarkdown Document 'WorkingNotes.Rmd' to a html document, a pdf document, and a github friendly document (when closer to submission will output a word document)
-
 

@@ -31,6 +31,7 @@ of complex multi-cellularity
             Number](#model-7-germline-vs-cell-number)
         -   [**Model 8**: Germline vs Cell
             Types](#model-8-germline-vs-cell-types)
+    -   [Open Questions](#open-questions)
 -   [References](#references)
 
 # Data Collection
@@ -88,12 +89,12 @@ relationships among species were reconstructed by ordering the taxa from
 Kingdom through to species, and grouping according to these names.
 
 As a comparison, we also constructed a tree using the ‘R Tree of Life
-Project’. These two trees were largely congruent: some larger groups had
+Project.’ These two trees were largely congruent: some larger groups had
 switched places, but within these groups relationships were
 predominantly the same. As the Rtol tree dropped X data points from the
 tree, we used the tree based on the taxa names. Multichotomies within
 the tree were randomly resolved, before branch lengths were generated as
-described by (**grafen1989?**). Branches smaller than 10^{-25} were
+described by \[@grafen1990\]. Branches smaller than 10^{-25} were
 deleted, and the dichotomies here collapsed to multichotomies. Figure ()
 shows a cophylogeny based on each tree.
 
@@ -101,9 +102,9 @@ shows a cophylogeny based on each tree.
 
 ## MCMCglmm parameters
 
-All analyses were conducted in R (R Core Team 2021) using the package
-MCMCglmm (**MCMCglmm?**), while documents were produced using
-\[RMarkdown\]. All data and code are accessible at github..
+All analyses were conducted in R \[@R-base\] using the package MCMCglmm
+\[@MCMCglmm\], while documents were produced using \[RMarkdown\]. All
+data and code are accessible at github.
 
 Model parameters were optimised using the first model described in our
 results, for which we ran a total of 38 MCMCglmm chains of varying
@@ -114,11 +115,27 @@ the combination of these parameters where the autocorrelation of
 successive sampled mean and variance were minimal: 8^{6} iterations, a
 warm-up of 10^{6} iterations and thinning by a factor of 100. In all
 fitted models, the autocorrelation was well below the suggested
-tolerable maximum of 0.1 (**hadfield?**). For each model, 6 chains were
+tolerable maximum of 0.1 \[@hadfield?\]. For each model, 6 chains were
 run which were visually inspected for chain convergence. Convergence was
-also supported by the Gelman-Rubin (**Gelman-Rubin?**) convergence
+also supported by the Gelman-Rubin \[@Gelman-Rubin\] convergence
 diagnostic, which approximated 1 (\<1.05) in all cases–these are
 reported in the summary of each model below.
+
+The four models described in section @ref(Without Phylogeny) are
+phylogenetically naive, and treat each species as independent data
+points. The default priors used for fixed effects, and residual variance
+prior of V = 1 and nu = 0.002.
+
+The differences between each level for the fixed effects were calculated
+at each MCMC iteration to produce a posterior distribution for the
+difference. Levels are considered statistically significant if the 95%
+credible interval of this difference distribution did not overlap with
+0, and if the proportion of MCMC iterations that were greater or less
+than 0 was less than 0.05.
+
+The entire analysis, including the parameter optimisation step and
+creating all output documents, runs in approximately 3hrs 15 mins using
+a 2020 MacBook Pro running 4 chains in parallel.
 
 ![Autocorrelation of successively sampled mean and variance values from
 posterior
@@ -129,18 +146,32 @@ distribution](WorkingNotes_files/figure-gfm/OptimisationFigure-1.png)
 ### **Model 1**: Fission vs Cell Number
 
 ![**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated
-means f, *B* Estimates for means from posterior distribution, dots
+means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
-posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model1Mean-1.png)
+posterior density regions, respectively. *C* Density plot of estimated
+differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model1Mean-1.png)
+
+**Do organisms that reproduce by fission have more cells?** Fissiparous
+organisms appear to be larger (makes sense, trees, fungi, algae, etc)
+
+*priors*: p1=list(R = list(V = 1, nu=0.002)) #sets prior for residual
+variance, the defaults are used as priors for fixed effects (see
+MCMCglmm course notes)
 
 ### **Model 2**: Fission vs Cell Types
 
+*priors* p1=list(R = list(V = 1, nu=0.002))
+
 ![**Model 2: Cell Types vs Fission** *A* Traceplots for the estimated
-means f, *B* Estimates for means from posterior distribution, dots
+means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
-posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model2Mean-1.png)
+posterior density regions, respectively. *C* Density plot of estimated
+differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model2Mean-1.png)
+
+**Do organisms that reproduce by fission have more cell types?** HCI
+overlaps with zero, so doesn’t seem likely.
 
 ### **Model 3**: Germline vs Cell Numbers
 
@@ -148,71 +179,93 @@ Should we subset to only those organisms that have sterile cells for the
 germline models?
 
 ![**Model 3: Cell number vs Germline** *A* Traceplots for the estimated
-means f, *B* Estimates for means from posterior distribution, dots
+means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
-posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model3Mean-1.png)
+posterior density regions, respectively. *C* Density plot of estimated
+differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model3Mean-1.png)
+
+**Do organisms with early segregating germline have more cells?** HCI
+just about overlaps with 0, so maayyyybe, but not clear.
+
+*priors* p1=list(R = list(V = 1, nu=0.002))
 
 ### **Model 4**: Germline vs Cell Types
 
 ![**Model 4: Cell Types vs Germline** *A* Traceplots for the estimated
-means f, *B* Estimates for means from posterior distribution, dots
+means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
-posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model4Mean-1.png)
+posterior density regions, respectively. *C* Density plot of estimated
+differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model4Mean-1.png)
+
+**Do organisms that segregate germline early have more cell types?**
+Again, just about overlaps with 0, so not clear.
+
+p1=list(R = list(V = 1, nu=0.002))
 
 ## Phylogenetically Informed Models
 
-The datapoints are not independent: they have shared evolutionary
-history of varying degrees. Should we exclude some of the
+Models below here use inverse covariance matrix describing the
+relationships among species to control for phylogeny.
 
 ### **Model 5**: Fission vs Cell Number
 
 ![**Model 5: Cell Number vs Fission with germline ** *A* Traceplots for
-the estimated means f, *B* Estimates for means from posterior
+the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
-and 95% of highest posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model5Mean-1.png)
+and 95% of highest posterior density regions, respectively. *C* Density
+plot of estimated differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model5Mean-1.png)
+
+Again, just about overlaps with 0, so not clear.
+
+p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 6**: Fission vs Cell Types
 
 ![**Model 6: Cell Number vs Fission with germline ** *A* Traceplots for
-the estimated means f, *B* Estimates for means from posterior
+the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
-and 95% of highest posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model6Mean-1.png)
+and 95% of highest posterior density regions, respectively. *C* Density
+plot of estimated differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model6Mean-1.png)
+
+Overlaps with 0, no difference
+
+p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 7**: Germline vs Cell Number
 
 ![**Model 7: Cell Number vs Fission with germline ** *A* Traceplots for
-the estimated means f, *B* Estimates for means from posterior
+the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
-and 95% of highest posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model7Mean-1.png)
+and 95% of highest posterior density regions, respectively. *C* Density
+plot of estimated differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model7Mean-1.png)
+
+Things with a germline might be smaller: the 95% CI is *just* below 0
+(-0.34)
+
+p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 8**: Germline vs Cell Types
 
 ![**Model 8: Cell Number vs Fission with germline ** *A* Traceplots for
-the estimated means f, *B* Estimates for means from posterior
+the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
-and 95% of highest posterior density regions,
-respectively.](WorkingNotes_files/figure-gfm/Model8Mean-1.png) ## Open
-Questions
+and 95% of highest posterior density regions, respectively. *C* Density
+plot of estimated differences, bar represents 90% and 95% credible
+intervals.](WorkingNotes_files/figure-gfm/Model8Mean-1.png)
+
+Seems like they may be smaller, but that they have more cell types per
+cell– HCI is just above 0 (0.0379847).
+
+p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
+
+## Open Questions
 
 Phylogenetic correlation between germline and fission– multivariate
 model? How to test this?
 
 # References
-
-<div id="refs" class="references csl-bib-body hanging-indent"
-custom-style="Bibliography">
-
-<div id="ref-R-base" class="csl-entry">
-
-R Core Team. 2021. *R: A Language and Environment for Statistical
-Computing*. Vienna, Austria: R Foundation for Statistical Computing.
-<https://www.R-project.org/>.
-
-</div>
-
-</div>
