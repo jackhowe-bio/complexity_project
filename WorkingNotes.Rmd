@@ -91,7 +91,7 @@ OptimisingPlot #from OptimisingModels.Rdata
 ### **Model 1**: Fission vs Cell Number
 
 
-```{r Model1Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model1Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
 Model1 <- readRDS('RScripts/model_outputs/Model1.RDS')
 
 Model1Sol_mcmc<- mcmc.list(lapply(Model1, function(m) m$Sol))
@@ -132,7 +132,7 @@ Fissiparous organisms appear to be larger (makes sense, trees, fungi, algae, etc
 
 *priors* p1=list(R = list(V = 1, nu=0.002))
 
-```{r Model2Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 2: Cell Types vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model2Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 2: Cell Types vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
 Model2 <- readRDS('RScripts/model_outputs/Model2.RDS')
 
 Model2Sol_mcmc<- mcmc.list(lapply(Model2, function(m) m$Sol))
@@ -173,7 +173,7 @@ HCI overlaps with zero, so doesn't seem likely.
 
 Should we subset to only those organisms that have sterile cells for the germline models?
 
-```{r Model3Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 3: Cell number vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model3Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 3: Cell number vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
 Model3 <- readRDS('RScripts/model_outputs/Model3.RDS')
 
 Model3Sol_mcmc<- mcmc.list(lapply(Model3, function(m) m$Sol))
@@ -211,7 +211,7 @@ HCI just about overlaps with 0, so maayyyybe, but not clear.
 ### **Model 4**: Germline vs Cell Types
 
 
-```{r Model4Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 4: Cell Types vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model4Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 4: Cell Types vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
 Model4 <- readRDS('RScripts/model_outputs/Model4.RDS')
 
 Model4Sol_mcmc<- mcmc.list(lapply(Model4, function(m) m$Sol))
@@ -253,7 +253,7 @@ Models below here use inverse covariance matrix describing the relationships amo
 ### **Model 5**: Fission vs Cell Number
         
         
-```{r Model5Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 5: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model5Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 5: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
 Model5 <- readRDS('RScripts/model_outputs/Model5.RDS')
 Model5Sol_mcmc<- mcmc.list(lapply(Model5, function(m) m$Sol))
 Model5Sol_gg<- ggmcmc::ggs(Model5Sol_mcmc)
@@ -295,7 +295,7 @@ p2=list(R = list(V = 1, nu=0.002),
 ### **Model 6**: Fission vs Cell Types
 
 
-```{r Model6Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 6: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model6Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 6: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
 Model6 <- readRDS('RScripts/model_outputs/Model6.RDS')
 Model6Sol_mcmc<- mcmc.list(lapply(Model6, function(m) m$Sol))
 Model6Sol_gg<- ggmcmc::ggs(Model6Sol_mcmc)
@@ -338,7 +338,7 @@ p2=list(R = list(V = 1, nu=0.002),
 
 ### **Model 7**: Germline vs Cell Number
 
-```{r Model7Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 7: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model7Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 7: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences  between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
 Model7 <- readRDS('RScripts/model_outputs/Model7.RDS')
 Model7Sol_mcmc<- mcmc.list(lapply(Model7, function(m) m$Sol))
 Model7Sol_gg<- ggmcmc::ggs(Model7Sol_mcmc)
@@ -384,7 +384,7 @@ p2=list(R = list(V = 1, nu=0.002),
 ### **Model 8**: Germline vs Cell Types
 
 
-```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with germline ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences, bar represents 90% and 95% credible intervals. "}
+```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
 Model8 <- readRDS('RScripts/model_outputs/Model8.RDS')
 Model8Sol_mcmc<- coda::mcmc.list(lapply(Model8, function(m) m$Sol))
 summary(Model8$chain1)
@@ -433,6 +433,10 @@ Difference %>%
 ## Open Questions
 
 Phylogenetic correlation between germline and fission-- multivariate model? How to test this?
+
+```{r}
+
+```
 
 \newpage
 

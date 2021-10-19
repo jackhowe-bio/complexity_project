@@ -149,7 +149,8 @@ distribution](WorkingNotes_files/figure-gfm/OptimisationFigure-1.png)
 means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
 posterior density regions, respectively. *C* Density plot of estimated
-differences, bar represents 90% and 95% credible
+differences between fissioning and non-fissioning organisms, bar
+represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model1Mean-1.png)
 
 **Do organisms that reproduce by fission have more cells?** Fissiparous
@@ -167,7 +168,8 @@ MCMCglmm course notes)
 means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
 posterior density regions, respectively. *C* Density plot of estimated
-differences, bar represents 90% and 95% credible
+differences between fissioning and non-fissioning organisms, bar
+represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model2Mean-1.png)
 
 **Do organisms that reproduce by fission have more cell types?** HCI
@@ -182,8 +184,9 @@ germline models?
 means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
 posterior density regions, respectively. *C* Density plot of estimated
-differences, bar represents 90% and 95% credible
-intervals.](WorkingNotes_files/figure-gfm/Model3Mean-1.png)
+differences between early germline segregators and organisms that
+segregate germlines continuously as adults, bar represents 90% and 95%
+credible intervals.](WorkingNotes_files/figure-gfm/Model3Mean-1.png)
 
 **Do organisms with early segregating germline have more cells?** HCI
 just about overlaps with 0, so maayyyybe, but not clear.
@@ -196,8 +199,9 @@ just about overlaps with 0, so maayyyybe, but not clear.
 means, *B* Estimates for means from posterior distribution, dots
 represent median, thick and thin lines indicate 90% and 95% of highest
 posterior density regions, respectively. *C* Density plot of estimated
-differences, bar represents 90% and 95% credible
-intervals.](WorkingNotes_files/figure-gfm/Model4Mean-1.png)
+differences between early germline segregators and organisms that
+segregate germlines continuously as adults, bar represents 90% and 95%
+credible intervals.](WorkingNotes_files/figure-gfm/Model4Mean-1.png)
 
 **Do organisms that segregate germline early have more cell types?**
 Again, just about overlaps with 0, so not clear.
@@ -211,11 +215,12 @@ relationships among species to control for phylogeny.
 
 ### **Model 5**: Fission vs Cell Number
 
-![**Model 5: Cell Number vs Fission with germline ** *A* Traceplots for
+![**Model 5: Cell Number vs Fission with phylogeny ** *A* Traceplots for
 the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
 and 95% of highest posterior density regions, respectively. *C* Density
-plot of estimated differences, bar represents 90% and 95% credible
+plot of estimated differences between fissioning and non-fissioning
+organisms, bar represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model5Mean-1.png)
 
 Again, just about overlaps with 0, so not clear.
@@ -224,11 +229,12 @@ p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 6**: Fission vs Cell Types
 
-![**Model 6: Cell Number vs Fission with germline ** *A* Traceplots for
+![**Model 6: Cell Number vs Fission with phylogeny ** *A* Traceplots for
 the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
 and 95% of highest posterior density regions, respectively. *C* Density
-plot of estimated differences, bar represents 90% and 95% credible
+plot of estimated differences between fissioning and non-fissioning
+organisms, bar represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model6Mean-1.png)
 
 Overlaps with 0, no difference
@@ -237,11 +243,13 @@ p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 7**: Germline vs Cell Number
 
-![**Model 7: Cell Number vs Fission with germline ** *A* Traceplots for
+![**Model 7: Cell Number vs Fission with phylogeny ** *A* Traceplots for
 the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
 and 95% of highest posterior density regions, respectively. *C* Density
-plot of estimated differences, bar represents 90% and 95% credible
+plot of estimated differences between early germline segregators and
+organisms that segregate germlines continuously as adults, bar
+represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model7Mean-1.png)
 
 Things with a germline might be smaller: the 95% CI is *just* below 0
@@ -251,17 +259,54 @@ p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 8**: Germline vs Cell Types
 
-![**Model 8: Cell Number vs Fission with germline ** *A* Traceplots for
+    ## 
+    ##  Iterations = 1000001:7999901
+    ##  Thinning interval  = 100
+    ##  Sample size  = 70000 
+    ## 
+    ##  DIC: 226.7579 
+    ## 
+    ##  G-structure:  ~species
+    ## 
+    ##         post.mean l-95% CI u-95% CI eff.samp
+    ## species    0.7402   0.2043    1.418    34743
+    ## 
+    ##  R-structure:  ~units
+    ## 
+    ##       post.mean  l-95% CI u-95% CI eff.samp
+    ## units    0.0123 0.0001529  0.04578    50977
+    ## 
+    ##  Location effects: cell_types ~ germline_timing_simple - 1 + scale(log(cell_number)) 
+    ## 
+    ##                                   post.mean l-95% CI u-95% CI eff.samp    pMCMC
+    ## germline_timing_simpleadult          1.1211   0.2479   2.0623    55252  0.02006
+    ## germline_timing_simpleearly          1.7797   0.7297   2.8027    50297  0.00271
+    ## germline_timing_simpleno_germline    0.7392  -0.3472   1.7870    30346  0.16497
+    ## scale(log(cell_number))              0.5993   0.3087   0.8953    35619 8.57e-05
+    ##                                      
+    ## germline_timing_simpleadult       *  
+    ## germline_timing_simpleearly       ** 
+    ## germline_timing_simpleno_germline    
+    ## scale(log(cell_number))           ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![**Model 8: Cell Number vs Fission with phylogeny ** *A* Traceplots for
 the estimated means, *B* Estimates for means from posterior
 distribution, dots represent median, thick and thin lines indicate 90%
 and 95% of highest posterior density regions, respectively. *C* Density
-plot of estimated differences, bar represents 90% and 95% credible
+plot of estimated differences between early germline segregators and
+organisms that segregate germlines continuously as adults, bar
+represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model8Mean-1.png)
 
 Seems like they may be smaller, but that they have more cell types per
 cell– HCI is just above 0 (0.0379847).
 
 p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
+
+Is pMCMC just the number of simulated cases where difference is \<0? In
+which case:
 
 ## Open Questions
 
