@@ -435,6 +435,28 @@ Difference %>%
 Phylogenetic correlation between germline and fission-- multivariate model? How to test this?
 
 ```{r}
+ModelMulti <- readRDS('RScripts/model_outputs/Model8.RDS')
+#Univariate regression is covariance between response and predictor/variance in predictor
+ModelMulti_VCV<- mcmc.list(lapply(ModelMulti, function(m) m$VCV))
+plot(ModelMulti_VCV) 
+gelman.diag(ModelMulti_VCV,multivariate = FALSE)
+
+ModelMulti_VCV_gg<- ggmcmc::ggs(ModelMulti_VCV)
+
+# for between species use the parameters ending in species 
+Covariance<- ModelMulti_VCV_gg %>%
+  filter(Parameter == 'traitFissionBinary.1:traitEarlyGermlineBinary.1.species') %>% 
+  rename(Covariance = value) %>% select(-Parameter)
+
+VariancePredictor<- ModelMulti_VCV_gg %>%
+  filter(Parameter == 'traitFissionBinary.1:traitFissionBinary.1.species') %>%
+  rename(PredictorVariance = value) %>% select(-Parameter)
+
+Regression<- merge(Covariance, VariancePredictor) %>%
+  mutate(value = Covariance / PredictorVariance)
+glimpse(Regression)
+ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+
 
 ```
 
