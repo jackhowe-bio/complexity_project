@@ -19,16 +19,22 @@ thinning <- readRDS('RScripts/thinning.RDS')
 n_chains <- readRDS('RScripts/n_chains.RDS')
 ################################
 
+# both responses need to be 0s or 1s for the model to work
+df_binary<- df %>%
+  mutate(FissionBinary= ifelse(df$FissionOrBuddingObserved_Species == 1, 1, 0), EarlyGermlineBinary= ifelse(df$germline_timing_simple == 'early', 1, 0)) 
+
+
 
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
-p2=list(R = list(V = 1, nu=0.002), 
-        G = list(G1=list(V=1, nu=0.002)))#prior for random variances - there is G1 because only 1 random effect. If there were 2 it would be G = list(G1=list(V=1, nu=0.002),G2=list(V=1, nu=0.002))
+pM2.1 =list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
+            R = list(V = diag(2),nu=1, fix=1), #Residual variance not identifiable for binary variables
+            G = list(G1=list(V = diag(2), nu = 1, alpha.mu = c(0,0), alpha.V = diag(c(1000,1000)))))#parameter expanded priors, usually good for binary data
 
-MCMCglmm(
-  fixed = cbind(germline_timing_simple, FissionOrBuddingObserved_Species) ~ cell_number, #-1 here removes the intercept equivalent to 0 in brms
-         random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
-         family =c("gaussian", "gaussian"),data = df,prior=p2, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T)
-
+#Here both responses need to 0 and 1s or yes and nos
+M2.1<- MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ cell_number-1,
+                random = ~us(cell_number):species, #2x2 phylogenetic covariance matrix
+                rcov = ~us(cell_number):units, #2x2 residual covariance matrix
+                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=600000, burnin=10000, thin=100,verbose = T)
 
 Model8_parallel <- mclapply(1:2, function(i){
   MCMCglmm(cbind(germline_timing_simple, FissionOrBuddingObserved_Species), #-1 here removes the intercept equivalent to 0 in brms
