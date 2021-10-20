@@ -59,4 +59,4 @@ glimpse(Regression)
 ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
 
 
-
+saveRDS(M2.1, 'RScripts/model_outputs/ModelMulti.RDS')
