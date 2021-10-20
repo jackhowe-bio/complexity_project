@@ -31,25 +31,21 @@ pM2.1 =list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
             G = list(G1=list(V = diag(2), nu = 1, alpha.mu = c(0,0), alpha.V = diag(c(1000,1000)))))#parameter expanded priors, usually good for binary data
 
 #Here both responses need to 0 and 1s or yes and nos
-M2.1<- MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ cell_number-1,
-                random = ~us(cell_number):species, #2x2 phylogenetic covariance matrix
-                rcov = ~us(cell_number):units, #2x2 residual covariance matrix
+M2.1<- mclapply(1:6, function(i){
+  MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
+                random = ~us(trait):species, #2x2 phylogenetic covariance matrix
+                rcov = ~us(trait):units, #2x2 residual covariance matrix
                 ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=600000, burnin=10000, thin=100,verbose = T)
-
-Model8_parallel <- mclapply(1:2, function(i){
-  MCMCglmm(cbind(germline_timing_simple, FissionOrBuddingObserved_Species), #-1 here removes the intercept equivalent to 0 in brms
-           random = ~species, ginverse=list(species=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
-           family ="poisson",data = df,prior=p2, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T)
 }, mc.cores = 4)
-names(Model8_parallel)<- c('chain1','chain2','chain3','chain4', 'chain 5','chain 8')
 
+M2.1_Sol<- mcmc.list(lapply(M2.1, function(m) m$Sol))
+plot(M2.1_Sol) 
+gelman.diag(M2.1_Sol,multivariate = FALSE)
 
-Model8_Sol<- mcmc.list(lapply(Model8_parallel, function(m) m$Sol))
-#plot(Model8_Sol) 
-gelman.diag(Model8_Sol,multivariate = FALSE)
+M2.1_VCV<- mcmc.list(lapply(M2.1_parallel, function(m) m$VCV))
+plot(M2.1_VCV) 
+gelman.diag(M2.1_VCV,multivariate = FALSE)
 
-Model8_VCV<- mcmc.list(lapply(Model8_parallel, function(m) m$VCV))
-#plot(Model8_VCV) 
-gelman.diag(Model8_VCV,multivariate = FALSE)
-chain1<- Model8_parallel$chain1
-summary(Model8_parallel$chain1)
+M1_Sol_gg<- ggmcmc::ggs(M2.1_Sol)
+ggmcmc::ggmcmc(M2.1_Sol_gg, file = 'MCMCglmmDiagnostics/Model1.pdf')
+
