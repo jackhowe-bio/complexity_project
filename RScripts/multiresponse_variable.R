@@ -24,7 +24,6 @@ df_binary<- df %>%
   mutate(FissionBinary= ifelse(df$FissionOrBuddingObserved_Species == 1, 1, 0), EarlyGermlineBinary= ifelse(df$germline_timing_simple == 'early', 1, 0)) 
 
 
-
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
 pM2.1 =list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
             R = list(V = diag(2),nu=1, fix=1), #Residual variance not identifiable for binary variables
@@ -38,14 +37,26 @@ M2.1<- mclapply(1:n_chains, function(i){
                 ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
 }, mc.cores = 4)
 
-M2.1_Sol<- mcmc.list(lapply(M2.1, function(m) m$Sol))
-plot(M2.1_Sol) 
-gelman.diag(M2.1_Sol,multivariate = FALSE)
-
+#Univariate regression is covariance between response and predictor/variance in predictor
 M2.1_VCV<- mcmc.list(lapply(M2.1_parallel, function(m) m$VCV))
 plot(M2.1_VCV) 
 gelman.diag(M2.1_VCV,multivariate = FALSE)
 
-M1_Sol_gg<- ggmcmc::ggs(M2.1_Sol)
-ggmcmc::ggmcmc(M2.1_Sol_gg, file = 'MCMCglmmDiagnostics/Model1.pdf')
+M2.1_VCV_gg<- ggmcmc::ggs(M2.1_VCV)
+
+# for between species use the parameters ending in species 
+Covariance<- M2.1_VCV_gg %>%
+  filter(Parameter == 'traitFissionBinary.1:traitEarlyGermlineBinary.1.species') %>% 
+  rename(Covariance = value) %>% select(-Parameter)
+
+VariancePredictor<- M2.1_VCV_gg %>%
+  filter(Parameter == 'traitFissionBinary.1:traitFissionBinary.1.species') %>%
+  rename(PredictorVariance = value) %>% select(-Parameter)
+
+Regression<- merge(Covariance, VariancePredictor) %>%
+  mutate(value = Covariance / PredictorVariance)
+glimpse(Regression)
+ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+
+
 
