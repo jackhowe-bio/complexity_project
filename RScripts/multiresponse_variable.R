@@ -31,11 +31,11 @@ pM2.1 =list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
             G = list(G1=list(V = diag(2), nu = 1, alpha.mu = c(0,0), alpha.V = diag(c(1000,1000)))))#parameter expanded priors, usually good for binary data
 
 #Here both responses need to 0 and 1s or yes and nos
-M2.1<- mclapply(1:6, function(i){
+M2.1<- mclapply(1:n_chains, function(i){
   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
                 random = ~us(trait):species, #2x2 phylogenetic covariance matrix
                 rcov = ~us(trait):units, #2x2 residual covariance matrix
-                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=600000, burnin=10000, thin=100,verbose = T)
+                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
 }, mc.cores = 4)
 
 M2.1_Sol<- mcmc.list(lapply(M2.1, function(m) m$Sol))
