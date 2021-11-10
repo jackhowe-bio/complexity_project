@@ -18,7 +18,7 @@ bibliography: "r-references.bib"
 ---
 
 ```{r RmdSetup, include = F}
-knitr::opts_chunk$set(include = F)
+knitr::opts_chunk$set(include = F, error = T)
 library(ggmcmc)
 library(ggpubr)
 library(tidyverse)
@@ -96,10 +96,9 @@ OptimisingPlot #from OptimisingModels.Rdata
 
 ### **Model 1**: Fission vs Cell Number
 
-
 ```{r Model1Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 1: Cell Numbers vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
 if(rerun_models == T){
-  load('RScripts/Model1.R')
+  source('RScripts/Model1.R', echo = F)
 }
   
 Model1 <- readRDS('RScripts/model_outputs/Model1.RDS')
@@ -133,6 +132,20 @@ Model1MeanPlot
 
 ```
 
+```{r Model1pMCMC, include = T, echo = F}
+source('RScripts/pMCMCfunctions.R')
+model<- Model1[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
+
 
 
 **Do organisms that reproduce by fission have more cells?**
@@ -145,6 +158,11 @@ Fissiparous organisms appear to be larger (makes sense, trees, fungi, algae, etc
 *priors* p1=list(R = list(V = 1, nu=0.002))
 
 ```{r Model2Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 2: Cell Types vs Fission** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
+if(rerun_models == T){
+  source('RScripts/Model2.R', echo = F)
+}
+
+
 Model2 <- readRDS('RScripts/model_outputs/Model2.RDS')
 
 Model2Sol_mcmc<- mcmc.list(lapply(Model2, function(m) m$Sol))
@@ -177,15 +195,35 @@ Model2MeanPlot
 
 ```
 
+```{r Model2pMCMC, include = T, echo = F}
+model<- Model2[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
 
 **Do organisms that reproduce by fission have more cell types?**
 HCI overlaps with zero, so doesn't seem likely.
+
+
 
 ### **Model 3**: Germline vs Cell Numbers
 
 Should we subset to only those organisms that have sterile cells for the germline models?
 
 ```{r Model3Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 3: Cell number vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
+if(rerun_models == T){
+  source('RScripts/Model3.R', echo = F)
+}
+
+
+  
 Model3 <- readRDS('RScripts/model_outputs/Model3.RDS')
 
 Model3Sol_mcmc<- mcmc.list(lapply(Model3, function(m) m$Sol))
@@ -213,7 +251,18 @@ DifPlotM<- ggplot(Difference, aes(colour = as.factor(Chain), x = Difference)) + 
 Model3MeanPlot<- ggarrange(Model3Sol_traceplot, Model3Sol_caterpillar, DifPlotM, labels = "AUTO")
 Model3MeanPlot
 ```
+```{r Model3pMCMC, include = T, echo = F}
+model<- Model3[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
 
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
 **Do organisms with early segregating germline have more cells?**
 HCI just about overlaps with 0, so maayyyybe, but not clear. 
 
@@ -224,6 +273,10 @@ HCI just about overlaps with 0, so maayyyybe, but not clear.
 
 
 ```{r Model4Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 4: Cell Types vs Germline** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
+if(rerun_models == T){
+  source('RScripts/Model4.R', echo = F)
+}
+
 Model4 <- readRDS('RScripts/model_outputs/Model4.RDS')
 
 Model4Sol_mcmc<- mcmc.list(lapply(Model4, function(m) m$Sol))
@@ -251,7 +304,18 @@ DifPlotM<- ggplot(Difference, aes(colour = as.factor(Chain), x = Difference)) + 
 Model4MeanPlot<- ggarrange(Model4Sol_traceplot, Model4Sol_caterpillar, DifPlotM, labels = "AUTO")
 Model4MeanPlot
 ```
+```{r Model4pMCMC, include = T, echo = F}
+model<- Model4[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
 
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
 **Do organisms that segregate germline early have more cell types?**
 Again, just about overlaps with 0, so not clear. 
 
@@ -266,6 +330,12 @@ Models below here use inverse covariance matrix describing the relationships amo
         
         
 ```{r Model5Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 5: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
+if(rerun_models == T){
+  source('RScripts/Model5.R', echo = F)
+}
+
+
+
 Model5 <- readRDS('RScripts/model_outputs/Model5.RDS')
 Model5Sol_mcmc<- mcmc.list(lapply(Model5, function(m) m$Sol))
 Model5Sol_gg<- ggmcmc::ggs(Model5Sol_mcmc)
@@ -301,34 +371,16 @@ Model5MeanPlot
 
 Again, just about overlaps with 0, so not clear. 
 ```{r Model5pMCMC, include = T, echo = F}
-source('RScripts/pMCMCglmmScript.R')
-M5<- Model5[[1]]
-fixed_del_phy<- colnames(M5$Sol)[grep('species.', colnames(M5$Sol))]
+model<- Model5[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
 
 #Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
-SItablesXL<-MCMCglmmProc(model=M5,link="poisson",start_row=1,create_sheet="yes",sheet="Table S1",title="Table S1: Jack project", 
-                         fixed_names=c("FissionOrBuddingObserved_Species0", "FissionOrBuddingObserved_Species1","FissionOrBuddingObserved_Species?", "FissionOrBuddingObserved_Species"),
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
                          fixed_diffinc = c("all"),
-                         Include_random = "yes",
-                         pvalues = "include",
-#                         randomvar_names=c("species","units"),
-                         fixed_del=c(fixed_del_phy),
-                         variances=NULL,padding=3)
-#The output is in excel format and can be written to excel using the openxlsx package
-
- #Can also be converted to Rmd friendly format
- #function for extracting df from xl workbook
- xl_2_df = function(xltab,sheet=NULL){
-   df<-readWorkbook(xltab,sheet=sheet)
- colnames(df)<-df[1,]
- df<-df %>% filter(pMCMC != "" & row_number() != 1)
- rownames(df)<-NULL
- return(df)
- }
-
- df<- readWorkbook(SItablesXL, sheet = "Table S1")
-
- knitr::kable(md_table(df))
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
 ```
 
 p2=list(R = list(V = 1, nu=0.002), 
@@ -338,6 +390,12 @@ p2=list(R = list(V = 1, nu=0.002),
 
 
 ```{r Model6Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 6: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between fissioning and non-fissioning organisms, bar represents 90% and 95% credible intervals. "}
+
+if(rerun_models == T){
+  source('RScripts/Model6.R', echo = F)
+}
+
+
 Model6 <- readRDS('RScripts/model_outputs/Model6.RDS')
 Model6Sol_mcmc<- mcmc.list(lapply(Model6, function(m) m$Sol))
 Model6Sol_gg<- ggmcmc::ggs(Model6Sol_mcmc)
@@ -378,9 +436,29 @@ Overlaps with 0, no difference
 p2=list(R = list(V = 1, nu=0.002), 
         G = list(G1=list(V=1, nu=0.002)))
 
+```{r Model6pMCMC, include = T, echo = F}
+model<- Model6[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
+
+
 ### **Model 7**: Germline vs Cell Number
 
 ```{r Model7Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 7: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences  between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
+
+if(rerun_models == T){
+  source('RScripts/Model7.R', echo = F)
+}
+
+
 Model7 <- readRDS('RScripts/model_outputs/Model7.RDS')
 Model7Sol_mcmc<- mcmc.list(lapply(Model7, function(m) m$Sol))
 Model7Sol_gg<- ggmcmc::ggs(Model7Sol_mcmc)
@@ -418,15 +496,36 @@ Model7MeanPlot<- ggarrange(Model7Sol_traceplot, Model7Sol_caterpillar, DifPlotM,
 Model7MeanPlot
 ```
 
+```{r Model7pMCMC, include = T, echo = F}
+model<- Model7[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
+```
+
 Things with a germline might be smaller: the 95% CI is *just* below 0 (-0.34)
 
 p2=list(R = list(V = 1, nu=0.002), 
         G = list(G1=list(V=1, nu=0.002)))
 
+
+
 ### **Model 8**: Germline vs Cell Types
 
 
 ```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
+
+if(rerun_models == T){
+  source('RScripts/Model8.R', echo = F)
+}
+
+
 Model8 <- readRDS('RScripts/model_outputs/Model8.RDS')
 Model8Sol_mcmc<- coda::mcmc.list(lapply(Model8, function(m) m$Sol))
 summary(Model8$chain1)
@@ -469,6 +568,20 @@ Is pMCMC just the number of simulated cases where difference is <0? In which cas
 ```{r}
 Difference %>%
   summarise(over_0 = sum(Difference > 0), under_0 = sum(Difference <=0), proportion = under_0/(over_0 + under_0))
+
+```
+
+```{r Model8pMCMC, include = T, echo = F}
+model<- Model8[[1]]
+fixed_names_list<- colnames(model$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+FixedEffectsTables<-GenerateFixedEffectsTable(model=model,link="poisson",
+                         fixed_names=fixed_names_list,
+                         fixed_diffinc = c("all"),
+                         pvalues = "include")
+knitr::kable(FixedEffectsTables[1], caption = "Table S1.1: Estimates of Fixed Effects")
+knitr::kable(FixedEffectsTables[2], caption = "Table S1.2: Comparison Between Fixed Effects")
 
 ```
 
