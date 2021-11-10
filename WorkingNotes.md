@@ -225,6 +225,53 @@ intervals.](WorkingNotes_files/figure-gfm/Model5Mean-1.png)
 
 Again, just about overlaps with 0, so not clear.
 
+``` r
+source('RScripts/pMCMCglmmScript.R')
+M5<- Model5[[1]]
+fixed_del_phy<- colnames(M5$Sol)[grep('species.', colnames(M5$Sol))]
+
+#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
+SItablesXL<-MCMCglmmProc(model=M5,link="poisson",start_row=1,create_sheet="yes",sheet="Table S1",title="Table S1: Jack project", 
+                         fixed_names=c("FissionOrBuddingObserved_Species0", "FissionOrBuddingObserved_Species1","FissionOrBuddingObserved_Species?", "FissionOrBuddingObserved_Species"),
+                         fixed_diffinc = c("all"),
+                         Include_random = "yes",
+                         pvalues = "include",
+#                         randomvar_names=c("species","units"),
+                         fixed_del=c(fixed_del_phy),
+                         variances=NULL,padding=3)
+#The output is in excel format and can be written to excel using the openxlsx package
+
+ #Can also be converted to Rmd friendly format
+ #function for extracting df from xl workbook
+ xl_2_df = function(xltab,sheet=NULL){
+   df<-readWorkbook(xltab,sheet=sheet)
+ colnames(df)<-df[1,]
+ df<-df %>% filter(pMCMC != "" & row_number() != 1)
+ rownames(df)<-NULL
+ return(df)
+ }
+
+ df<- readWorkbook(SItablesXL, sheet = "Table S1")
+
+ md_table(df)
+```
+
+    ## |Table.S1:.Jack.project                                                 |                       |                   |
+    ## |:----------------------------------------------------------------------|:----------------------|:------------------|
+    ## |FissionOrBuddingObserved_Species0                                      |8.92 (0.38, 18.32)     |0.044              |
+    ## |FissionOrBuddingObserved_Species1                                      |9.99 (1.73, 19.62)     |0.02               |
+    ## |FissionOrBuddingObserved_Species?                                      |8.44 (-0.63, 18.63)    |0.061              |
+    ## |FissionOrBuddingObserved_Species                                       |9.85 (0.69, 19.19)     |0.04               |
+    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 |-1.54 (-3.98, 1)       |0.223              |
+    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? |0.01 (-3.76, 3.86)     |0.999              |
+    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  |-0.43 (-3.63, 2.63)    |0.751              |
+    ## |FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? |1.37 (-3.1, 5.96)      |0.5                |
+    ## |FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  |0.92 (-1.81, 3.88)     |0.465              |
+    ## |FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  |-0.35 (-5.28, 4.55)    |0.839              |
+    ## |Random Effects                                                         |Posterior Mode (CI)    |I2 % (CI)          |
+    ## |species                                                                |100.71 (65.75, 148.63) |99.74 (98.76, 100) |
+    ## |units                                                                  |0.01 (0, 1.09)         |0.26 (0, 1.24)     |
+
 p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 ### **Model 6**: Fission vs Cell Types
