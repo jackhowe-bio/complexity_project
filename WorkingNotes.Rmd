@@ -519,7 +519,7 @@ p2=list(R = list(V = 1, nu=0.002),
 ### **Model 8**: Germline vs Cell Types
 
 
-```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals. "}
+```{r Model8Mean, include = T, fig.height = 8, echo = F, fig.cap = "**Model 8: Cell Number vs Fission with phylogeny ** *A* Traceplots for the estimated means, *B* Estimates for means from posterior distribution, dots represent median, thick and thin lines indicate 90% and 95% of highest posterior density regions, respectively. *C* Density plot of estimated differences between early germline segregators and organisms that segregate germlines continuously as adults, bar represents 90% and 95% credible intervals"}
 
 if(rerun_models == T){
   source('RScripts/Model8.R', echo = F)

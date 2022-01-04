@@ -153,6 +153,26 @@ differences between fissioning and non-fissioning organisms, bar
 represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model1Mean-1.png)
 
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 | 7.02 (5.18, 9.03)   | 0.000 |
+| FissionOrBuddingObserved_Species1 | 13.01 (9.59, 15.58) | 0.000 |
+| FissionOrBuddingObserved_Species? | 8.84 (-3.36, 21.12) | 0.140 |
+| FissionOrBuddingObserved_Species  | 6.91 (1.23, 12.28)  | 0.018 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                              | Posterior Mode (CI)   | pMCMC |
+|:-----------------------------------------------------------------------|:----------------------|------:|
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 | -5.62 (-8.97, -1.83)  | 0.003 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? | -1.31 (-14.33, 10.47) | 0.738 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  | 1.37 (-5.6, 6.12)     | 0.894 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? | 4.44 (-9.21, 15.99)   | 0.592 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  | 5.96 (-0.48, 12.05)   | 0.067 |
+| FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  | 2.84 (-11.23, 15.83)  | 0.718 |
+
+Table S1.2: Comparison Between Fixed Effects
+
 **Do organisms that reproduce by fission have more cells?** Fissiparous
 organisms appear to be larger (makes sense, trees, fungi, algae, etc)
 
@@ -172,6 +192,31 @@ differences between fissioning and non-fissioning organisms, bar
 represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model2Mean-1.png)
 
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 | 1.86 (1.65, 2.05)   | 0.000 |
+| FissionOrBuddingObserved_Species1 | 1.98 (1.7, 2.21)    | 0.000 |
+| FissionOrBuddingObserved_Species? | 2.51 (1.49, 3.44)   | 0.000 |
+| FissionOrBuddingObserved_Species  | 1.5 (0.73, 2.4)     | 0.001 |
+| scale(log(cell_number))           | 0.8 (0.65, 0.97)    | 0.000 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                              | Posterior Mode (CI) | pMCMC |
+|:-----------------------------------------------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 | -0.09 (-0.42, 0.22) | 0.532 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? | -0.73 (-1.59, 0.41) | 0.236 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  | 0.32 (-0.58, 1.15)  | 0.517 |
+| FissionOrBuddingObserved_Species0 vs scale(log(cell_number))           | 1.09 (0.79, 1.32)   | 0.000 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? | -0.58 (-1.5, 0.5)   | 0.331 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  | 0.33 (-0.5, 1.26)   | 0.390 |
+| FissionOrBuddingObserved_Species1 vs scale(log(cell_number))           | 1.21 (0.82, 1.47)   | 0.000 |
+| FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  | 0.86 (-0.41, 2.17)  | 0.178 |
+| FissionOrBuddingObserved_Species? vs scale(log(cell_number))           | 1.7 (0.64, 2.66)    | 0.001 |
+| FissionOrBuddingObserved_Species vs scale(log(cell_number))            | 0.72 (-0.07, 1.6)   | 0.077 |
+
+Table S1.2: Comparison Between Fixed Effects
+
 **Do organisms that reproduce by fission have more cell types?** HCI
 overlaps with zero, so doesn’t seem likely.
 
@@ -188,6 +233,26 @@ differences between early germline segregators and organisms that
 segregate germlines continuously as adults, bar represents 90% and 95%
 credible intervals.](WorkingNotes_files/figure-gfm/Model3Mean-1.png)
 
+| Fixed Effects                     | Posterior Mode (CI)  | pMCMC |
+|:----------------------------------|:---------------------|------:|
+| germline_timing_simple3           | 5.38 (-7.18, 20.88)  | 0.334 |
+| germline_timing_simpleadult       | 16.71 (15.4, 18.17)  | 0.000 |
+| germline_timing_simpleearly       | 14.73 (11.67, 17.34) | 0.000 |
+| germline_timing_simpleno_germline | 3.15 (0.26, 6.11)    | 0.033 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                        | Posterior Mode (CI)  | pMCMC |
+|:-----------------------------------------------------------------|:---------------------|------:|
+| germline_timing_simple3 vs germline_timing_simpleadult           | -9.61 (-24.21, 4.01) | 0.170 |
+| germline_timing_simple3 vs germline_timing_simpleearly           | -6.61 (-21.82, 6.75) | 0.295 |
+| germline_timing_simple3 vs germline_timing_simpleno_germline     | 3.99 (-10.69, 17.92) | 0.610 |
+| germline_timing_simpleadult vs germline_timing_simpleearly       | 2.22 (-0.91, 5.39)   | 0.166 |
+| germline_timing_simpleadult vs germline_timing_simpleno_germline | 13.74 (10.31, 16.76) | 0.000 |
+| germline_timing_simpleearly vs germline_timing_simpleno_germline | 11.33 (7.33, 15.48)  | 0.000 |
+
+Table S1.2: Comparison Between Fixed Effects
+
 **Do organisms with early segregating germline have more cells?** HCI
 just about overlaps with 0, so maayyyybe, but not clear.
 
@@ -202,6 +267,26 @@ posterior density regions, respectively. *C* Density plot of estimated
 differences between early germline segregators and organisms that
 segregate germlines continuously as adults, bar represents 90% and 95%
 credible intervals.](WorkingNotes_files/figure-gfm/Model4Mean-1.png)
+
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| germline_timing_simpleadult       | 1 (0.68, 1.3)       | 0.000 |
+| germline_timing_simpleearly       | 1.53 (0.87, 2.13)   | 0.000 |
+| germline_timing_simpleno_germline | 0.59 (0.12, 1.11)   | 0.019 |
+| scale(log(cell_number))           | 0.73 (0.52, 0.98)   | 0.000 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                        | Posterior Mode (CI) | pMCMC |
+|:-----------------------------------------------------------------|:--------------------|------:|
+| germline_timing_simpleadult vs germline_timing_simpleearly       | -0.58 (-1.23, 0.16) | 0.136 |
+| germline_timing_simpleadult vs germline_timing_simpleno_germline | 0.38 (-0.28, 1.02)  | 0.278 |
+| germline_timing_simpleadult vs scale(log(cell_number))           | 0.23 (-0.27, 0.72)  | 0.354 |
+| germline_timing_simpleearly vs germline_timing_simpleno_germline | 0.85 (0.1, 1.69)    | 0.031 |
+| germline_timing_simpleearly vs scale(log(cell_number))           | 0.85 (0.08, 1.42)   | 0.032 |
+| germline_timing_simpleno_germline vs scale(log(cell_number))     | -0.09 (-0.59, 0.33) | 0.603 |
+
+Table S1.2: Comparison Between Fixed Effects
 
 **Do organisms that segregate germline early have more cell types?**
 Again, just about overlaps with 0, so not clear.
@@ -225,52 +310,25 @@ intervals.](WorkingNotes_files/figure-gfm/Model5Mean-1.png)
 
 Again, just about overlaps with 0, so not clear.
 
-``` r
-source('RScripts/pMCMCglmmScript.R')
-M5<- Model5[[1]]
-fixed_del_phy<- colnames(M5$Sol)[grep('species.', colnames(M5$Sol))]
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 | 8.92 (0.38, 18.32)  | 0.044 |
+| FissionOrBuddingObserved_Species1 | 9.99 (1.73, 19.62)  | 0.020 |
+| FissionOrBuddingObserved_Species? | 8.44 (-0.63, 18.63) | 0.061 |
+| FissionOrBuddingObserved_Species  | 9.85 (0.69, 19.19)  | 0.040 |
 
-#Apply function (description of function terms can be found on github: https://github.com/charliecornwallis/Rfunctions/blob/master/MCMCglmmProc.R)
-SItablesXL<-MCMCglmmProc(model=M5,link="poisson",start_row=1,create_sheet="yes",sheet="Table S1",title="Table S1: Jack project", 
-                         fixed_names=c("FissionOrBuddingObserved_Species0", "FissionOrBuddingObserved_Species1","FissionOrBuddingObserved_Species?", "FissionOrBuddingObserved_Species"),
-                         fixed_diffinc = c("all"),
-                         Include_random = "yes",
-                         pvalues = "include",
-#                         randomvar_names=c("species","units"),
-                         fixed_del=c(fixed_del_phy),
-                         variances=NULL,padding=3)
-#The output is in excel format and can be written to excel using the openxlsx package
+Table S1.1: Estimates of Fixed Effects
 
- #Can also be converted to Rmd friendly format
- #function for extracting df from xl workbook
- xl_2_df = function(xltab,sheet=NULL){
-   df<-readWorkbook(xltab,sheet=sheet)
- colnames(df)<-df[1,]
- df<-df %>% filter(pMCMC != "" & row_number() != 1)
- rownames(df)<-NULL
- return(df)
- }
+| Fixed Effects Comparisons                                              | Posterior Mode (CI) | pMCMC |
+|:-----------------------------------------------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 | -1.54 (-3.98, 1)    | 0.223 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? | 0.01 (-3.76, 3.86)  | 0.999 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  | -0.43 (-3.63, 2.63) | 0.751 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? | 1.37 (-3.1, 5.96)   | 0.500 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  | 0.92 (-1.81, 3.88)  | 0.465 |
+| FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  | -0.35 (-5.28, 4.55) | 0.839 |
 
- df<- readWorkbook(SItablesXL, sheet = "Table S1")
-
- md_table(df)
-```
-
-    ## |Table.S1:.Jack.project                                                 |                       |                   |
-    ## |:----------------------------------------------------------------------|:----------------------|:------------------|
-    ## |FissionOrBuddingObserved_Species0                                      |8.92 (0.38, 18.32)     |0.044              |
-    ## |FissionOrBuddingObserved_Species1                                      |9.99 (1.73, 19.62)     |0.02               |
-    ## |FissionOrBuddingObserved_Species?                                      |8.44 (-0.63, 18.63)    |0.061              |
-    ## |FissionOrBuddingObserved_Species                                       |9.85 (0.69, 19.19)     |0.04               |
-    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 |-1.54 (-3.98, 1)       |0.223              |
-    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? |0.01 (-3.76, 3.86)     |0.999              |
-    ## |FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  |-0.43 (-3.63, 2.63)    |0.751              |
-    ## |FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? |1.37 (-3.1, 5.96)      |0.5                |
-    ## |FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  |0.92 (-1.81, 3.88)     |0.465              |
-    ## |FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  |-0.35 (-5.28, 4.55)    |0.839              |
-    ## |Random Effects                                                         |Posterior Mode (CI)    |I2 % (CI)          |
-    ## |species                                                                |100.71 (65.75, 148.63) |99.74 (98.76, 100) |
-    ## |units                                                                  |0.01 (0, 1.09)         |0.26 (0, 1.24)     |
+Table S1.2: Comparison Between Fixed Effects
 
 p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
@@ -288,6 +346,31 @@ Overlaps with 0, no difference
 
 p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 | 1.07 (-0.01, 2.09)  | 0.049 |
+| FissionOrBuddingObserved_Species1 | 1.14 (0.17, 2.26)   | 0.029 |
+| FissionOrBuddingObserved_Species? | 1.05 (-0.42, 2.36)  | 0.164 |
+| FissionOrBuddingObserved_Species  | 0.84 (-0.43, 1.99)  | 0.189 |
+| scale(log(cell_number))           | 0.65 (0.34, 0.93)   | 0.000 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                              | Posterior Mode (CI) | pMCMC |
+|:-----------------------------------------------------------------------|:--------------------|------:|
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species1 | -0.17 (-0.63, 0.37) | 0.599 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species? | 0.05 (-0.85, 1.08)  | 0.815 |
+| FissionOrBuddingObserved_Species0 vs FissionOrBuddingObserved_Species  | 0.33 (-0.5, 1.04)   | 0.493 |
+| FissionOrBuddingObserved_Species0 vs scale(log(cell_number))           | 0.38 (-0.68, 1.54)  | 0.418 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species? | 0.3 (-0.82, 1.29)   | 0.654 |
+| FissionOrBuddingObserved_Species1 vs FissionOrBuddingObserved_Species  | 0.39 (-0.31, 1.1)   | 0.259 |
+| FissionOrBuddingObserved_Species1 vs scale(log(cell_number))           | 0.64 (-0.53, 1.71)  | 0.300 |
+| FissionOrBuddingObserved_Species? vs FissionOrBuddingObserved_Species  | 0.18 (-1.05, 1.35)  | 0.771 |
+| FissionOrBuddingObserved_Species? vs scale(log(cell_number))           | 0.39 (-1.07, 1.79)  | 0.612 |
+| FissionOrBuddingObserved_Species vs scale(log(cell_number))            | 0.1 (-1.13, 1.44)   | 0.781 |
+
+Table S1.2: Comparison Between Fixed Effects
+
 ### **Model 7**: Germline vs Cell Number
 
 ![**Model 7: Cell Number vs Fission with phylogeny ** *A* Traceplots for
@@ -298,6 +381,26 @@ plot of estimated differences between early germline segregators and
 organisms that segregate germlines continuously as adults, bar
 represents 90% and 95% credible
 intervals.](WorkingNotes_files/figure-gfm/Model7Mean-1.png)
+
+| Fixed Effects                     | Posterior Mode (CI)  | pMCMC |
+|:----------------------------------|:---------------------|------:|
+| germline_timing_simple3           | 8.49 (-15.17, 28.24) | 0.545 |
+| germline_timing_simpleadult       | 14.32 (-3.62, 34.17) | 0.106 |
+| germline_timing_simpleearly       | 11.94 (-8.16, 30.07) | 0.226 |
+| germline_timing_simpleno_germline | 12.1 (-6.96, 31.31)  | 0.204 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                        | Posterior Mode (CI)  | pMCMC |
+|:-----------------------------------------------------------------|:---------------------|------:|
+| germline_timing_simple3 vs germline_timing_simpleadult           | -8.7 (-19.97, 2.02)  | 0.113 |
+| germline_timing_simple3 vs germline_timing_simpleearly           | -5.63 (-16.1, 6.14)  | 0.378 |
+| germline_timing_simple3 vs germline_timing_simpleno_germline     | -5.67 (-17.09, 6.06) | 0.343 |
+| germline_timing_simpleadult vs germline_timing_simpleearly       | 3.76 (0.42, 7.48)    | 0.031 |
+| germline_timing_simpleadult vs germline_timing_simpleno_germline | 3.71 (0.01, 6.72)    | 0.048 |
+| germline_timing_simpleearly vs germline_timing_simpleno_germline | -0.22 (-5.43, 4.4)   | 0.823 |
+
+Table S1.2: Comparison Between Fixed Effects
 
 Things with a germline might be smaller: the 95% CI is *just* below 0
 (-0.34)
@@ -354,6 +457,26 @@ p2=list(R = list(V = 1, nu=0.002), G = list(G1=list(V=1, nu=0.002)))
 
 Is pMCMC just the number of simulated cases where difference is \<0? In
 which case:
+
+| Fixed Effects                     | Posterior Mode (CI) | pMCMC |
+|:----------------------------------|:--------------------|------:|
+| germline_timing_simpleadult       | 1.13 (0.25, 2.06)   | 0.020 |
+| germline_timing_simpleearly       | 1.78 (0.73, 2.8)    | 0.003 |
+| germline_timing_simpleno_germline | 0.64 (-0.35, 1.79)  | 0.165 |
+| scale(log(cell_number))           | 0.57 (0.31, 0.9)    | 0.000 |
+
+Table S1.1: Estimates of Fixed Effects
+
+| Fixed Effects Comparisons                                        | Posterior Mode (CI)  | pMCMC |
+|:-----------------------------------------------------------------|:---------------------|------:|
+| germline_timing_simpleadult vs germline_timing_simpleearly       | -0.69 (-1.26, -0.04) | 0.037 |
+| germline_timing_simpleadult vs germline_timing_simpleno_germline | 0.37 (-0.35, 1.1)    | 0.301 |
+| germline_timing_simpleadult vs scale(log(cell_number))           | 0.54 (-0.47, 1.54)   | 0.292 |
+| germline_timing_simpleearly vs germline_timing_simpleno_germline | 1 (0.15, 1.96)       | 0.026 |
+| germline_timing_simpleearly vs scale(log(cell_number))           | 1.22 (0.05, 2.25)    | 0.042 |
+| germline_timing_simpleno_germline vs scale(log(cell_number))     | 0.09 (-0.93, 1.23)   | 0.786 |
+
+Table S1.2: Comparison Between Fixed Effects
 
 ## Open Questions
 

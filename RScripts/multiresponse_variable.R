@@ -11,9 +11,10 @@ library(ggthemes)
 
 #run the data import script
 source('RScripts/DataImportPhylogenyConstruction.R')
+M2.1 <- readRDS('RScripts/model_outputs/ModelMulti.RDS')
 
 #import the MCMCglmm parameters
-iterations<- readRDS('RScripts/iterations.RDS')
+iterations<- 20000000
 burnin<- readRDS('RScripts/burnin.RDS')
 thinning <- readRDS('RScripts/thinning.RDS')
 n_chains <- readRDS('RScripts/n_chains.RDS')
@@ -34,11 +35,11 @@ M2.1<- mclapply(1:n_chains, function(i){
   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
                 random = ~us(trait):species, #2x2 phylogenetic covariance matrix
                 rcov = ~us(trait):units, #2x2 residual covariance matrix
-                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
+                ginverse=list(species=inv_tree),family = c("categorical","categorical"), data = df_binary,prior=pM2.1, nitt=12000000, burnin=burnin, thin=thinning,verbose = T)
 }, mc.cores = 4)
 
 #Univariate regression is covariance between response and predictor/variance in predictor
-M2.1_VCV<- mcmc.list(lapply(M2.1_parallel, function(m) m$VCV))
+M2.1_VCV<- mcmc.list(lapply(M2.1, function(m) m$VCV))
 plot(M2.1_VCV) 
 gelman.diag(M2.1_VCV,multivariate = FALSE)
 
@@ -58,5 +59,7 @@ Regression<- merge(Covariance, VariancePredictor) %>%
 glimpse(Regression)
 ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
 
+# units?
 
 saveRDS(M2.1, 'RScripts/model_outputs/ModelMulti.RDS')
+
