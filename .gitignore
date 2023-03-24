@@ -7,3 +7,4 @@ RScripts/model_outputs/Model*
 .Rapp.history
 RScripts/OptimisingModels.Rdata
 README.html
+HPC_Analyses/RScripts/ModelOutputs/*/*.RDS
