@@ -26,11 +26,6 @@ df_binary<- df %>%
   mutate(FissionBinary= as.factor(ifelse(df$Fission == 1, 1, 0)), EarlyGermlineBinary= as.factor(ifelse(df$GermNumeric == 1, 1, 0)))
 
 
-#Read in the priors
-p1=readRDS('RScripts/R_Objects/priors_1.RDS') #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
-p2=readRDS('RScripts/R_Objects/priors_2.RDS') #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
-p3=readRDS('RScripts/R_Objects/priors_3.RDS') #sets prior for residual variance, the defaults are used as priors for fixed effects (see MCMCglmm course notes)
-
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
 p4=list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
             R = list(V = diag(2),nu=1, fix=1), #Residual variance not identifiable for binary variables
@@ -38,8 +33,7 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
 
 #Here both responses need to 0 and 1s or yes and nos
 
-i = 4
-for(prior_set in list(p4)){
+
 # run MCMCglmm
   Model_Correlation<- mclapply(1:n_chains, function(i){
     MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
@@ -62,13 +56,11 @@ summary(Model_Correlation$chain1)
 
 Model_Correlation_Sol_gg<- ggmcmc::ggs(Model_Correlation_ROTL_Sol)
 
-diagnostic_filename<- paste('RScripts/ModelDiagnostics/p', i,'/Model_Correlation_ROTL_p',i, '.pdf', sep = '')
-ggmcmc::ggmcmc(Model_Correlation_Sol_gg, filename = diagnostic_filename)
+diagnostic_filename<- paste('RScripts/ModelDiagnostics/p4/Model_Correlation_ROTL_p4.pdf', sep = '')
+ggmcmc::ggmcmc(Model_Correlation_Sol_gg, file = diagnostic_filename)
 
-MCMCglmm_filename<- paste('RScripts/ModelOutputs/p', i,'/Model_Correlation_ROTL_p',i, '.RDS', sep = '')
+MCMCglmm_filename<- paste('RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS', sep = '')
 saveRDS(Model_Correlation, MCMCglmm_filename)
-i = i + 1
-####################
 
 
 #Univariate regression is covariance between response and predictor/variance in predictor
@@ -94,8 +86,11 @@ VariancePredictor<- Model_Correlation_VCV_gg %>%
 Regression<- merge(Covariance, VariancePredictor) %>%
   mutate(value = Covariance / PredictorVariance)
 glimpse(Regression)
-ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
-dev.off()
-}
 
+pdf('RScripts/ModelOutputs/p4/Regression.pdf')
+ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
+ggplot(Regression, aes(x = Iteration, y = Covariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+ggplot(Regression, aes(x = Iteration, y = PredictorVariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+
+dev.off()
 
