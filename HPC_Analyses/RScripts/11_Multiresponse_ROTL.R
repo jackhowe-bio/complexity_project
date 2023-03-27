@@ -12,22 +12,27 @@ library(ggthemes)
 
 #import the MCMCglmm parameters
 iterations<- 16000000
-burnin<- readRDS('RScripts/R_Objects/burnin.RDS')
-thinning <- readRDS('RScripts/R_Objects/thinning.RDS')
-n_chains <- readRDS('RScripts/R_Objects/n_chains.RDS')
+burnin<- readRDS('HPC_Analyses/RScripts/R_Objects/burnin.RDS')
+thinning <- readRDS('HPC_Analyses/RScripts/R_Objects/thinning.RDS')
+n_chains <- readRDS('HPC_Analyses/RScripts/R_Objects/n_chains.RDS')
+
+#For test runs 
+# iterations<- 160000
+# burnin<-60000
+# thinning <-100
 ################################
 
 
 #Read in the data and the tree
-df = readRDS('RScripts/R_Objects/metadata.RDS')
-inv_tree = readRDS('RScripts/R_Objects/inv_tree.RDS')
+df = readRDS('HPC_Analyses/RScripts/R_Objects/metadata.RDS')
+inv_tree = readRDS('HPC_Analyses/RScripts/R_Objects/inv_tree.RDS')
 
 df_binary<- df %>%
   mutate(FissionBinary= as.factor(ifelse(df$Fission == 1, 1, 0)), EarlyGermlineBinary= as.factor(ifelse(df$GermNumeric == 1, 1, 0)))
 
 
 #Setting the priors (there are others to try especially for binary data, but these usually work well for other familys)
-p4=list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
+p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
             R = list(V = diag(2),nu=1, fix=1), #Residual variance not identifiable for binary variables
             G = list(G1=list(V = diag(2), nu = 1, alpha.mu = c(0,0), alpha.V = diag(c(1000,1000)))))#parameter expanded priors, usually good for binary data
 
@@ -45,15 +50,76 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1,1+pi^2/3))),
 names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
 Model_Correlation_ROTL_Sol<- mcmc.list(lapply(Model_Correlation, function(m) m$Sol))
-#plot(Model_Correlation_ROTL_Sol) 
+plot(Model_Correlation_ROTL_Sol) 
 #gelman.diag(Model_Correlation_ROTL_Sol,multivariate = FALSE)
 
 Model_Correlation_ROTL_VCV<- mcmc.list(lapply(Model_Correlation, function(m) m$VCV))
-#plot(Model_Correlation_ROTL_VCV) 
+plot(Model_Correlation_ROTL_VCV) 
 gelman.diag(Model_Correlation_ROTL_VCV,multivariate = FALSE)
 chain1<- Model_Correlation$chain1
 summary(Model_Correlation$chain1)
 
+#*************************************************************************
+#CKC edits: 
+#phylogenetic heritability in each trait [intraclass correlation coefficient (ICC) for binary traits]
+ICC_fission1<-chain1$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain1$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain1$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+posterior.mode(ICC_fission1)
+HPDinterval(ICC_fission1)
+plot(ICC_fission1)
+
+ICC_germline1<-chain1$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain1$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain1$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+posterior.mode(ICC_germline1)
+HPDinterval(ICC_germline1)
+plot(ICC_germline1)
+
+
+#calculate phylogenetic correlation
+fission_germline1<-chain1$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain1$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain1$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+plot(fission_germline1)
+posterior.mode(fission_germline1)
+HPDinterval(fission_germline1)
+
+#Can check the convergence of these terms
+chain2<- Model_Correlation$chain2
+chain3<- Model_Correlation$chain3
+chain4<- Model_Correlation$chain4
+chain5<- Model_Correlation$chain5
+chain6<- Model_Correlation$chain6
+
+ICC_fission2<-chain2$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain2$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain2$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+ICC_germline2<-chain2$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain2$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain2$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+fission_germline2<-chain2$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain2$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain2$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+
+ICC_fission3<-chain3$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain3$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain3$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+ICC_germline3<-chain3$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain3$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain3$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+fission_germline3<-chain3$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain3$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain3$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+
+ICC_fission4<-chain4$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain4$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain4$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+ICC_germline4<-chain4$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain4$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain4$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+fission_germline4<-chain4$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain4$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain4$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+
+ICC_fission5<-chain5$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain5$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain5$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+ICC_germline5<-chain5$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain5$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain5$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+fission_germline5<-chain5$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain5$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain5$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+
+ICC_fission6<-chain6$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']/((chain6$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']+chain6$VCV[,'traitFissionBinary.2:traitFissionBinary.2.units'])+pi^2/3)
+ICC_germline6<-chain6$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']/((chain6$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl']+chain6$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.units'])+pi^2/3)
+fission_germline6<-chain6$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.species_rotl']/sqrt(chain6$VCV[,'traitFissionBinary.2:traitFissionBinary.2.species_rotl']*chain6$VCV[,'traitEarlyGermlineBinary.2:traitEarlyGermlineBinary.2.species_rotl'])
+
+ICC_fission<-mcmc.list(ICC_fission1,ICC_fission2,ICC_fission3,ICC_fission4,ICC_fission5,ICC_fission6)
+ICC_germline<-mcmc.list(ICC_germline1,ICC_germline2,ICC_germline3,ICC_germline4,ICC_germline5,ICC_germline6)
+fission_germline<-mcmc.list(fission_germline1,fission_germline2,fission_germline3,fission_germline4,fission_germline5,fission_germline6)
+
+plot(ICC_fission)
+gelman.diag(ICC_fission,multivariate = FALSE)
+
+plot(ICC_germline)
+gelman.diag(ICC_germline,multivariate = FALSE)
+
+plot(fission_germline)
+gelman.diag(fission_germline,multivariate = FALSE)
+
+#*************************************************************************
 Model_Correlation_Sol_gg<- ggmcmc::ggs(Model_Correlation_ROTL_Sol)
 
 diagnostic_filename<- paste('RScripts/ModelDiagnostics/p4/Model_Correlation_ROTL_p4.pdf', sep = '')
@@ -74,6 +140,7 @@ Model_Correlation_VCV_gg<- ggmcmc::ggs(Model_Correlation_VCV)
 Covariance<- Model_Correlation_VCV_gg %>%
   filter(Parameter == 'traitFissionBinary.2:traitEarlyGermlineBinary.2.species_rotl') %>% 
   rename(Covariance = value) %>% select(-Parameter)
+
 
 #in previous model was: 'traitFissionBinary.1:traitEarlyGermlineBinary.1.species'
 
