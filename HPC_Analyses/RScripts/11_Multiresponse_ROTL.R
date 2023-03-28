@@ -1,5 +1,5 @@
 # Model 5: fission vs number of cells / phylogeny
-setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses/')
+setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/')
 
 ## load packages
 library(ape)
@@ -8,7 +8,9 @@ library(MCMCglmm)
 library(parallel)
 library(coda)
 library(ggthemes)
-
+library(ggmcmc)
+library(bayesplot)
+library(ggpubr)
 
 #import the MCMCglmm parameters
 iterations<- 16000000
@@ -40,18 +42,22 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
 
 
 # run MCMCglmm
-  Model_Correlation<- mclapply(1:n_chains, function(i){
-    MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
-             random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
-             rcov = ~us(trait):units, #2x2 residual covariance matrix
-             ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
-             data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
-  }, mc.cores = 6)
-names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
+#  Model_Correlation<- mclapply(1:n_chains, function(i){
+ #   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
+ #            random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
+#             rcov = ~us(trait):units, #2x2 residual covariance matrix
+#             ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
+#             data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
+#  }, mc.cores = 6)
+#names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
+
+Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
 
 Model_Correlation_ROTL_Sol<- mcmc.list(lapply(Model_Correlation, function(m) m$Sol))
 plot(Model_Correlation_ROTL_Sol) 
 #gelman.diag(Model_Correlation_ROTL_Sol,multivariate = FALSE)
+
+
 
 Model_Correlation_ROTL_VCV<- mcmc.list(lapply(Model_Correlation, function(m) m$VCV))
 plot(Model_Correlation_ROTL_VCV) 
@@ -109,6 +115,8 @@ fission_germline6<-chain6$VCV[,'traitEarlyGermlineBinary.2:traitFissionBinary.2.
 ICC_fission<-mcmc.list(ICC_fission1,ICC_fission2,ICC_fission3,ICC_fission4,ICC_fission5,ICC_fission6)
 ICC_germline<-mcmc.list(ICC_germline1,ICC_germline2,ICC_germline3,ICC_germline4,ICC_germline5,ICC_germline6)
 fission_germline<-mcmc.list(fission_germline1,fission_germline2,fission_germline3,fission_germline4,fission_germline5,fission_germline6)
+varnames(fission_germline) <- 'correlation'
+
 
 plot(ICC_fission)
 gelman.diag(ICC_fission,multivariate = FALSE)
@@ -119,6 +127,23 @@ gelman.diag(ICC_germline,multivariate = FALSE)
 plot(fission_germline)
 gelman.diag(fission_germline,multivariate = FALSE)
 
+
+HPDinterval(fission_germline)
+
+
+summary(fission_germline)
+
+trace<- mcmc_trace(fission_germline) + theme_minimal()
+areas<- mcmc_areas(fission_germline) + theme_minimal()
+intervals<- mcmc_intervals(fission_germline) + theme_minimal()
+
+a<- ggarrange(trace, areas, intervals, ncol = 3, labels = 'AUTO')
+
+
+pdf('HPC_Analyses/RScripts/ModelOutputs/p4/Fission_Germline.pdf', width = 30, height = 10)
+a
+dev.off()
+
 #*************************************************************************
 Model_Correlation_Sol_gg<- ggmcmc::ggs(Model_Correlation_ROTL_Sol)
 
@@ -127,6 +152,9 @@ ggmcmc::ggmcmc(Model_Correlation_Sol_gg, file = diagnostic_filename)
 
 MCMCglmm_filename<- paste('RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS', sep = '')
 saveRDS(Model_Correlation, MCMCglmm_filename)
+
+
+
 
 
 #Univariate regression is covariance between response and predictor/variance in predictor
@@ -161,3 +189,4 @@ ggplot(Regression, aes(x = Iteration, y = PredictorVariance, colour = as.factor(
 
 dev.off()
 
+ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
