@@ -42,20 +42,20 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
 
 
 # run MCMCglmm
-#  Model_Correlation<- mclapply(1:n_chains, function(i){
- #   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
- #            random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
-#             rcov = ~us(trait):units, #2x2 residual covariance matrix
-#             ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
-#             data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
-#  }, mc.cores = 6)
-#names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
+  Model_Correlation<- mclapply(1:n_chains, function(i){
+   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
+            random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
+            rcov = ~us(trait):units, #2x2 residual covariance matrix
+             ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
+             data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
+  }, mc.cores = 6)
+names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
-Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
+#Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
 
 Model_Correlation_ROTL_Sol<- mcmc.list(lapply(Model_Correlation, function(m) m$Sol))
 plot(Model_Correlation_ROTL_Sol) 
-#gelman.diag(Model_Correlation_ROTL_Sol,multivariate = FALSE)
+gelman.diag(Model_Correlation_ROTL_Sol,multivariate = FALSE)
 
 
 
@@ -122,7 +122,7 @@ plot(ICC_fission)
 gelman.diag(ICC_fission,multivariate = FALSE)
 
 plot(ICC_germline)
-gelman.diag(ICC_germline,multivariate = FALSE)
+gelman.diag(ICC_germline,multivariate = FALSE)z
 
 plot(fission_germline)
 gelman.diag(fission_germline,multivariate = FALSE)
@@ -138,55 +138,54 @@ areas<- mcmc_areas(fission_germline) + theme_minimal()
 intervals<- mcmc_intervals(fission_germline) + theme_minimal()
 
 a<- ggarrange(trace, areas, intervals, ncol = 3, labels = 'AUTO')
-
+a
 
 pdf('HPC_Analyses/RScripts/ModelOutputs/p4/Fission_Germline.pdf', width = 30, height = 10)
 a
 dev.off()
 
 #*************************************************************************
-Model_Correlation_Sol_gg<- ggmcmc::ggs(Model_Correlation_ROTL_Sol)
+# Model_Correlation_Sol_gg<- ggmcmc::ggs(Model_Correlation_ROTL_Sol)
+# 
+# diagnostic_filename<- 'RScripts/ModelDiagnostics/p4/Model_Correlation_ROTL_p4.pdf'
+# ggmcmc::ggmcmc(Model_Correlation_Sol_gg, file = diagnostic_filename)
 
-diagnostic_filename<- paste('RScripts/ModelDiagnostics/p4/Model_Correlation_ROTL_p4.pdf', sep = '')
-ggmcmc::ggmcmc(Model_Correlation_Sol_gg, file = diagnostic_filename)
-
-MCMCglmm_filename<- paste('RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS', sep = '')
+MCMCglmm_filename<- 'RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS'
 saveRDS(Model_Correlation, MCMCglmm_filename)
+ 
+ 
 
-
-
-
-
-#Univariate regression is covariance between response and predictor/variance in predictor
-Model_Correlation_VCV<- mcmc.list(lapply(Model_Correlation, function(m) m$VCV))
-plot(Model_Correlation_VCV) 
-gelman.diag(Model_Correlation_VCV,multivariate = FALSE)
-
-Model_Correlation_VCV_gg<- ggmcmc::ggs(Model_Correlation_VCV)
-
-# for between species use the parameters ending in species 
-Covariance<- Model_Correlation_VCV_gg %>%
-  filter(Parameter == 'traitFissionBinary.2:traitEarlyGermlineBinary.2.species_rotl') %>% 
-  rename(Covariance = value) %>% select(-Parameter)
-
-
-#in previous model was: 'traitFissionBinary.1:traitEarlyGermlineBinary.1.species'
-
-VariancePredictor<- Model_Correlation_VCV_gg %>%
-  filter(Parameter == 'traitFissionBinary.2:traitFissionBinary.2.species_rotl') %>%
-  rename(PredictorVariance = value) %>% select(-Parameter)
-
-# in previous model was: traitFissionBinary.1:traitFissionBinary.1.species
-
-Regression<- merge(Covariance, VariancePredictor) %>%
-  mutate(value = Covariance / PredictorVariance)
-glimpse(Regression)
-
-pdf('RScripts/ModelOutputs/p4/Regression.pdf')
-ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
-ggplot(Regression, aes(x = Iteration, y = Covariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
-ggplot(Regression, aes(x = Iteration, y = PredictorVariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
-
-dev.off()
-
-ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
+# 
+# #Univariate regression is covariance between response and predictor/variance in predictor
+# Model_Correlation_VCV<- mcmc.list(lapply(Model_Correlation, function(m) m$VCV))
+# plot(Model_Correlation_VCV) 
+# gelman.diag(Model_Correlation_VCV,multivariate = FALSE)
+# 
+# Model_Correlation_VCV_gg<- ggmcmc::ggs(Model_Correlation_VCV)
+# 
+# # for between species use the parameters ending in species 
+# Covariance<- Model_Correlation_VCV_gg %>%
+#   filter(Parameter == 'traitFissionBinary.2:traitEarlyGermlineBinary.2.species_rotl') %>% 
+#   rename(Covariance = value) %>% select(-Parameter)
+# 
+# 
+# #in previous model was: 'traitFissionBinary.1:traitEarlyGermlineBinary.1.species'
+# 
+# VariancePredictor<- Model_Correlation_VCV_gg %>%
+#   filter(Parameter == 'traitFissionBinary.2:traitFissionBinary.2.species_rotl') %>%
+#   rename(PredictorVariance = value) %>% select(-Parameter)
+# 
+# # in previous model was: traitFissionBinary.1:traitFissionBinary.1.species
+# 
+# Regression<- merge(Covariance, VariancePredictor) %>%
+#   mutate(value = Covariance / PredictorVariance)
+# glimpse(Regression)
+# 
+# pdf('RScripts/ModelOutputs/p4/Regression.pdf')
+# ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
+# ggplot(Regression, aes(x = Iteration, y = Covariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+# ggplot(Regression, aes(x = Iteration, y = PredictorVariance, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal()
+# 
+# dev.off()
+# 
+# ggplot(Regression, aes(x = Iteration, y = value, colour = as.factor(Chain))) + geom_line(size = 1, alpha = 0.5) + geom_smooth() + theme_minimal() + ylab('Regression coefficient')
