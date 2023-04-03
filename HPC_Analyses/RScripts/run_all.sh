@@ -11,3 +11,6 @@
 #RScript --verbose 7_Model4_ROTL.R
 RScript --verbose 8_Model1And2_Interpretation.R
 RScript --verbose 9_Model3And4_Interpretation.R
+RScript --verbose 10_Figures.R
+RScript --verbose 11_Multiresponse_ROTL.R
+RScript --verbose 12_GermlineWithoutCellNumber.R

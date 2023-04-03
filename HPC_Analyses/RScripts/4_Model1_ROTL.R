@@ -37,7 +37,7 @@ Model1_ROTL_parallel <- mclapply(1:n_chains, function(i){
   MCMCglmm(Number ~Fission-1, #-1 here removes the intercept equivalent to 0 in brms
            random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
            family ="poisson",data = df,prior=p3, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T)
-}, mc.cores = 6)
+}, mc.cores = 3)
 names(Model1_ROTL_parallel)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
 Model1_ROTL_Sol<- mcmc.list(lapply(Model1_ROTL_parallel, function(m) m$Sol))

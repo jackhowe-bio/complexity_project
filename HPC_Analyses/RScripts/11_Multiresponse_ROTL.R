@@ -48,7 +48,7 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
             rcov = ~us(trait):units, #2x2 residual covariance matrix
              ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
              data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
-  }, mc.cores = 6)
+  }, mc.cores = 3)
 names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
 #Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')

@@ -1,4 +1,4 @@
-# Model 5: fission vs number of cells / phylogeny
+# Model 7: germline vs number of cell types / phylogeny
 setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses/')
 
 ## load packages
@@ -34,7 +34,7 @@ for(prior_set in list(p1,p2,p3)){
   MCMCglmm(Types ~ GermTimeSimp-1 + scale(log(Number)), #-1 here removes the intercept equivalent to 0 in brms
            random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
            family ="poisson",data = df,prior=prior_set, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T)
-}, mc.cores = 6)
+}, mc.cores = 3)
 names(Model4_ROTL_parallel)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
 
