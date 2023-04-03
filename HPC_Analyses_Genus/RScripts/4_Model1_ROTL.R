@@ -1,5 +1,5 @@
 # Model 5: fission vs number of cells / phylogeny
-setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses/')
+setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses_Genus/')
 
 ## load packages
 library(ape)

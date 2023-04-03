@@ -1,5 +1,5 @@
 # Model 5: fission vs number of cells / phylogeny
-setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/')
+setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses_Genus/')
 
 ## load packages
 library(ape)
@@ -14,9 +14,9 @@ library(ggpubr)
 
 #import the MCMCglmm parameters
 iterations<- 16000000
-burnin<- readRDS('HPC_Analyses/RScripts/R_Objects/burnin.RDS')
-thinning <- readRDS('HPC_Analyses/RScripts/R_Objects/thinning.RDS')
-n_chains <- readRDS('HPC_Analyses/RScripts/R_Objects/n_chains.RDS')
+burnin<- readRDS('RScripts/R_Objects/burnin.RDS')
+thinning <- readRDS('RScripts/R_Objects/thinning.RDS')
+n_chains <- readRDS('RScripts/R_Objects/n_chains.RDS')
 
 #For test runs 
 # iterations<- 160000
@@ -26,8 +26,8 @@ n_chains <- readRDS('HPC_Analyses/RScripts/R_Objects/n_chains.RDS')
 
 
 #Read in the data and the tree
-df = readRDS('HPC_Analyses/RScripts/R_Objects/metadata.RDS')
-inv_tree = readRDS('HPC_Analyses/RScripts/R_Objects/inv_tree.RDS')
+df = readRDS('RScripts/R_Objects/metadata.RDS')
+inv_tree = readRDS('RScripts/R_Objects/inv_tree.RDS')
 
 df_binary<- df %>%
   mutate(FissionBinary= as.factor(ifelse(df$Fission == 1, 1, 0)), EarlyGermlineBinary= as.factor(ifelse(df$GermNumeric == 1, 1, 0)))
@@ -51,7 +51,7 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
   }, mc.cores = 6)
 names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
-#Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
+#Model_Correlation<- readRDS('RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
 
 Model_Correlation_ROTL_Sol<- mcmc.list(lapply(Model_Correlation, function(m) m$Sol))
 plot(Model_Correlation_ROTL_Sol) 
@@ -140,7 +140,7 @@ intervals<- mcmc_intervals(fission_germline) + theme_minimal()
 a<- ggarrange(trace, areas, intervals, ncol = 3, labels = 'AUTO')
 a
 
-pdf('HPC_Analyses/RScripts/ModelOutputs/p4/Fission_Germline.pdf', width = 30, height = 10)
+pdf('RScripts/ModelOutputs/p4/Fission_Germline.pdf', width = 30, height = 10)
 a
 dev.off()
 

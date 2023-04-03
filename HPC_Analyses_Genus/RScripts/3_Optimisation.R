@@ -1,7 +1,7 @@
 # Script that fits MCMCglmm models with varying combinations or parameters for 
 
 # optimising analyses
-setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses/')
+setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses_Genus/')
 library(ape)
 library(tidyverse)
 library(MCMCglmm)

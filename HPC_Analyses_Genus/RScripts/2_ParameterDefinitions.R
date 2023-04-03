@@ -1,6 +1,6 @@
 
 #setwd
-setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses/')
+setwd('/Users/pcx971/Documents/oxford/complexity/complexity_project/HPC_Analyses_Genus/')
 
 # define priors to be used
 p1=list(R = list(V = 1, nu=0.002), 
