@@ -122,7 +122,7 @@ plot(ICC_fission)
 gelman.diag(ICC_fission,multivariate = FALSE)
 
 plot(ICC_germline)
-gelman.diag(ICC_germline,multivariate = FALSE)z
+gelman.diag(ICC_germline,multivariate = FALSE)
 
 plot(fission_germline)
 gelman.diag(fission_germline,multivariate = FALSE)
