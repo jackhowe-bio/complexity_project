@@ -15,7 +15,7 @@ library(ggthemes)
 
 #import the data and get it into the right format
 multicell_data<- 
-  read_csv('Data/germline_data_1.4.csv', col_types = list( #import data with defining column types
+  read_csv('Data/germline_data_1.5.csv', col_types = list( #import data with defining column types
   cell_types = col_number(),
   cell_number = col_number(),
   clonal = col_factor(),
@@ -132,3 +132,4 @@ anvio_file<- metadata %>%
   mutate(TypesControlledForNumber = Types/log(Number))
 
 write_tsv(anvio_file, "anvio/metadata.txt")
+

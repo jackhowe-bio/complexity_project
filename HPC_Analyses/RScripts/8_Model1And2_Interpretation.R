@@ -11,6 +11,7 @@ library(coda)
 library(ggthemes)
 library(ggpubr)
 
+source('RScripts/pMCMC_Script.R')
 
 for(Model in c(1,2)){
   for(prior_set in c('p1','p2','p3')){
@@ -47,10 +48,21 @@ for(Model in c(1,2)){
     SummaryPlot<- ggarrange(Sol_traceplot, Sol_caterpillar, DifPlotM, labels = "AUTO")
     SummaryPlot
     
+    #pMCMC
+    fixed_names_list<- colnames(ModelOutput$Sol)[grep('species.', colnames(model$Sol), invert = T)]
+    pMCMC_tables<- GenerateFixedEffectsTable(model = ModelOutput, 
+                              link="poisson",
+                              fixed_names=fixed_names_list,
+                              fixed_diffinc = c("all"),
+                              pvalues = "include"))
+  print(pMCMC_tables[1])
+  print(pMCMC_tables[2])
     
     OutputFigureName<- paste('RScripts/ModelOutputs/',prior_set,'/Model',Model,'SummaryFigure_',prior_set,'.pdf',sep = '')
     pdf(OutputFigureName)
     print(SummaryPlot)
     dev.off()
-    }  
+  }  
+  
+  
 }  

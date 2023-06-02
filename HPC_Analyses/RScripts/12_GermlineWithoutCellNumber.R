@@ -54,10 +54,10 @@ for(prior_set in list(p1,p2,p3)){
   
   M4_Sol_gg<- ggmcmc::ggs(Model4_ROTL_Sol)
   
-  diagnostic_filename<- paste('RScripts/ModelDiagnostics/p', i,'/Model4_ROTL_p',i, '.pdf', sep = '')
+  diagnostic_filename<- paste('RScripts/ModelDiagnostics/p', i,'/Model4WithoutCellNumber_ROTL_p',i, '.pdf', sep = '')
   #ggmcmc::ggmcmc(M4_Sol_gg, file = diagnostic_filename)
   
-  MCMCglmm_filename<- paste('RScripts/ModelOutputs/p', i,'/Model4_ROTL_p',i, '.RDS', sep = '')
+  MCMCglmm_filename<- paste('RScripts/ModelOutputs/p', i,'/Model4WithoutCellNumber_ROTL_p',i, '.RDS', sep = '')
   saveRDS(Model4_ROTL_parallel, MCMCglmm_filename)
   i = i + 1
 }

@@ -42,16 +42,16 @@ p4=list(B=list(mu=c(0,0), V=diag(c(1+pi^2/3,1+pi^2/3))),
 
 
 # run MCMCglmm
-  Model_Correlation<- mclapply(1:n_chains, function(i){
-   MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
-            random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
-            rcov = ~us(trait):units, #2x2 residual covariance matrix
-             ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
-             data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
-  }, mc.cores = 3)
-names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
+#   Model_Correlation<- mclapply(1:n_chains, function(i){
+#    MCMCglmm(cbind(FissionBinary,EarlyGermlineBinary) ~ trait-1,
+#             random = ~us(trait):species_rotl, #2x2 phylogenetic covariance matrix
+#             rcov = ~us(trait):units, #2x2 residual covariance matrix
+#              ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"), 
+#              data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = T)
+#   }, mc.cores = 3)
+# names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
-#Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
+Model_Correlation<- readRDS('HPC_Analyses/RScripts/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS')
 
 Model_Correlation_ROTL_Sol<- mcmc.list(lapply(Model_Correlation, function(m) m$Sol))
 plot(Model_Correlation_ROTL_Sol) 
