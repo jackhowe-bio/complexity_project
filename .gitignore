@@ -8,3 +8,4 @@ RScripts/model_outputs/Model*
 RScripts/OptimisingModels.Rdata
 README.html
 HPC_Analyses/RScripts/ModelOutputs/*/*.RDS
+HPC_Analyses_Genus/RScripts/ModelOutputs/*/*.RDS
