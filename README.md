@@ -42,7 +42,7 @@ cd HPC_Analyses_Genus/RScripts
 bash run_all.sh
 ```
 
-This may involve the installation of the relavant R packages if they are not already installed.
+This may involve the installation of the relevant R packages if they are not already installed.
 
 Chains for each model are run in parallel to speed up analyses (3 at a time). This can be sped up if your machine allows by changing the `mc.cores = 3` line to a number >3. 
 
