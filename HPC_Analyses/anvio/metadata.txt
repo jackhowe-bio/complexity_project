@@ -17,7 +17,7 @@ cheiroglossa_palmata	cheiroglossa palmata	0	adult	6309573445	14	0.62042068843235
 chlorogloeopsis	chlorogloeopsis	1	adult	22	2	0.6470309062973449
 chordaria_flagelliformis	chordaria flagelliformis	0	adult	3981071706	6	0.27143405118809805
 chordodasiopsis_antennatus	chordodasiopsis antennatus	0	early	1259	15	2.1014074706799657
-cladostephus_spongiosus	cladostephus spongiosus	0	adult	125892541	8	0.4289328216656169
+cladostephus_spongiosus	cladostephus spongiosus	1	adult	125892541	8	0.4289328216656169
 colpomenia_sinuosa	colpomenia sinuosa	0	adult	1995262315	5	0.23349165693706211
 conocephalum_conicum	conocephalum conicum	1	adult	3162278	15	1.0022180279652546
 conocyema_polymorpha	conocyema polymorpha	0	NA	29	3	0.8909226131201102
@@ -34,7 +34,7 @@ dictyota_binghamiae	dictyota binghamiae	1	adult	251000000000	4	0.152388390234322
 dicyema_typus	dicyema typus	0	NA	1585	3	0.40714735309682926
 dicyemennea_abelis	dicyemennea abelis	0	NA	20	6	2.0028492041720045
 dicyemennea_lameerei	dicyemennea lameerei	0	NA	224	3	0.5543599805407895
-dilsea_natashae	dilsea natashae	1	adult	19953000000	12	0.5059737507341848
+dilsea_natashae	dilsea natashae	0	adult	19953000000	12	0.5059737507341848
 dinophilus_gyrociliatus	dinophilus gyrociliatus	0	early	10000	23	2.497193270943698
 diurodrilus_westheidei	diurodrilus westheidei	0	early	3549	14	1.7126594946074503
 ducellieria_chodatii	ducellieria chodatii	0	no_germline	40	1	0.2710850306818168
@@ -46,22 +46,22 @@ eudorina_cylindrica	eudorina cylindrica	0	no_germline	16	2	0.7213475204444817
 eudorina_elegans	eudorina elegans	0	no_germline	32	1	0.28853900817779266
 eudorina_minodii	eudorina minodii	0	no_germline	32	1	0.28853900817779266
 eudorina_unicocca	eudorina unicocca	0	no_germline	32	1	0.28853900817779266
-farlowia_mollis	farlowia mollis	1	adult	3162277660	7	0.3200064603505435
+farlowia_mollis	farlowia mollis	0	adult	3162277660	7	0.3200064603505435
 fucus_vesiculosus	fucus vesiculosus	1	adult	3160000000000	7	0.24321099826172113
 fuirena_ciliaris	fuirena ciliaris	1	adult	25119000000	44	1.8373993166669864
 funaria_hygrometrica	funaria hygrometrica	1	adult	251188643	20	1.034034480754157
-gloeophycus_koreanus	gloeophycus koreanus	1	adult	63096000000	12	0.4825493426691354
+gloeophycus_koreanus	gloeophycus koreanus	0	adult	63096000000	12	0.4825493426691354
 gonium_multicoccum	gonium multicoccum	0	no_germline	32	1	0.28853900817779266
 gonium_pectorale	gonium pectorale	0	no_germline	16	1	0.36067376022224085
 gonium_quadratum	gonium quadratum	0	no_germline	16	1	0.36067376022224085
 gonium_viridistellatum	gonium viridistellatum	0	no_germline	16	1	0.36067376022224085
 gymnoascus_reessii	gymnoascus reessii	1	adult	15849	5	0.5170170107307891
-halymenia_asymmetrica	halymenia asymmetrica	1	adult	63096000000	13	0.5227617878915634
+halymenia_asymmetrica	halymenia asymmetrica	0	adult	63096000000	13	0.5227617878915634
 haplospora_globosa	haplospora globosa	1	adult	25119000000	4	0.16703630151518056
 helminthostachys_zeylanica	helminthostachys zeylanica	1	adult	70794579	5	0.2766206889889523
-heteroglossum_carnosum	heteroglossum carnosum	1	adult	1000000000	11	0.5308043667706411
+heteroglossum_carnosum	heteroglossum carnosum	0	adult	1000000000	11	0.5308043667706411
 heteroralfsia_saxicola	heteroralfsia saxicola	0	adult	794328235	9	0.439174195175625
-himantothallus_grandifolius	himantothallus grandifolius	0	adult	1580000000000	14	0.4984255810541453
+himantothallus_grandifolius	himantothallus grandifolius	1	adult	1580000000000	14	0.4984255810541453
 hirudo_medicinalis	hirudo medicinalis	0	early	19953000000	26	1.096276459924067
 hummia_onusta	hummia onusta	0	adult	100000000	5	0.27143405118953234
 hydra_vulgaris	hydra vulgaris	1	adult	63096	15	1.3571697391436546
@@ -108,7 +108,7 @@ rhabditis_monhystera	rhabditis monhystera	0	early	447	23	3.7689109647060133
 rhopalura_granosa	rhopalura granosa	0	NA	1413	3	0.4135951264323895
 sagittaria_lancifolia	sagittaria lancifolia	1	adult	100000000000	42	1.6582152945396886
 sarconema_scinaioides	sarconema scinaioides	1	adult	2511886432	13	0.6006200281586539
-schimmelmannia_dawsonii	schimmelmannia dawsonii	1	adult	251000000000	11	0.4190680731443877
+schimmelmannia_dawsonii	schimmelmannia dawsonii	0	adult	251000000000	11	0.4190680731443877
 schmitzia_hiscockiana	schmitzia hiscockiana	1	adult	200000000000	14	0.5380149197885828
 scytosiphon_lomentaria	scytosiphon lomentaria	1	adult	794328235	4	0.19518853118916665
 selenipedium_palmifolium	selenipedium palmifolium	0	adult	12589000000	35	1.504982184155731
@@ -141,7 +141,7 @@ volvulina_pringsheimii	volvulina pringsheimii	0	no_germline	16	1	0.3606737602222
 volvulina_steinii	volvulina steinii	0	no_germline	16	1	0.36067376022224085
 wolffia_arrhiza	wolffia arrhiza	1	adult	10000	5	0.5428681023790647
 wolffia_microscopica	wolffia microscopica	1	adult	70795	7	0.6268164437768007
-yamadaella caenomyce	yamadaella caenomyce	0	adult	3981071706	7	0.3166730597194477
+yamadaella_caenomyce	yamadaella caenomyce	0	adult	3981071706	7	0.3166730597194477
 yamagishiella_unicocca	yamagishiella unicocca	0	no_germline	32	1	0.28853900817779266
 zeacarpa_leiomorpha	zeacarpa leiomorpha	0	adult	7943282347	8	0.35094503588188625
 zoothamnium_alternans	zoothamnium alternans	0	adult	142	4	0.807130667294935
