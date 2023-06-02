@@ -1,110 +1,49 @@
-# Single-celled bottlenecks, germlines and the evolution of complex multi-cellularity
+# Conflict Reducing Innovations in Development Enable Increased Multicellular Complexity
 
 
-## Running the files
+## README
 
-This repo contains all data and scripts for all analyses run.
+This repo contains all data and scripts for all analyses run for the manuscript. 
 
-Most things are now stored in the HPC_Analyses folder (named because I had ambitions 
-of running on the server, but had issues with R libraries there so ran locally).
+The `data` folder contains the data and associated references. 
 
-All scripts are in the `RScripts` folder. 
+There are then 2 directories: 
 
+- `HPC_Analyses` contains the data with genus level data excluded
+- `HPC_Analyses_Genus` contains the data with genus level data included
 
+Within each of these directories are the data, scripts and outputs.
 
-## Directory structure:
-```
-.
-|-- HPC_Analyses
-|   |-- Data
-|   |   |-- AllMetadata.txt
-|   |   |-- Phylogeny_ROTL.txt
-|   |   |-- Phylogeny_ROTL_intermediate.txt
-|   |   |-- Phylogeny_ROTL_original.txt
-|   |   |-- ROTL_metadata.txt
-|   |   `-- germline_data_1.4.csv
-|   |-- RScripts
-|   |   |-- 10_Figures.R #generates some of the figures for the manuscript (except anvio fig)
-|   |   |-- 11_Multiresponse_ROTL.R
-|   |   |-- 1_DataPrep.R #generates the phylogeny and preps the data
-|   |   |-- 2_ParameterDefinitions.R #defines iterations etc, needs edited after running 3
-|   |   |-- 3_Optimisation.R #runs combinations of mcmcglmm iterations/burnin/thinning for testing
-|   |   |-- 4_Model1_ROTL.R 
-|   |   |-- 5_Model2_ROTL.R
-|   |   |-- 6_Model3_ROTL.R
-|   |   |-- 7_Model4_ROTL.R
-|   |   |-- 8_Model1And2_Interpretation.R 
-|   |   |-- 9_Model3And4_Interpretation.R
-|   |   |-- ModelDiagnostics #contains pdfs with diagnostics from mcmcglmm
-|   |   |   |-- p1
-|   |   |   |   `-- Model3_ROTL_p1.pdf
-|   |   |   |-- p2
-|   |   |   |   `-- Model3_ROTL_p2.pdf
-|   |   |   |-- p3
-|   |   |   |   `-- Model3_ROTL_p3.pdf
-|   |   |   `-- p4
-|   |   |       `-- Model_Correlation_ROTL_p4.pdf
-|   |   |-- ModelOutputs #the RDS files are large so are not uploaded
-|   |   |   |-- p1 
-|   |   |   |   |-- Model1SummaryFigure_p1.pdf #pdfs show the HPD intervals and chains
-|   |   |   |   |-- Model1_ROTL_p1.RDS 
-|   |   |   |   |-- Model2SummaryFigure_p1.pdf
-|   |   |   |   |-- Model2_ROTL_p1.RDS
-|   |   |   |   |-- Model3SummaryFigure_p1.pdf
-|   |   |   |   |-- Model3_ROTL_p1.RDS
-|   |   |   |   |-- Model4SummaryFigure_p1.pdf
-|   |   |   |   `-- Model4_ROTL_p1.RDS
-|   |   |   |-- p2
-|   |   |   |   |-- Model1SummaryFigure_p2.pdf
-|   |   |   |   |-- Model1_ROTL_p2.RDS
-|   |   |   |   |-- Model2SummaryFigure_p2.pdf
-|   |   |   |   |-- Model2_ROTL_p2.RDS
-|   |   |   |   |-- Model3SummaryFigure_p2.pdf
-|   |   |   |   |-- Model3_ROTL_p2.RDS
-|   |   |   |   |-- Model4SummaryFigure_p2.pdf
-|   |   |   |   `-- Model4_ROTL_p2.RDS
-|   |   |   |-- p3
-|   |   |   |   |-- Model1SummaryFigure_p3.pdf
-|   |   |   |   |-- Model1_ROTL_p3.RDS
-|   |   |   |   |-- Model2SummaryFigure_p3.pdf
-|   |   |   |   |-- Model2_ROTL_p3.RDS
-|   |   |   |   |-- Model3SummaryFigure_p3.pdf
-|   |   |   |   |-- Model3_ROTL_p3.RDS
-|   |   |   |   |-- Model4SummaryFigure_p3.pdf
-|   |   |   |   `-- Model4_ROTL_p3.RDS
-|   |   |   `-- p4
-|   |   |       |-- Model_Correlation_ROTL_p4.RDS
-|   |   |       `-- Regression.pdf
-|   |   |-- R_Objects #contains priors and parameters for mcmcglmm
-|   |   |   |-- burnin.RDS
-|   |   |   |-- inv_tree.RDS
-|   |   |   |-- iterations.RDS
-|   |   |   |-- metadata.RDS
-|   |   |   |-- n_chains.RDS
-|   |   |   |-- priors_1.RDS
-|   |   |   |-- priors_2.RDS
-|   |   |   |-- priors_3.RDS
-|   |   |   `-- thinning.RDS
-|   |   `-- run_all.sh # runs each of the scripts above (needs updated)
-|   |-- anvio
-|   |   |-- AnvioOutput.svg #output from anvio
-|   |   |-- FigureProfile.db #needed for anvio file
-|   |   |-- Phylogeny_ROTL.txt #generated from data prep
-|   |   `-- metadata.txt #generated from dataprep
-|   `-- figures #figures for the manuscript
-|       |-- Figure2.pdf
-|       |-- FigureBars.pdf
-|       |-- FigureFission.pdf
-|       |-- FigureGerm.pdf
-|       |-- Optimisation.pdf
-|       `-- phylogeniesROTL.pdf
-|-- MCMCglmm\ functions.R #not sure if needed
-|-- README.html 
-|-- README.md
-|-- complexity_project.Rproj
-|-- data #used previously, tidier data in HPC folder
-`-- manuscript
+- `anvio` contains the inputs and outputs for the anvio software used to draw and label 
+the phylogeny
+- `Data` includes the data files
+- `figures` contains the output summary figures used in the manuscript
+- `RScripts` contains all the scripts used to generate results and figures
+  - .R files starting with 1 through 12 run all the analyses. To run all files, 
+  use the `run_all.sh` script while in this folder. 
+  - `SupplementaryInfo.Rmd` and `SupplementaryInfo.pdf` are in the `HPC_Analyses` 
+  folder. This generates the supplementary info. (a copy is present in the first dir)
+  -`ModelOutputs` contains the figures that were used to populate the supplementary 
+  info file for each prior set. The .RDS model objects generated in the R Scripts
+  are not uploaded here because of their large size. They are generated when the scripts are run. 
 
 
+## Running the analyses
+
+When the dir is downloaded, run the following to conduct all analyses and produce all figures:
+
+```{bash}
+cd HPC_Analyses/RScripts
+bash run_all.sh
+
+cd ..
+cd ..
+cd HPC_Analyses_Genus/RScripts
+bash run_all.sh
 ```
 
+This may involve the installation of the relavant R packages if they are not already installed.
+
+Chains for each model are run in parallel to speed up analyses (3 at a time). This can be sped up if your machine allows by changing the `mc.cores = 3` line to a number >3. 
+
+Once run the `SupplementaryInfo.Rmd` file can be knit to create the supplement. 
