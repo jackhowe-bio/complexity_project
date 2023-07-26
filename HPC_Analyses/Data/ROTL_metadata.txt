@@ -141,7 +141,7 @@ Volvulina pringsheimii	Plantae	Chlorophyta	obligate	simple	no	0	1	16	1	0	NA	0	no
 Volvulina steinii	Plantae	Chlorophyta	obligate	simple	no	0	1	16	1	0	NA	0	no_germline	0.0625	0	0	0	volvulina steinii	volvulina_steinii
 Wolffia arrhiza	Plantae	Tracheophyta	obligate	complex	yes	NA	5	10000	0	1	b	3	adult	5e-04	4	4e-04	2	wolffia arrhiza	wolffia_arrhiza
 Wolffia microscopica	Plantae	Tracheophyta	obligate	complex	yes	NA	7	70795	1	1	b	3	adult	9.88770393389364e-05	6	8.47517480048026e-05	2	wolffia microscopica	wolffia_microscopica
-Yamadaella<U+00A0>caenomyce	Plantae	Rhodophyta	obligate	complex	yes	NA	7	3981071706	1	0	none	3	adult	1.75832050185132e-09	6	1.5071318587297e-09	2	yamadaella<U+00A0>caenomyce	yamadaella<U+00A0>caenomyce
+Yamadaella caenomyce	Plantae	Rhodophyta	obligate	complex	yes	NA	7	3981071706	1	0	none	3	adult	1.75832050185132e-09	6	1.5071318587297e-09	2	yamadaella_caenomyce	yamadaella_caenomyce
 Yamagishiella unicocca	Plantae	Chlorophyta	obligate	simple	no	0	1	32	1	0	NA	0	no_germline	0.03125	0	0	0	yamagishiella unicocca	yamagishiella_unicocca
 Zeacarpa leiomorpha	Plantae	Chlorophyta	obligate	complex	yes	NA	8	7943282347	1	0	NA	3	adult	1.00714032946612e-09	7	8.81247788282856e-10	2	zeacarpa leiomorpha	zeacarpa_leiomorpha
 Zoothamnium alternans	Chromista	Ciliophora	obligate	simple	yes	NA	4	142	1	0	NA	3	adult	0.028169014084507	3	0.0211267605633803	2	zoothamnium alternans	zoothamnium_alternans
