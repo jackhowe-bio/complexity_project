@@ -161,7 +161,7 @@ for(prior_set in priors){
              family ="categorical",data = df,prior=p1, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T, pl = T)
   }, mc.cores = 3)
   
-  names(MCMCglmm_Fission)<- c('chain1','chain2','chain3')
+  names(MCMCglmm_Germline)<- c('chain1','chain2','chain3')
   
   MCMCglmm_filename<- paste('AncestralStates_p', i,'_Germline.RDS', sep = '')
   saveRDS(MCMCglmm_Germline, MCMCglmm_filename)
