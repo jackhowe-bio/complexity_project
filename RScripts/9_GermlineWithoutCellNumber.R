@@ -11,7 +11,7 @@ for(prior_set in list(p1,p2,p3)){
     MCMCglmm(Types ~ GermTimeSimp-1, #-1 here removes the intercept equivalent to 0 in brms
              random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
              family ="poisson",data = df,prior=prior_set, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=F)
-  }, mc.cores = 3)
+  },mc.cores = n_cores)
   names(Model4_ROTL_parallel)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
   
   

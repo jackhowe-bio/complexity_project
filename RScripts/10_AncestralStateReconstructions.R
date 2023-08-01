@@ -40,7 +40,7 @@ for(prior in priors){
     MCMCglmm(Types ~ 1, #-1 here removes the intercept equivalent to 0 in brms
              random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
              family ="poisson",data = dfACR,prior=prior, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T, pl = T)
-  }, mc.cores = 3)
+  }, mc.cores = n_cores)
   
   names(MCMCglmm_Types)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
 
@@ -76,7 +76,7 @@ for(prior_set in priors){
     MCMCglmm(Number ~ 1, #-1 here removes the intercept equivalent to 0 in brms
              random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
              family ="poisson",data = dfACR,prior=prior_set, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T, pl = T)
-  }, mc.cores = 3)
+  }, mc.cores = n_cores)
   
   names(MCMCglmm_Number)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
   
@@ -110,7 +110,7 @@ i = 1
     MCMCglmm(as.factor(Fission) ~ 1, #-1 here removes the intercept equivalent to 0 in brms
              random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
              family ="categorical",data = dfACR,prior=p_binary, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T, pl = T)
-  }, mc.cores = 3)
+  }, mc.cores = n_cores)
   
   names(MCMCglmm_Fission)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
   
@@ -151,7 +151,7 @@ i = 1
     MCMCglmm(as.factor(GermNumeric) ~ 1, #-1 here removes the intercept equivalent to 0 in brms
              random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
              family ="categorical",data = dfACR,prior=p_binary, nitt=iterations, burnin=burnin, thin=thinning ,verbose = F, pr=T, pl = T)
-  }, mc.cores = 3)
+  }, mc.cores = n_cores)
   
   names(MCMCglmm_Germline)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
   

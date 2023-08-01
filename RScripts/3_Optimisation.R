@@ -18,7 +18,7 @@ OptimisationRunParallel <- mclapply(1:nrow(testing_args), function(i, n_itts,n_b
   MCMCglmm(Number ~Fission-1, #-1 here removes the intercept equivalent to 0 in brms
            random = ~species_rotl, ginverse=list(species_rotl=inv_tree), # phylogeny modelled by linking species to inverse distance matrix created from phylogeny
            family ="poisson",data = df ,prior=p1, nitt=n_itts[i], burnin=n_burn[i], thin=n_thin[i], verbose = F, pr=F)
-}, mc.set.seed=T, mc.cores = 6, n_itts = testing_args$n_itts, n_burn = testing_args$n_burn, n_thin = testing_args$n_thin)
+}, mc.set.seed=T, mc.cores = n_cores, n_itts = testing_args$n_itts, n_burn = testing_args$n_burn, n_thin = testing_args$n_thin)
 
 options(scipen = 8) #makes sure that numbers come out properly, penalty for scientific notiation under 8 digits
 names(OptimisationRunParallel)<- paste('it:',testing_args$n_itts,'thin:',testing_args$n_thin,'burnin:',testing_args$n_burn, sep = '') #set a name for each run that gives the parameter info for later

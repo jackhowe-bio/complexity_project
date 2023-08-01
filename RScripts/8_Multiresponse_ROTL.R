@@ -14,7 +14,7 @@ df_binary<- df %>%
             rcov = ~us(trait):units, #2x2 residual covariance matrix
              ginverse=list(species_rotl=inv_tree),family = c("categorical","categorical"),
              data = df_binary,prior=p4, nitt=iterations, burnin=burnin, thin=thinning,verbose = F)
-  }, mc.cores = 3)
+  }, mc.cores = n_cores)
 names(Model_Correlation)<- c('chain1','chain2','chain3','chain4', 'chain5','chain6')
 
 #Model_Correlation<- readRDS(paste(PathForAnalyses, 'R_Objects/ModelOutputs/p4/Model_Correlation_ROTL_p4.RDS', sep = ''))
