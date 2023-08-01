@@ -63,6 +63,8 @@ burnin<- 1000000
 thinning <- 1000
 n_chains<- 6
 
+n_cores<- 6
+
 # # while testing:
 # iterations<- 8000
 # burnin<- 1000
