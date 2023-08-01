@@ -29,8 +29,6 @@ dfACR<- df
 
 
 priors= list(p3,p2,p1)
-priors = list(p1)
-prior=p1
 
 i = 1
 for(prior in priors){
@@ -114,7 +112,7 @@ i = 1
   
   names(MCMCglmm_Fission)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
   
-  MCMCglmm_filename<- paste(PathForAnalyses, 'R_Objects/ModelOutputs/p', i, '/AncestralStates_Fission.RDS', sep = '')
+  MCMCglmm_filename<- paste(PathForAnalyses, 'R_Objects/ModelOutputs/p5/AncestralStates_Fission.RDS', sep = '')
   saveRDS(MCMCglmm_Fission, MCMCglmm_filename)
 
   
@@ -155,7 +153,7 @@ i = 1
   
   names(MCMCglmm_Germline)<- c('chain1','chain2','chain3','chain4','chain5','chain6')
   
-  MCMCglmm_filename<- paste(PathForAnalyses, 'R_Objects/ModelOutputs/p', i, '/AncestralStates_Germlines.RDS', sep = '')
+  MCMCglmm_filename<- paste(PathForAnalyses, 'R_Objects/ModelOutputs/p5/AncestralStates_Germlines.RDS', sep = '')
   saveRDS(MCMCglmm_Germline, MCMCglmm_filename)
   i = i + 1
   
