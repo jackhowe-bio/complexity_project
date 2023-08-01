@@ -1,13 +1,6 @@
 # Script that fits MCMCglmm models with varying combinations or parameters for 
 # optimising analyses
 
-#Read in the data and the tree
-File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
-df = readRDS(File)
-File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
-inv_tree = readRDS(File)
-
-
 # define the testing arguments by generating dataframe
 testing_args <- expand.grid(n_itts = as.integer(seq(500000, 10000000, length = 7)), n_thin = as.integer(seq(100,1000, length = 2)), n_burn = as.integer(seq(100000, 1000000, length = 3)))
 #make sure the burn in length does not exceed the total length (otherwise error)
