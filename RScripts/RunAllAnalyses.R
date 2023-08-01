@@ -18,7 +18,7 @@ library(ggplot2)
 library(binom)
 
 # make the structure for the directory
-system("mkdir -p Results/{SpeciesLevel,GenusLevel}/{All,OnlyAnimals,NoAnimals}/R_Objects/Model{Outputs,Diagnostics}/{p1,p2,p3,p4}")
+system("mkdir -p Results/{SpeciesLevel,GenusLevel}/{All,OnlyAnimals,NoAnimals}/R_Objects/Model{Outputs,Diagnostics}/{p1,p2,p3,p4,p5}")
 system("mkdir -p Results/{SpeciesLevel,GenusLevel}/{All,OnlyAnimals,NoAnimals}/Figures")
 system("mkdir -p Results/{SpeciesLevel,GenusLevel}/{All,OnlyAnimals,NoAnimals}/Data/Anvio")
 
@@ -63,7 +63,7 @@ burnin<- 1000000
 thinning <- 1000
 n_chains<- 6
 
-n_cores<- 6
+n_cores<- 4
 
 # # while testing:
 # iterations<- 8000
@@ -73,7 +73,7 @@ n_cores<- 6
 
 # objects to keep = 
 objects_to_keep = ls()
-
+objects_to_keep[length(objects_to_keep) + 1]<- "objects_to_keep"
 
 ############################################################
 #Species Level
@@ -97,8 +97,11 @@ df = readRDS(File)
 File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
 inv_tree = readRDS(File)
 
+#the optimisation needs run once
+source("RScripts/3_Optimisation.R")
+
 # run the models
-#source("RScripts/3_Optimisation.R")
+
 source("RScripts/4_Model1_ROTL.R")
 source("RScripts/5_Model2_ROTL.R")
 source("RScripts/6_Model3_ROTL.R")
@@ -324,6 +327,7 @@ source('RScripts/10_AncestralStateReconstructions.R')
 
 # draw the figures
 source('RScripts/11_Figures.R')
+
 # then tidy up the objects in memory
 objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
 rm(list = objects_to_remove)
