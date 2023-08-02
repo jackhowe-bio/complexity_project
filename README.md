@@ -9,8 +9,10 @@ The `Data` folder contains the data and associated references.
 
 The `RScripts` folder contains all the scripts for running the analysis. 
 
-To run, `cd` to this directory, then run `RScript RunAllAnalyses.R`.
+To run, edit line 2 of `RScripts/RunAllAnalyses.R` to reflect your working dir.
+Then `cd` to this directory, and run `RScript RScripts/RunAllAnalyses.R`.
 This will run all permutations of the analyses that are presented in the manuscript. 
-It will create the `Results` folder, and all files and folders within it-- including the figures that are presented in the manuscript. 
+It will create the `Results` folder, and all files and folders within it-- including the figures that are presented in the manuscript (although they are compiled using illustrator/inkscape)
 It will *eventually* also create the supplementary information. 
+
 
