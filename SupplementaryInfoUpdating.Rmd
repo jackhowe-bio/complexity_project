@@ -8,6 +8,7 @@ output:
   html_document:
     df_print: paged
 ---
+\listoftables
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -142,11 +143,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+    caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -227,11 +228,12 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+     
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -315,11 +317,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -404,11 +406,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -525,7 +527,7 @@ Model = '4WithoutCellNumber'
 
 This analysis was run to test for a phylogenetic association between early germline segregation and a strict bottleneck separating each generation. Prior set 4 above was used.
 
-```{r correlation, echo=F, results='asis'}
+```{r GenusAllCorrelation, echo=F, results='asis'}
 prior_set = 'p4'
 Model = '_Correlation'
 
@@ -611,7 +613,7 @@ varnames(fission_germline) <- 'correlation'
 Figure: A shows the convergence of all chains, B and C both show the posterior estimates and confidence intervals for the correlation between the *absence* of a strict bottleneck, and the *presence* of early germline segregation. 
 This is shown only for 1 chain.
 
-```{r correlation2, echo=F, results='asis'}
+```{r GenusAllCorrelation2, echo=F, results='asis'}
 #cat(summary(fission_germline))
 
 trace<- mcmc_trace(fission_germline) + theme_minimal()
@@ -629,8 +631,6 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
-
-
 
 
 
@@ -706,11 +706,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -791,11 +791,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -879,11 +879,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -968,11 +968,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -1262,11 +1262,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -1347,11 +1347,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -1435,11 +1435,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -1524,11 +1524,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -1824,11 +1824,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -1909,11 +1909,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -1997,11 +1997,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -2086,11 +2086,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -2207,7 +2207,7 @@ Model = '4WithoutCellNumber'
 
 This analysis was run to test for a phylogenetic association between early germline segregation and a strict bottleneck separating each generation. Prior set 4 above was used.
 
-```{r correlation, echo=F, results='asis'}
+```{r SpeciesAllCorrelation, echo=F, results='asis'}
 prior_set = 'p4'
 Model = '_Correlation'
 
@@ -2293,7 +2293,7 @@ varnames(fission_germline) <- 'correlation'
 Figure: A shows the convergence of all chains, B and C both show the posterior estimates and confidence intervals for the correlation between the *absence* of a strict bottleneck, and the *presence* of early germline segregation. 
 This is shown only for 1 chain.
 
-```{r correlation2, echo=F, results='asis'}
+```{r SpeciesAllCorrelation2, echo=F, results='asis'}
 #cat(summary(fission_germline))
 
 trace<- mcmc_trace(fission_germline) + theme_minimal()
@@ -2388,11 +2388,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -2473,11 +2473,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -2561,11 +2561,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -2650,11 +2650,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -2944,11 +2944,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -3029,11 +3029,11 @@ p=1
     cat("\\newpage")
     cat("\n")  
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
     
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
     
@@ -3117,11 +3117,11 @@ Model = 3
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
@@ -3206,11 +3206,11 @@ Model = 4
     cat("\\newpage")
     cat("\n")
     cat(header)
-    caption1 = paste('Table S', Model,'.',p,'.1: Estimates of Fixed Effects', sep = '' )
+caption1 = paste("Estimates of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table1<- knitr::kable(FixedEffectsTables[1], caption = caption1, "latex")
     print(table1)
 
-    caption2 = paste('Table S', Model,'.',p,'.2: Comparisons of Fixed Effects', sep = '' )
+    caption2 = paste("Comparisons of Fixed Effects for Model ", p , " with prior set ", prior_set, " for " WhichTaxa, " taxa, at the ", GenusVsSpecies, " level",  sep = '' )
     table2<- knitr::kable(FixedEffectsTables[2], caption = caption2, "latex")
     print(table2)
 
