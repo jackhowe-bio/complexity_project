@@ -50,7 +50,7 @@ OptimisingPlot<- ggarrange(OptimisingVariancePlot,OptimisingMeanPlot, ncol = 1, 
 
 File=paste(PathForAnalyses, 'Figures/Optimisation.pdf', sep = '')
 pdf(File)
-OptimisingPlot
+print(OptimisingPlot)
 dev.off()
 
 #save image of environment so it doesn't need run each time
