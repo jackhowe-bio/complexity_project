@@ -4,6 +4,8 @@
 # define the testing arguments by generating dataframe
 testing_args <- expand.grid(n_itts = as.integer(seq(500000, 10000000, length = 7)), n_thin = as.integer(seq(100,1000, length = 2)), n_burn = as.integer(seq(100000, 1000000, length = 3)))
 #make sure the burn in length does not exceed the total length (otherwise error)
+
+#testing_args <- expand.grid(n_itts = as.integer(seq(5000, 50000, length = 3)), n_thin = as.integer(seq(100,1000, length = 2)), n_burn = as.integer(seq(100, 1000, length = 3)))
 testing_args<- subset(testing_args, n_itts >= 2*n_burn)
 
 #running MCMCglmm for all combinations
@@ -21,11 +23,10 @@ autocorrelation_tests_VCV<- data.frame(sapply(OptimisationRunParallel, function(
 
 #make the data readable for ggplot
 autocorrelation_tests_VCV_long<- autocorrelation_tests_VCV %>% 
-  mutate(info = rownames(.)) %>%
-  extract(info, 
-          into = c('iterations','thinning','burnin'),
-          regex = "it:(.*)thin:(.*)burnin:(.*)") %>%
-  rename(autocorrelation = 1) %>%
+  pivot_longer(everything(), 
+               names_pattern = "it\\.(.*)thin\\.(.*)burnin\\.(.*)",
+               names_to = c('iterations','thinning','burnin'),
+               values_to = "autocorrelation") %>%
   mutate(iterations = as.numeric(iterations))
 
 
