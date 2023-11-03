@@ -123,10 +123,18 @@ Correlation_fig<- ggplot() +
   geom_pointrange(data = df_summary, aes(x = as.factor(Bottleneck), y = conf$mean, ymin = conf$lower, ymax = conf$upper), size = 1) + 
   theme_few() + xlab('Strict Generational Single-Cell Bottleneck') + ylab('Probability(Early Germline Segregation)')
 
+Correlation_fig<- 
+  ggplot() + 
+  geom_beeswarm(data = df_prob_fig, aes(x = as.factor(Bottleneck), y = GermNumeric),
+                alpha = 0.8, size = 3, colour = 'grey40', method = 'swarm') + 
+  geom_pointrange(data = df_summary, aes(x = as.factor(Bottleneck), y = conf$mean, ymin = conf$lower, ymax = conf$upper), size = 1) + 
+  theme_few() + xlab('Strict Generational Single-Cell Bottleneck') + ylab('Probability(Early Germline Segregation)')
+  
+
 pdf(paste(PathForAnalyses, "Figures/Figure4.pdf", sep = ''))
 print(Correlation_fig)
 dev.off()
 
 
 print(Correlation_fig)
-ggsave(paste(PathForAnalyses, "Figures/Figure4.pdf", sep = ''), width = 8, height = 8)
+ggsave(paste(PathForAnalyses, "Figures/Figure4.jpg", sep = ''), width = 8, height = 8)
