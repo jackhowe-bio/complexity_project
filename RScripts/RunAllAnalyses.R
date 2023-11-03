@@ -16,6 +16,7 @@ library(bayesplot)
 library(ggtree)
 library(ggplot2)
 library(binom)
+library(ggbeeswarm)
 
 # make the structure for the directory
 system("mkdir -p Results/{SpeciesLevel,GenusLevel}/{All,OnlyAnimals,NoAnimals}/R_Objects/Model{Outputs,Diagnostics}/{p1,p2,p3,p4,p5}")
@@ -82,125 +83,125 @@ objects_to_keep[length(objects_to_keep) + 1]<- "objects_to_keep"
       #########################
       # All
       #########################
-PathForAnalyses<- "Results/SpeciesLevel/All/"
-
-# this is where it needs subset
-multicell_data<- dataframe_input %>%
-  subset(germline_timing != '0' & germline_timing != '?')
-
-# then prepare the dataset and the tree: this saves to the file that is loaded next
-source("RScripts/1_DataPrep.R")
-
-#Read in the data and the tree
-File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
-df = readRDS(File)
-File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
-inv_tree = readRDS(File)
-
-#the optimisation needs run once
-source("RScripts/3_Optimisation.R")
-
-# run the models
-
-source("RScripts/4_Model1_ROTL.R")
-source("RScripts/5_Model2_ROTL.R")
-source("RScripts/6_Model3_ROTL.R")
-source('RScripts/7_Model4_ROTL.R')
-
-# then the correlation models
-source('RScripts/8_Multiresponse_ROTL.R')
-source('RScripts/9_GermlineWithoutCellNumber.R')
-source('RScripts/10_AncestralStateReconstructions.R')
-
-# draw the figures
-source('RScripts/11_Figures.R')
-
-objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
-rm(list = objects_to_remove)
-
-
-      ################################
-      # Without Animals
-      ################################
-
-PathForAnalyses<- "Results/SpeciesLevel/NoAnimals/"
-
-# this is where it needs subset
-multicell_data<- dataframe_input %>%
-  subset(germline_timing != '0' & germline_timing != '?') %>%
-  subset(kingdom != 'Animalia')
-
-# then prepare the dataset and the tree: this saves to the file that is loaded next
-source("RScripts/1_DataPrep.R")
-
-#Read in the data and the tree
-File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
-df = readRDS(File)
-File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
-inv_tree = readRDS(File)
-
-# run the models
-#source("RScripts/3_Optimisation.R")
-source("RScripts/4_Model1_ROTL.R")
-source("RScripts/5_Model2_ROTL.R")
-source("RScripts/6_Model3_ROTL.R")
-source('RScripts/7_Model4_ROTL.R')
-
-# then the correlation models
-source('RScripts/8_Multiresponse_ROTL.R')
-source('RScripts/9_GermlineWithoutCellNumber.R')
-
-# and ancestral state reconstructions
-source('RScripts/10_AncestralStateReconstructions.R')
-
-# draw the figures
-source('RScripts/11_Figures.R')
-
-# then tidy up the objects in memory
-objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
-rm(list = objects_to_remove)
-
-
-    ##################################
-    # Only animals
-    ##################################
-
-PathForAnalyses<- "Results/SpeciesLevel/OnlyAnimals/"
-
-# this is where it needs subset
-multicell_data<- dataframe_input %>%
-  subset(germline_timing != '0' & germline_timing != '?') %>%
-  subset(kingdom == 'Animalia')
-
-# then prepare the dataset and the tree: this saves to the file that is loaded next
-source("RScripts/1_DataPrep.R")
-
-#Read in the data and the tree
-File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
-df = readRDS(File)
-File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
-inv_tree = readRDS(File)
-
-# run the models
-#source("RScripts/3_Optimisation.R")
-source("RScripts/4_Model1_ROTL.R")
-source("RScripts/5_Model2_ROTL.R")
-source("RScripts/6_Model3_ROTL.R")
-source('RScripts/7_Model4_ROTL.R')
-
-# then the correlation models
-source('RScripts/8_Multiresponse_ROTL.R')
-source('RScripts/9_GermlineWithoutCellNumber.R')
-
-# and ancestral state reconstructions
-source('RScripts/10_AncestralStateReconstructions.R')
-
-# draw the figures
-source('RScripts/11_Figures.R')
-
-# then tidy up the objects in memory
-objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
-rm(list = objects_to_remove)
+# PathForAnalyses<- "Results/SpeciesLevel/All/"
+# 
+# # this is where it needs subset
+ multicell_data<- dataframe_input %>%
+   subset(germline_timing != '0' & germline_timing != '?')
+# 
+# # then prepare the dataset and the tree: this saves to the file that is loaded next
+# source("RScripts/1_DataPrep.R")
+# 
+# #Read in the data and the tree
+# File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
+# df = readRDS(File)
+# File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
+# inv_tree = readRDS(File)
+# 
+# #the optimisation needs run once
+# source("RScripts/3_Optimisation.R")
+# 
+# # run the models
+# 
+# source("RScripts/4_Model1_ROTL.R")
+# source("RScripts/5_Model2_ROTL.R")
+# source("RScripts/6_Model3_ROTL.R")
+# source('RScripts/7_Model4_ROTL.R')
+# 
+# # then the correlation models
+# source('RScripts/8_Multiresponse_ROTL.R')
+# source('RScripts/9_GermlineWithoutCellNumber.R')
+# source('RScripts/10_AncestralStateReconstructions.R')
+# 
+# # draw the figures
+# source('RScripts/11_Figures.R')
+# 
+# objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
+# rm(list = objects_to_remove)
+# 
+# 
+#       ################################
+#       # Without Animals
+#       ################################
+# 
+# PathForAnalyses<- "Results/SpeciesLevel/NoAnimals/"
+# 
+# # this is where it needs subset
+# multicell_data<- dataframe_input %>%
+#   subset(germline_timing != '0' & germline_timing != '?') %>%
+#   subset(kingdom != 'Animalia')
+# 
+# # then prepare the dataset and the tree: this saves to the file that is loaded next
+# source("RScripts/1_DataPrep.R")
+# 
+# #Read in the data and the tree
+# File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
+# df = readRDS(File)
+# File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
+# inv_tree = readRDS(File)
+# 
+# # run the models
+# #source("RScripts/3_Optimisation.R")
+# source("RScripts/4_Model1_ROTL.R")
+# source("RScripts/5_Model2_ROTL.R")
+# source("RScripts/6_Model3_ROTL.R")
+# source('RScripts/7_Model4_ROTL.R')
+# 
+# # then the correlation models
+# source('RScripts/8_Multiresponse_ROTL.R')
+# source('RScripts/9_GermlineWithoutCellNumber.R')
+# 
+# # and ancestral state reconstructions
+# source('RScripts/10_AncestralStateReconstructions.R')
+# 
+# # draw the figures
+# source('RScripts/11_Figures.R')
+# 
+# # then tidy up the objects in memory
+# objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
+# rm(list = objects_to_remove)
+# 
+# 
+#     ##################################
+#     # Only animals
+#     ##################################
+# 
+# PathForAnalyses<- "Results/SpeciesLevel/OnlyAnimals/"
+# 
+# # this is where it needs subset
+# multicell_data<- dataframe_input %>%
+#   subset(germline_timing != '0' & germline_timing != '?') %>%
+#   subset(kingdom == 'Animalia')
+# 
+# # then prepare the dataset and the tree: this saves to the file that is loaded next
+# source("RScripts/1_DataPrep.R")
+# 
+# #Read in the data and the tree
+# File=paste(PathForAnalyses, 'R_Objects/metadata.RDS', sep = '')
+# df = readRDS(File)
+# File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
+# inv_tree = readRDS(File)
+# 
+# # run the models
+# #source("RScripts/3_Optimisation.R")
+# source("RScripts/4_Model1_ROTL.R")
+# source("RScripts/5_Model2_ROTL.R")
+# source("RScripts/6_Model3_ROTL.R")
+# source('RScripts/7_Model4_ROTL.R')
+# 
+# # then the correlation models
+# source('RScripts/8_Multiresponse_ROTL.R')
+# source('RScripts/9_GermlineWithoutCellNumber.R')
+# 
+# # and ancestral state reconstructions
+# source('RScripts/10_AncestralStateReconstructions.R')
+# 
+# # draw the figures
+# source('RScripts/11_Figures.R')
+# 
+# # then tidy up the objects in memory
+# objects_to_remove = ls()[(ls() %in% objects_to_keep) == F]
+# rm(list = objects_to_remove)
 
 
 
@@ -225,19 +226,19 @@ df = readRDS(File)
 File=paste(PathForAnalyses, 'R_Objects/inv_tree.RDS', sep = '')
 inv_tree = readRDS(File)
 
-# run the models
-#source("RScripts/3_Optimisation.R")
-source("RScripts/4_Model1_ROTL.R")
-source("RScripts/5_Model2_ROTL.R")
-source("RScripts/6_Model3_ROTL.R")
-source('RScripts/7_Model4_ROTL.R')
-
-# then the correlation models
-source('RScripts/8_Multiresponse_ROTL.R')
-source('RScripts/9_GermlineWithoutCellNumber.R')
-
-# and ancestral state reconstructions
-source('RScripts/10_AncestralStateReconstructions.R')
+# # run the models
+# #source("RScripts/3_Optimisation.R")
+# source("RScripts/4_Model1_ROTL.R")
+# source("RScripts/5_Model2_ROTL.R")
+# source("RScripts/6_Model3_ROTL.R")
+# source('RScripts/7_Model4_ROTL.R')
+# 
+# # then the correlation models
+# source('RScripts/8_Multiresponse_ROTL.R')
+# source('RScripts/9_GermlineWithoutCellNumber.R')
+# 
+# # and ancestral state reconstructions
+# source('RScripts/10_AncestralStateReconstructions.R')
 
 # draw the figures
 source('RScripts/11_Figures.R')
