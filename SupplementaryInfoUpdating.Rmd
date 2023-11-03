@@ -6,6 +6,10 @@ output:
     toc_depth: 3
   word_document: default
   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
     df_print: paged
 ---
 
@@ -687,6 +691,9 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
+```{r GenusAllAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
+```
 
 
 
@@ -701,6 +708,7 @@ WhichTaxa='OnlyAnimals'
 
 
 ### Model 1: *Number of Cells ~ Presence of Strict Bottleneck*
+
 
 
 ```{r GenusAnimalsModel1, results='asis', echo=FALSE}
@@ -1225,6 +1233,11 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
+```{r GenusAnimalsAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
+```
+
+
 
 ## Analyses with data points excluding the animals
 ```{r, echo=F}
@@ -1758,6 +1771,10 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
+```{r GenusNoAnimalsAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
+```
+
 
 # Analyses including only data from species
 
@@ -2296,7 +2313,9 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
-
+```{r SpeciesAllAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
+```
 
 
 
@@ -2834,6 +2853,9 @@ HPDinterval(fission_germline)
 
 
 ### Ancestral state reconstruction
+```{r SpeciesAnimalsAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
+```
 
 ## Analyses with data points excluding the animals
 ```{r, echo=F}
@@ -3361,4 +3383,9 @@ a
 For each chain, the posterior CI were as follows  
 ```{r}
 HPDinterval(fission_germline)
+```
+
+### Ancestral state reconstruction
+```{r SpeciesNoAnimalsAncestralState, echo = F, out.width="100%"}
+knitr::include_graphics(paste("Results/", GenusVsSpecies,"Level/", WhichTaxa, "/Figures/AllPlotsPhylogeny.pdf", sep = ''))
 ```
