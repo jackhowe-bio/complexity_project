@@ -13,6 +13,6 @@ To run, edit line 2 of `RScripts/RunAllAnalyses.R` to reflect your working dir.
 Then `cd` to this directory, and run `RScript RScripts/RunAllAnalyses.R`.
 This will run all permutations of the analyses that are presented in the manuscript. 
 It will create the `Results` folder, and all files and folders within it-- including the figures that are presented in the manuscript (although they are compiled using illustrator/inkscape)
-It will *eventually* also create the supplementary information. 
+It should also create the supplementary information. 
 
 
