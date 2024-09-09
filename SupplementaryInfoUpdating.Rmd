@@ -1,5 +1,9 @@
 ---
-title: "Supplementary Information"
+title: "Supplementary Information for manuscript: **Conflict-Reducing Innovations in Development Enable Increased Multicellular Complexity**"
+author:
+  - Jack Howe, Copenhagen University, Denmark
+  - Charlie K. Cornwallis, Lund University, Sweden
+  - Ashleigh S. Griffin, University of Oxford, U.K.
 output:
   pdf_document: 
     toc: true
@@ -41,6 +45,17 @@ source('/Users/pcx971/Documents/oxford/complexity/complexity_project/RScripts/pM
 ```
 
 \listoftables
+\newpage
+
+# Manuscript Information
+
+*Conflict-Reducing Innovations in Development Enable Increased Multicellular Complexity*
+
+Journal: Proceedings of the Royal Society B
+
+DOI: https://doi.org/10.1098/rspb.2023.2466
+
+
 \newpage
 
 # Parameters used
